@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AquaFlow Login</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Segoe UI, sans-serif;
+  background: #eef2f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  width: 340px;
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e88e5;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #1e88e5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.links {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #1e88e5;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="logo">💧 AquaFlow</div>
+  <div class="subtitle">Multi-User Login System</div>
+
+  <!-- LOGIN -->
+  <div id="loginForm">
+
+    <div class="input-group">
+      <input id="email" placeholder="Email">
+    </div>
+
+    <div class="input-group">
+      <input id="password" type="password" placeholder="Password">
+    </div>
+
+    <button onclick="login()">Login</button>
+
+    <div class="links" onclick="showRegister()">Register</div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="registerForm" style="display:none;">
+
+    <div class="input-group">
+      <input id="rname" placeholder="Name">
+    </div>
+
+    <div class="input-group">
+      <input id="remail" placeholder="Email">
+    </div>
+
+    <div class="input-group">
+      <input id="rpass" type="password" placeholder="Password">
+    </div>
+
+    <div class="input-group">
+      <select id="role">
+        <option value="customer">Customer</option>
+        <option value="rider">Rider</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <button onclick="register()">Create Account</button>
+
+    <div class="links" onclick="showLogin()">Back</div>
+  </div>
+
+</div>
+
+<script>
+
+/* INIT DEFAULT ADMIN */
+if(!localStorage.getItem("users")){
+  let defaultUsers = [
+    {email:"admin@gmail.com", password:"1234", role:"admin", name:"Admin"},
+    {email:"rider@gmail.com", password:"1234", role:"rider", name:"Rider"}
+  ];
+  localStorage.setItem("users", JSON.stringify(defaultUsers));
+}
+
+/* SWITCH */
+function showRegister(){
+  loginForm.style.display="none";
+  registerForm.style.display="block";
+}
+
+function showLogin(){
+  loginForm.style.display="block";
+  registerForm.style.display="none";
+}
+
+/* REGISTER */
+function register(){
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  let user = {
+    name: rname.value,
+    email: remail.value,
+    password: rpass.value,
+    role: role.value
+  };
+
+  users.push(user);
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("Account created!");
+  showLogin();
+}
+
+/* LOGIN */
+function login(){
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  let user = users.find(u =>
+    u.email === email.value &&
+    u.password === password.value
+  );
+
+  if(!user){
+    alert("Invalid login");
+    return;
+  }
+
+  localStorage.setItem("username", user.name);
+  localStorage.setItem("role", user.role);
+
+  /* REDIRECT BASED SA ROLE */
+  if(user.role === "admin"){
+    window.location.href = "admin.html";
+  }
+  else if(user.role === "rider"){
+    window.location.href = "rider1.html";
+  }
+  else{
+    window.location.href = "customer.html";
+  }
+}
+
+</script>
+
+</body>
+</html>

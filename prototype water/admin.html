@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AquaFlow Admin Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f1f5f9;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: #0f172a;
+  color: white;
+  position: fixed;
+  padding: 20px;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.sidebar button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+
+.sidebar button:hover {
+  background: rgba(56,189,248,0.15);
+}
+
+/* CONTENT */
+.content {
+  margin-left: 260px;
+  padding: 25px;
+}
+
+/* CARDS */
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.stat {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.stat h2 {
+  margin: 0;
+  color: #0ea5e9;
+}
+
+/* BUTTON */
+.btn {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.accept { background: #22c55e; color: white; }
+.progress { background: #f59e0b; color: white; }
+.done { background: #3b82f6; color: white; }
+
+input {
+  padding: 8px;
+  margin-top: 5px;
+  width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="brand">💧 AquaFlow Admin</div>
+
+  <button onclick="dashboard()">📊 Dashboard</button>
+  <button onclick="ordersPage()">📦 All Orders</button>
+  <button onclick="earnings()">💰 Earnings</button>
+  <button onclick="settings()">⚙️ Settings</button>
+</div>
+
+<div class="content" id="content"></div>
+
+<script>
+
+/* STORAGE */
+function getOrders(){
+  return JSON.parse(localStorage.getItem("history")) || [];
+}
+
+function getPrice(){
+  return Number(localStorage.getItem("price")) || 25;
+}
+
+/* AUTO ADD DATE IF MISSING */
+function fixDates(){
+  let orders = getOrders();
+  let updated = false;
+
+  orders.forEach(o=>{
+    if(!o.date){
+      o.date = new Date().toLocaleString();
+      updated = true;
+    }
+  });
+
+  if(updated){
+    localStorage.setItem("history", JSON.stringify(orders));
+  }
+}
+
+/* NOTIFICATIONS */
+let lastCount = getOrders().length;
+
+setInterval(()=>{
+  let current = getOrders().length;
+  if(current > lastCount){
+    alert("🔔 New order received!");
+    lastCount = current;
+  }
+},2000);
+
+/* DASHBOARD */
+dashboard();
+
+function dashboard(){
+
+  fixDates();
+
+  let orders = getOrders();
+  let total = orders.reduce((s,o)=> s + (o.total || 0), 0);
+
+  document.getElementById("content").innerHTML = `
+    <h2>📊 Dashboard</h2>
+
+    <div class="grid">
+      <div class="stat">
+        <h2>${orders.length}</h2>
+        <p>Total Orders</p>
+      </div>
+
+      <div class="stat">
+        <h2>₱${total}</h2>
+        <p>Total Earnings</p>
+      </div>
+
+      <div class="stat">
+        <h2>${getPrice()}</h2>
+        <p>Price/Gallon</p>
+      </div>
+    </div>
+
+    <canvas id="chart" height="100"></canvas>
+  `;
+
+  loadChart(orders);
+}
+
+/* CHART */
+function loadChart(orders){
+
+  let labels = orders.map(o => o.orderNumber);
+  let data = orders.map(o => o.total);
+
+  new Chart(document.getElementById("chart"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Earnings per Order",
+        data: data
+      }]
+    }
+  });
+}
+
+/* ORDERS */
+function ordersPage(){
+
+  fixDates();
+
+  let orders = getOrders();
+  let html = "<h2>📦 Orders</h2>";
+
+  orders.forEach((o,i)=>{
+    html += `
+      <div class="card">
+        📦 <b>${o.orderNumber}</b><br>
+        👤 ${o.user}<br>
+        📅 ${o.date}<br>
+        📍 ${o.address}<br>
+        💧 ${o.gallon} gallons<br>
+        💰 ₱${o.total}<br>
+        🚦 ${o.status}
+
+        <br><br>
+
+        <button class="btn accept" onclick="updateStatus(${i},'Accepted')">Accept</button>
+        <button class="btn progress" onclick="updateStatus(${i},'On Delivery')">Delivering</button>
+        <button class="btn done" onclick="updateStatus(${i},'Delivered')">Done</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/* UPDATE */
+function updateStatus(i, status){
+  let orders = getOrders();
+  orders[i].status = status;
+  localStorage.setItem("history", JSON.stringify(orders));
+  ordersPage();
+}
+
+/* EARNINGS */
+function earnings(){
+
+  let orders = getOrders();
+  let total = orders.reduce((s,o)=> s + o.total, 0);
+  let gallons = orders.reduce((s,o)=> s + Number(o.gallon), 0);
+
+  document.getElementById("content").innerHTML = `
+    <h2>💰 Earnings</h2>
+
+    <div class="card">
+      💧 Gallons: ${gallons}<br>
+      📦 Orders: ${orders.length}<br>
+      💰 Total: ₱${total}
+    </div>
+  `;
+}
+
+/* SETTINGS (PRICE EDIT) */
+function settings(){
+
+  document.getElementById("content").innerHTML = `
+    <h2>⚙️ Settings</h2>
+
+    <div class="card">
+      Price per gallon:
+
+      <input id="priceInput" type="number" value="${getPrice()}">
+
+      <button class="btn done" onclick="savePrice()">Save</button>
+    </div>
+  `;
+}
+
+function savePrice(){
+  let p = document.getElementById("priceInput").value;
+  localStorage.setItem("price", p);
+  alert("✅ Price updated!");
+  dashboard();
+}
+
+</script>
+
+</body>
+</html>

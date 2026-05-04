@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AquaFlow Rider Dashboard</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f1f5f9;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.sidebar button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.sidebar button:hover {
+  background: rgba(56,189,248,0.15);
+}
+
+/* CONTENT */
+.content {
+  margin-left: 240px;
+  padding: 20px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* BUTTON */
+.step-btn {
+  width: 100%;
+  padding: 10px;
+  margin: 4px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #e2e8f0;
+}
+
+.active-step {
+  background: #22c55e !important;
+  color: white;
+}
+
+/* MAP POPUP */
+#mapPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* MAP BOX */
+.map-box {
+  width: 95%;
+  max-width: 420px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* MAP AREA */
+.map-area {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #dbeafe;
+}
+
+/* ROAD */
+.road {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  height: 4px;
+  background: #94a3b8;
+}
+
+/* START */
+.start {
+  position: absolute;
+  top: 45%;
+  left: 10%;
+  font-size: 20px;
+}
+
+/* DEST */
+.dest {
+  position: absolute;
+  top: 45%;
+  right: 10%;
+  font-size: 20px;
+}
+
+/* RIDER */
+#rider {
+  position: absolute;
+  top: 45%;
+  left: 10%;
+  font-size: 22px;
+  transition: 1.5s linear;
+}
+
+/* STATUS TEXT */
+.status {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* CLOSE */
+.close-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #0ea5e9;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">🚴 Rider Panel</div>
+
+  <button onclick="loadOrders()">📦 Incoming</button>
+  <button onclick="active()">🛵 Active</button>
+  <button onclick="earnings()">💰 Earnings</button>
+  <button onclick="delivered()">🎉 Delivered</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content"></div>
+
+<script>
+
+/* STORAGE */
+function getOrders(){
+  return JSON.parse(localStorage.getItem("history")) || [];
+}
+
+function save(data){
+  localStorage.setItem("history", JSON.stringify(data));
+}
+
+loadOrders();
+
+/* ---------------- INCOMING ---------------- */
+function loadOrders(){
+
+  let o = getOrders();
+  let html = "<h2>📦 Incoming Orders</h2>";
+
+  let has = false;
+
+  o.forEach((x,i)=>{
+
+    if(x.status !== "Order Received") return;
+
+    has = true;
+
+    html += `
+      <div class="card">
+        📦 ${x.orderNumber}<br>
+        👤 ${x.name}<br>
+        📞 ${x.contact}<br>
+        📍 ${x.address}<br>
+
+        <button class="step-btn" onclick="accept(${i})">
+          Accept Order
+        </button>
+      </div>
+    `;
+  });
+
+  if(!has) html += "<p>No incoming orders</p>";
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/* ACCEPT */
+function accept(i){
+  let o = getOrders();
+  o[i].status = "Go to Pickup";
+  save(o);
+  loadOrders();
+  active();
+}
+
+/* ---------------- ACTIVE ---------------- */
+function active(){
+
+  let o = getOrders();
+  let html = "<h2>🛵 Active Deliveries</h2>";
+
+  let found = false;
+
+  o.forEach((x,i)=>{
+
+    if(x.status === "Order Received" || x.status === "Delivered") return;
+
+    found = true;
+
+    html += `
+      <div class="card">
+        📦 ${x.orderNumber}<br>
+        👤 ${x.name}<br>
+        📍 ${x.address}<br>
+        🚦 ${x.status}
+
+        <br><br>
+
+        ${statusUI(i, x.status)}
+      </div>
+    `;
+  });
+
+  if(!found) html += "<p>No active deliveries</p>";
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/* STATUS UI */
+function statusUI(i, current){
+
+  let flow = [
+    "Go to Pickup",
+    "Collecting Gallon",
+    "Cleaning",
+    "Refilling",
+    "Out for Delivery",
+    "Delivered"
+  ];
+
+  let html = "";
+
+  flow.forEach(step=>{
+
+    let active = current === step ? "active-step" : "";
+
+    html += `
+      <button class="step-btn ${active}" onclick="setStatus(${i}, '${step}')">
+        ${step}
+      </button>
+    `;
+  });
+
+  return html;
+}
+
+/* UPDATE STATUS */
+function setStatus(i, status){
+
+  let o = getOrders();
+  o[i].status = status;
+  save(o);
+
+  if(status === "Out for Delivery"){
+    showMap(o[i]);
+  }
+
+  active();
+}
+
+/* ---------------- FAKE MAP ---------------- */
+function showMap(order){
+
+  let popup = document.createElement("div");
+  popup.id = "mapPopup";
+
+  popup.innerHTML = `
+    <div class="map-box">
+
+      <div style="text-align:center;padding:10px;">
+        <h3>🚴 Live Tracking</h3>
+        <p><b>${order.name}</b></p>
+        <p>${order.address}</p>
+      </div>
+
+      <div class="map-area">
+
+        <div class="road"></div>
+
+        <div class="start">🚴</div>
+        <div class="dest">🏠</div>
+
+        <div id="rider">🚴</div>
+
+      </div>
+
+      <div class="status" id="statusText">
+        Rider is starting delivery...
+      </div>
+
+      <button class="close-btn" onclick="closeMap()">
+        Close
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  animateRider();
+}
+
+/* ---------------- ANIMATION + AUTO DELIVERED ---------------- */
+function animateRider(){
+
+  let rider = document.getElementById("rider");
+  let text = document.getElementById("statusText");
+
+  let steps = [
+    "🚴 Going to pickup...",
+    "📦 Collecting gallons...",
+    "🧼 Cleaning containers...",
+    "💧 Refilling water...",
+    "🚚 Out for delivery...",
+    "🏠 Arriving at house..."
+  ];
+
+  let pos = 10;
+  let i = 0;
+
+  let interval = setInterval(()=>{
+
+    if(pos >= 80){
+
+      clearInterval(interval);
+
+      rider.style.left = "80%";
+
+      text.innerHTML = "🎉 DELIVERED - Order Completed!";
+
+      // AUTO CLOSE POPUP
+      setTimeout(()=>{
+        closeMap();
+      }, 2000);
+
+      return;
+    }
+
+    pos += 12;
+    rider.style.left = pos + "%";
+
+    text.innerHTML = steps[i] || steps[steps.length - 1];
+
+    i++;
+
+  }, 1500);
+}
+
+/* CLOSE MAP */
+function closeMap(){
+  let el = document.getElementById("mapPopup");
+  if(el) el.remove();
+}
+
+/* EARNINGS */
+function earnings(){
+
+  let o = getOrders();
+  let d = o.filter(x=>x.status==="Delivered");
+
+  let total = d.reduce((s,x)=>s+Number(x.total||0),0);
+
+  document.getElementById("content").innerHTML = `
+    <h2>💰 Earnings</h2>
+
+    <div class="card">
+      Delivered: ${d.length}<br>
+      Income: ₱${total}
+    </div>
+  `;
+}
+
+/* DELIVERED */
+function delivered(){
+
+  let o = getOrders().filter(x=>x.status==="Delivered");
+
+  let html = "<h2>🎉 Delivered</h2>";
+
+  o.forEach(x=>{
+    html += `
+      <div class="card">
+        📦 ${x.orderNumber}<br>
+        💰 ₱${x.total}
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>

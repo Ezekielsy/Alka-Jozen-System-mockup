@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AquaFlow Customer</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f1f5f9;
+}
+
+.wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.sidebar button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.sidebar button:hover {
+  background: rgba(56,189,248,0.15);
+}
+
+.content {
+  flex: 1;
+  padding: 25px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  margin-bottom: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.step {
+  margin: 10px 0;
+  padding: 10px;
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  margin-right: 10px;
+}
+
+.active {
+  background: #22c55e;
+}
+
+.order-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.2s;
+}
+
+.order-card:hover {
+  transform: scale(1.02);
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="sidebar">
+  <div class="brand">💧 AquaFlow</div>
+
+  <button onclick="home()">🏠 Home</button>
+  <button onclick="newOrder()">🛒 New Order</button>
+  <button onclick="trackOrder()">📦 Track Order</button>
+  <button onclick="profile()">👤 Profile</button>
+  <button onclick="logout()">🚪 Logout</button>
+</div>
+
+<div class="content">
+  <div class="card" id="content"></div>
+</div>
+
+</div>
+
+<script>
+
+/* GLOBAL TRACKING STATE */
+let currentTrackingId = null;
+let trackingInterval = null;
+
+/* GET PRICE */
+function getPrice(){
+  return Number(localStorage.getItem("price")) || 25;
+}
+
+/* STORAGE */
+function getHistory(){
+  return JSON.parse(localStorage.getItem("history")) || [];
+}
+
+/* STOP TRACKING */
+function stopTracking(){
+  if(trackingInterval){
+    clearInterval(trackingInterval);
+    trackingInterval = null;
+  }
+}
+
+/* HOME */
+home();
+
+function home(){
+  stopTracking();
+  document.getElementById("content").innerHTML = `
+    <h2>💧 Welcome to AquaFlow</h2>
+    <p>🚚 Fast & Clean Water Delivery System</p>
+    <p>💰 ₱${getPrice()} per Gallon</p>
+  `;
+}
+
+/* NEW ORDER */
+function newOrder(){
+  stopTracking();
+
+  document.getElementById("content").innerHTML = `
+    <h3>🛒 Place Order</h3>
+
+    <input id="gallon" type="number" placeholder="💧 Gallons" oninput="compute()">
+
+    <div id="totalBox"><b>💰 Total: ₱0</b></div>
+
+    <input id="address" placeholder="📍 Address">
+    <input id="contact" placeholder="📞 09XXXXXXXXX" maxlength="11">
+
+    <select id="payment">
+      <option>💵 Cash</option>
+      <option>📱 GCash</option>
+    </select>
+
+    <button class="btn" onclick="placeOrder()">📦 Place Order</button>
+  `;
+}
+
+/* COMPUTE */
+function compute(){
+  let g = document.getElementById("gallon").value || 0;
+  document.getElementById("totalBox").innerHTML =
+    `<b>💰 Total: ₱${g * getPrice()}</b>`;
+}
+
+/* PLACE ORDER */
+function placeOrder(){
+
+  let contact = document.getElementById("contact").value;
+
+  if(!/^09\d{9}$/.test(contact)){
+    alert("❌ Invalid Contact Number");
+    return;
+  }
+
+  let user = localStorage.getItem("username") || "Guest";
+  let g = document.getElementById("gallon").value;
+
+  let order = {
+    orderNumber: "AF-" + Math.floor(Math.random()*1000000),
+    user: user,
+    gallon: g,
+    address: address.value,
+    contact: contact,
+    payment: payment.value,
+    total: g * getPrice(),
+    status: "Order Received"
+  };
+
+  let h = getHistory();
+  h.push(order);
+  localStorage.setItem("history", JSON.stringify(h));
+
+  alert("✅ Order Placed!");
+  trackOrder();
+}
+
+/* TRACK LIST */
+function trackOrder(){
+  stopTracking();
+
+  let user = localStorage.getItem("username");
+  let orders = getHistory().filter(o => o.user === user);
+
+  let html = "<h3>📦 My Orders</h3>";
+
+  if(orders.length === 0){
+    html += "<p>No orders yet</p>";
+  }
+
+  orders.forEach(o=>{
+    html += `
+      <div class="order-card" onclick="showTrack('${o.orderNumber}')">
+        📦 ${o.orderNumber}<br>
+        🚦 ${o.status}
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/* START TRACKING */
+function showTrack(id){
+
+  currentTrackingId = id;
+
+  renderTracking();
+
+  stopTracking();
+
+  trackingInterval = setInterval(()=>{
+    renderTracking();
+  },2000);
+}
+
+/* RENDER TRACKING */
+function renderTracking(){
+
+  let o = getHistory().find(x=>x.orderNumber===currentTrackingId);
+  if(!o) return;
+
+  let s = o.status;
+
+  document.getElementById("content").innerHTML = `
+    <h3>📍 Tracking Order</h3>
+
+    <div class="card">
+      📦 <b>${o.orderNumber}</b><br>
+      👤 ${o.user}<br>
+      📞 ${o.contact}<br>
+      📍 ${o.address}<br>
+      💰 ₱${o.total}<br><br>
+      🚦 <b>Status:</b> ${s}
+    </div>
+
+    <div style="max-height:300px;overflow-y:auto;padding-right:5px;">
+
+      <div class="step"><div class="dot ${active(s,'Order Received')}"></div> Order Received</div>
+      <div class="step"><div class="dot ${active(s,'Go to Pickup')}"></div> Go to Pickup</div>
+      <div class="step"><div class="dot ${active(s,'Collecting Gallon')}"></div> Collecting Gallon</div>
+      <div class="step"><div class="dot ${active(s,'Cleaning')}"></div> Cleaning</div>
+      <div class="step"><div class="dot ${active(s,'Refilling')}"></div> Water Refilling</div>
+      <div class="step"><div class="dot ${active(s,'Out')}"></div> Out for Delivery</div>
+      <div class="step"><div class="dot ${s==='Delivered'?'active':''}"></div> Delivered</div>
+
+    </div>
+  `;
+}
+
+/* STEP LOGIC */
+function active(current, step){
+  let flow = ["Order Received","Go to Pickup","Collecting Gallon","Cleaning","Refilling","Out","Delivered"];
+  return flow.indexOf(current) >= flow.indexOf(step) ? "active" : "";
+}
+
+/* PROFILE */
+function profile(){
+  stopTracking();
+  document.getElementById("content").innerHTML = `
+    <h3>👤 Profile</h3>
+    <p>Name: ${localStorage.getItem("username")}</p>
+  `;
+}
+
+/* LOGOUT */
+function logout(){
+  stopTracking();
+  localStorage.removeItem("username");
+  window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>
