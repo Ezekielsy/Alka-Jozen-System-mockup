@@ -23,21 +23,13 @@ body {
   text-align: center;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1e88e5;
-}
-
-.subtitle {
-  font-size: 12px;
-  color: #777;
-  margin-bottom: 20px;
-}
+.logo { font-size: 24px; font-weight: bold; color: #1e88e5; }
+.subtitle { font-size: 12px; color: #777; margin-bottom: 20px; }
 
 .input-group {
   text-align: left;
   margin-bottom: 12px;
+  position: relative;
 }
 
 input, select {
@@ -47,6 +39,17 @@ input, select {
   border: 1px solid #ddd;
   border-radius: 10px;
 }
+
+.toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #1e88e5;
+}
+
+.strength { font-size: 11px; margin-top: 4px; }
 
 button {
   width: 100%;
@@ -60,7 +63,7 @@ button {
 }
 
 .links {
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: 12px;
   color: #1e88e5;
   cursor: pointer;
@@ -72,124 +75,189 @@ button {
 
 <div class="card">
 
-  <div class="logo">💧 AquaFlow</div>
-  <div class="subtitle">Multi-User Login System</div>
+<div class="logo">💧 Alka-Jozen</div>
+<div class="subtitle">Water Station Login System</div>
 
-  <!-- LOGIN -->
-  <div id="loginForm">
-
-    <div class="input-group">
-      <input id="email" placeholder="Email">
-    </div>
-
-    <div class="input-group">
-      <input id="password" type="password" placeholder="Password">
-    </div>
-
-    <button onclick="login()">Login</button>
-
-    <div class="links" onclick="showRegister()">Register</div>
+<!-- LOGIN -->
+<div id="loginForm">
+  <div class="input-group">
+    <input id="email" placeholder="Email">
   </div>
 
-  <!-- REGISTER -->
-  <div id="registerForm" style="display:none;">
-
-    <div class="input-group">
-      <input id="rname" placeholder="Name">
-    </div>
-
-    <div class="input-group">
-      <input id="remail" placeholder="Email">
-    </div>
-
-    <div class="input-group">
-      <input id="rpass" type="password" placeholder="Password">
-    </div>
-
-    <div class="input-group">
-      <select id="role">
-        <option value="customer">Customer</option>
-        <option value="rider">Rider</option>
-        <option value="admin">Admin</option>
-      </select>
-    </div>
-
-    <button onclick="register()">Create Account</button>
-
-    <div class="links" onclick="showLogin()">Back</div>
+  <div class="input-group">
+    <input id="password" type="password" placeholder="Password">
+    <span class="toggle" onclick="togglePassword('password',this)">👁</span>
   </div>
+
+  <button onclick="login()">Login</button>
+
+  <div class="links" onclick="showForgot()">Forgot Password?</div>
+  <div class="links" onclick="showRegister()">Register</div>
+</div>
+
+<!-- REGISTER -->
+<div id="registerForm" style="display:none;">
+  <div class="input-group"><input id="fname" placeholder="First Name"></div>
+  <div class="input-group"><input id="mname" placeholder="Middle Name"></div>
+  <div class="input-group"><input id="lname" placeholder="Surname"></div>
+  <div class="input-group"><input id="contact" placeholder="Contact Number" oninput="formatPH(this)"></div>
+  <div class="input-group"><input id="remail" placeholder="Email"></div>
+
+  <div class="input-group">
+    <input id="rpass" type="password" placeholder="Password" oninput="checkStrength(this.value)">
+    <span class="toggle" onclick="togglePassword('rpass',this)">👁</span>
+    <div id="strengthText" class="strength"></div>
+  </div>
+
+  <div class="input-group">
+    <select id="role">
+      <option value="customer">Customer</option>
+      <option value="rider">Rider</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
+
+  <button onclick="register()">Create Account</button>
+  <div class="links" onclick="showLogin()">Back</div>
+</div>
+
+<!-- FORGOT PASSWORD -->
+<div id="forgotForm" style="display:none;">
+
+  <div class="input-group">
+    <input id="femail" placeholder="Enter your email">
+  </div>
+
+  <div class="input-group">
+    <input id="newpass" type="password" placeholder="New Password" oninput="checkStrength(this.value)">
+    <span class="toggle" onclick="togglePassword('newpass',this)">👁</span>
+    <div id="strengthText2" class="strength"></div>
+  </div>
+
+  <button onclick="resetPassword()">Reset Password</button>
+
+  <div class="links" onclick="showLogin()">Back to Login</div>
+</div>
 
 </div>
 
 <script>
 
-/* INIT DEFAULT ADMIN */
+/* INIT USERS */
 if(!localStorage.getItem("users")){
-  let defaultUsers = [
-    {email:"admin@gmail.com", password:"1234", role:"admin", name:"Admin"},
-    {email:"rider@gmail.com", password:"1234", role:"rider", name:"Rider"}
-  ];
-  localStorage.setItem("users", JSON.stringify(defaultUsers));
+  localStorage.setItem("users", JSON.stringify([
+    {email:"admin@gmail.com", password:"1234", role:"admin", fname:"Admin", lname:"User"},
+    {email:"rider@gmail.com", password:"1234", role:"rider", fname:"Rider", lname:"User"}
+  ]));
 }
 
 /* SWITCH */
 function showRegister(){
   loginForm.style.display="none";
+  forgotForm.style.display="none";
   registerForm.style.display="block";
 }
 
 function showLogin(){
   loginForm.style.display="block";
   registerForm.style.display="none";
+  forgotForm.style.display="none";
+}
+
+function showForgot(){
+  loginForm.style.display="none";
+  registerForm.style.display="none";
+  forgotForm.style.display="block";
+}
+
+/* FORMAT PH */
+function formatPH(input){
+  let val = input.value.replace(/\D/g, "");
+  if(val.startsWith("63")) val = "0" + val.slice(2);
+  if(!val.startsWith("0")) val = "0" + val;
+  input.value = val.slice(0,11);
+}
+
+/* PASSWORD STRENGTH */
+function checkStrength(p){
+  let text = document.getElementById("strengthText") || document.getElementById("strengthText2");
+  let s = 0;
+
+  if(p.length>=8) s++;
+  if(/[A-Z]/.test(p)) s++;
+  if(/[0-9]/.test(p)) s++;
+  if(/[^A-Za-z0-9]/.test(p)) s++;
+
+  if(p.length===0) text.innerHTML="";
+  else if(s<=1){ text.innerHTML="Weak"; text.style.color="red";}
+  else if(s==2){ text.innerHTML="Medium"; text.style.color="orange";}
+  else{ text.innerHTML="Strong"; text.style.color="green";}
+}
+
+/* TOGGLE */
+function togglePassword(id,el){
+  let i=document.getElementById(id);
+  if(i.type==="password"){ i.type="text"; el.textContent="🙈";}
+  else{ i.type="password"; el.textContent="👁";}
 }
 
 /* REGISTER */
 function register(){
+  let users=JSON.parse(localStorage.getItem("users"))||[];
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-
-  let user = {
-    name: rname.value,
-    email: remail.value,
-    password: rpass.value,
-    role: role.value
+  let user={
+    fname:fname.value,
+    mname:mname.value,
+    lname:lname.value,
+    contact:contact.value,
+    email:remail.value,
+    password:rpass.value,
+    role:role.value
   };
 
-  users.push(user);
-  localStorage.setItem("users", JSON.stringify(users));
+  if(users.find(u=>u.email===user.email)){
+    alert("Email already exists!");
+    return;
+  }
 
+  users.push(user);
+  localStorage.setItem("users",JSON.stringify(users));
   alert("Account created!");
   showLogin();
 }
 
 /* LOGIN */
 function login(){
+  let users=JSON.parse(localStorage.getItem("users"))||[];
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let user=users.find(u=>u.email===email.value && u.password===password.value);
 
-  let user = users.find(u =>
-    u.email === email.value &&
-    u.password === password.value
-  );
+  if(!user){ alert("Invalid login"); return; }
+
+  localStorage.setItem("username",user.fname+" "+user.lname);
+  localStorage.setItem("role",user.role);
+
+  if(user.role==="admin") location="admin.html";
+  else if(user.role==="rider") location="rider1.html";
+  else location="customer.html";
+}
+
+/* RESET PASSWORD */
+function resetPassword(){
+  let users=JSON.parse(localStorage.getItem("users"))||[];
+
+  let user=users.find(u=>u.email===femail.value);
 
   if(!user){
-    alert("Invalid login");
+    alert("Email not found!");
     return;
   }
 
-  localStorage.setItem("username", user.name);
-  localStorage.setItem("role", user.role);
+  user.password=newpass.value;
+  localStorage.setItem("users",JSON.stringify(users));
 
-  /* REDIRECT BASED SA ROLE */
-  if(user.role === "admin"){
-    window.location.href = "admin.html";
-  }
-  else if(user.role === "rider"){
-    window.location.href = "rider1.html";
-  }
-  else{
-    window.location.href = "customer.html";
-  }
+  alert("Password updated!");
+  showLogin();
 }
 
 </script>

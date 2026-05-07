@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AquaFlow Admin Dashboard</title>
+<title>Alka-Jozen Admin Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -51,7 +51,7 @@ body {
   padding: 25px;
 }
 
-/* CARDS */
+/* CARD */
 .card {
   background: white;
   padding: 15px;
@@ -63,8 +63,8 @@ body {
 /* GRID */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(3,1fr);
+  gap: 12px;
 }
 
 .stat {
@@ -75,57 +75,57 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.stat h2 {
-  margin: 0;
-  color: #0ea5e9;
+input {
+  padding: 10px;
+  width: 100%;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
-/* BUTTON */
-.btn {
+/* BUTTONS */
+.action {
   padding: 8px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 5px;
+  margin: 3px;
 }
 
 .accept { background: #22c55e; color: white; }
 .progress { background: #f59e0b; color: white; }
 .done { background: #3b82f6; color: white; }
-
-input {
-  padding: 8px;
-  margin-top: 5px;
-  width: 100%;
-}
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-  <div class="brand">💧 AquaFlow Admin</div>
+  <div class="brand">💧 Alka-Jozen Admin</div>
 
   <button onclick="dashboard()">📊 Dashboard</button>
-  <button onclick="ordersPage()">📦 All Orders</button>
-  <button onclick="earnings()">💰 Earnings</button>
-  <button onclick="settings()">⚙️ Settings</button>
+  <button onclick="ordersPage()">📦 Orders</button>
+  <button onclick="customers()">👤 Customers</button>
+  <button onclick="riders()">🚴 Riders</button>
+  <button onclick="salesReport()">📈 Sales Report</button>
 </div>
 
-<div class="content" id="content"></div>
+<!-- CONTENT -->
+<div class="content"></div>
 
 <script>
 
-/* STORAGE */
+/* ===================== DATA ===================== */
 function getOrders(){
   return JSON.parse(localStorage.getItem("history")) || [];
 }
 
-function getPrice(){
-  return Number(localStorage.getItem("price")) || 25;
+function save(data){
+  localStorage.setItem("history", JSON.stringify(data));
 }
 
-/* AUTO ADD DATE IF MISSING */
+/* AUTO DATE FIX */
 function fixDates(){
   let orders = getOrders();
   let updated = false;
@@ -138,22 +138,11 @@ function fixDates(){
   });
 
   if(updated){
-    localStorage.setItem("history", JSON.stringify(orders));
+    save(orders);
   }
 }
 
-/* NOTIFICATIONS */
-let lastCount = getOrders().length;
-
-setInterval(()=>{
-  let current = getOrders().length;
-  if(current > lastCount){
-    alert("🔔 New order received!");
-    lastCount = current;
-  }
-},2000);
-
-/* DASHBOARD */
+/* ===================== DASHBOARD ===================== */
 dashboard();
 
 function dashboard(){
@@ -161,130 +150,174 @@ function dashboard(){
   fixDates();
 
   let orders = getOrders();
-  let total = orders.reduce((s,o)=> s + (o.total || 0), 0);
+  let total = orders.reduce((s,o)=>s+(o.total||0),0);
 
-  document.getElementById("content").innerHTML = `
+  let status = {
+    "Order Received":0,
+    "Go to Pickup":0,
+    "Cleaning":0,
+    "Refilling":0,
+    "Out for Delivery":0,
+    "Delivered":0
+  };
+
+  orders.forEach(o=>{
+    if(status[o.status] !== undefined){
+      status[o.status]++;
+    }
+  });
+
+  document.querySelector(".content").innerHTML = `
     <h2>📊 Dashboard</h2>
 
     <div class="grid">
-      <div class="stat">
-        <h2>${orders.length}</h2>
-        <p>Total Orders</p>
-      </div>
-
-      <div class="stat">
-        <h2>₱${total}</h2>
-        <p>Total Earnings</p>
-      </div>
-
-      <div class="stat">
-        <h2>${getPrice()}</h2>
-        <p>Price/Gallon</p>
-      </div>
+      <div class="stat"><h2>${orders.length}</h2><p>Total Orders</p></div>
+      <div class="stat"><h2>₱${total}</h2><p>Total Sales</p></div>
+      <div class="stat"><h2>${orders.filter(o=>o.status==="Delivered").length}</h2><p>Delivered</p></div>
     </div>
 
-    <canvas id="chart" height="100"></canvas>
+    <div class="card">
+      <canvas id="chart1"></canvas>
+    </div>
+
+    <div class="card">
+      <canvas id="chart2"></canvas>
+    </div>
   `;
 
-  loadChart(orders);
-}
+  new Chart(document.getElementById("chart1"),{
+    type:"bar",
+    data:{
+      labels: orders.map(o=>o.orderNumber),
+      datasets:[{
+        label:"Sales",
+        data: orders.map(o=>o.total),
+        backgroundColor:"#38bdf8"
+      }]
+    }
+  });
 
-/* CHART */
-function loadChart(orders){
-
-  let labels = orders.map(o => o.orderNumber);
-  let data = orders.map(o => o.total);
-
-  new Chart(document.getElementById("chart"), {
-    type: "bar",
-    data: {
-      labels: labels,
-      datasets: [{
-        label: "Earnings per Order",
-        data: data
+  new Chart(document.getElementById("chart2"),{
+    type:"pie",
+    data:{
+      labels:Object.keys(status),
+      datasets:[{
+        data:Object.values(status),
+        backgroundColor:[
+          "#f87171","#fbbf24","#facc15",
+          "#60a5fa","#38bdf8","#22c55e"
+        ]
       }]
     }
   });
 }
 
-/* ORDERS */
+/* ===================== ORDERS ===================== */
 function ordersPage(){
 
-  fixDates();
-
   let orders = getOrders();
-  let html = "<h2>📦 Orders</h2>";
+
+  let html = "<h2>📦 Orders Management</h2>";
 
   orders.forEach((o,i)=>{
+
     html += `
       <div class="card">
         📦 <b>${o.orderNumber}</b><br>
         👤 ${o.user}<br>
-        📅 ${o.date}<br>
         📍 ${o.address}<br>
-        💧 ${o.gallon} gallons<br>
-        💰 ₱${o.total}<br>
-        🚦 ${o.status}
+        🚦 ${o.status}<br>
+        💰 ₱${o.total}
 
         <br><br>
 
-        <button class="btn accept" onclick="updateStatus(${i},'Accepted')">Accept</button>
-        <button class="btn progress" onclick="updateStatus(${i},'On Delivery')">Delivering</button>
-        <button class="btn done" onclick="updateStatus(${i},'Delivered')">Done</button>
+        <button class="action accept" onclick="update(${i},'Go to Pickup')">Accept</button>
+        <button class="action progress" onclick="update(${i},'Out for Delivery')">Deliver</button>
+        <button class="action done" onclick="update(${i},'Delivered')">Done</button>
       </div>
     `;
   });
 
-  document.getElementById("content").innerHTML = html;
+  document.querySelector(".content").innerHTML = html;
 }
 
-/* UPDATE */
-function updateStatus(i, status){
+function update(i,status){
   let orders = getOrders();
   orders[i].status = status;
-  localStorage.setItem("history", JSON.stringify(orders));
+  save(orders);
   ordersPage();
 }
 
-/* EARNINGS */
-function earnings(){
+/* ===================== CUSTOMERS ===================== */
+function customers(){
 
   let orders = getOrders();
-  let total = orders.reduce((s,o)=> s + o.total, 0);
-  let gallons = orders.reduce((s,o)=> s + Number(o.gallon), 0);
+  let map = {};
 
-  document.getElementById("content").innerHTML = `
-    <h2>💰 Earnings</h2>
+  orders.forEach(o=>{
+    map[o.user] = (map[o.user]||0)+1;
+  });
 
-    <div class="card">
-      💧 Gallons: ${gallons}<br>
-      📦 Orders: ${orders.length}<br>
-      💰 Total: ₱${total}
-    </div>
-  `;
+  let html = "<h2>👤 Customers</h2>";
+
+  Object.keys(map).forEach(u=>{
+    html += `
+      <div class="card">
+        👤 ${u}<br>
+        📦 Orders: ${map[u]}
+      </div>
+    `;
+  });
+
+  document.querySelector(".content").innerHTML = html;
 }
 
-/* SETTINGS (PRICE EDIT) */
-function settings(){
+/* ===================== RIDERS ===================== */
+function riders(){
 
-  document.getElementById("content").innerHTML = `
-    <h2>⚙️ Settings</h2>
+  let orders = getOrders();
+  let map = {};
 
-    <div class="card">
-      Price per gallon:
+  orders.forEach(o=>{
+    if(o.rider){
+      map[o.rider] = (map[o.rider]||0)+1;
+    }
+  });
 
-      <input id="priceInput" type="number" value="${getPrice()}">
+  let html = "<h2>🚴 Riders</h2>";
 
-      <button class="btn done" onclick="savePrice()">Save</button>
-    </div>
-  `;
+  Object.keys(map).forEach(r=>{
+    html += `
+      <div class="card">
+        🚴 ${r}<br>
+        📦 Deliveries: ${map[r]}
+      </div>
+    `;
+  });
+
+  document.querySelector(".content").innerHTML = html;
 }
 
-function savePrice(){
-  let p = document.getElementById("priceInput").value;
-  localStorage.setItem("price", p);
-  alert("✅ Price updated!");
-  dashboard();
+/* ===================== SALES REPORT ===================== */
+function salesReport(){
+
+  let orders = getOrders();
+
+  let today = new Date().toDateString();
+
+  let daily = orders.filter(o=>new Date(o.date).toDateString()===today);
+
+  let weekly = orders.slice(-7);
+
+  document.querySelector(".content").innerHTML = `
+    <h2>📈 Sales Report</h2>
+
+    <div class="card">
+      📅 Today: ₱${daily.reduce((s,o)=>s+o.total,0)}<br>
+      📆 Weekly: ₱${weekly.reduce((s,o)=>s+o.total,0)}<br>
+      📦 Orders: ${orders.length}
+    </div>
+  `;
 }
 
 </script>

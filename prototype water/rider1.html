@@ -1,14 +1,13 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-<title>AquaFlow Rider Dashboard</title>
+<title>Alka-Jozen Rider Dashboard</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -16,7 +15,6 @@ body {
   background: #f1f5f9;
 }
 
-/* SIDEBAR */
 .sidebar {
   width: 240px;
   background: #0f172a;
@@ -49,13 +47,11 @@ body {
   background: rgba(56,189,248,0.15);
 }
 
-/* CONTENT */
 .content {
   margin-left: 240px;
   padding: 20px;
 }
 
-/* CARD */
 .card {
   background: white;
   padding: 15px;
@@ -64,7 +60,6 @@ body {
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* BUTTON */
 .step-btn {
   width: 100%;
   padding: 10px;
@@ -80,7 +75,7 @@ body {
   color: white;
 }
 
-/* MAP POPUP */
+/* MAP */
 #mapPopup {
   position: fixed;
   top: 0;
@@ -91,10 +86,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
 }
 
-/* MAP BOX */
 .map-box {
   width: 95%;
   max-width: 420px;
@@ -103,7 +96,6 @@ body {
   overflow: hidden;
 }
 
-/* MAP AREA */
 .map-area {
   position: relative;
   width: 100%;
@@ -111,7 +103,6 @@ body {
   background: #dbeafe;
 }
 
-/* ROAD */
 .road {
   position: absolute;
   top: 50%;
@@ -121,55 +112,35 @@ body {
   background: #94a3b8;
 }
 
-/* START */
-.start {
-  position: absolute;
-  top: 45%;
-  left: 10%;
-  font-size: 20px;
-}
+.start { position: absolute; top:45%; left:10%; }
+.dest { position: absolute; top:45%; right:10%; }
 
-/* DEST */
-.dest {
-  position: absolute;
-  top: 45%;
-  right: 10%;
-  font-size: 20px;
-}
-
-/* RIDER */
 #rider {
   position: absolute;
   top: 45%;
   left: 10%;
-  font-size: 22px;
   transition: 1.5s linear;
 }
 
-/* STATUS TEXT */
 .status {
   text-align: center;
   padding: 10px;
-  font-size: 14px;
 }
 
-/* CLOSE */
 .close-btn {
   width: 100%;
   padding: 12px;
   border: none;
   background: #0ea5e9;
   color: white;
-  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-  <div class="brand">🚴 Rider Panel</div>
+  <div class="brand">🚴 Alka-Jozen Rider</div>
 
   <button onclick="loadOrders()">📦 Incoming</button>
   <button onclick="active()">🛵 Active</button>
@@ -177,12 +148,11 @@ body {
   <button onclick="delivered()">🎉 Delivered</button>
 </div>
 
-<!-- CONTENT -->
 <div class="content" id="content"></div>
 
 <script>
 
-/* STORAGE */
+/* ================= STORAGE ================= */
 function getOrders(){
   return JSON.parse(localStorage.getItem("history")) || [];
 }
@@ -191,14 +161,23 @@ function save(data){
   localStorage.setItem("history", JSON.stringify(data));
 }
 
+/* ================= RIDER NAME ================= */
+function getRiderName(){
+  return localStorage.getItem("username") || "Unknown Rider";
+}
+
+/* ================= SAFE USER NAME ================= */
+function getName(o){
+  return o.name || o.user || "Unknown";
+}
+
+/* ================= LOAD ================= */
 loadOrders();
 
-/* ---------------- INCOMING ---------------- */
 function loadOrders(){
 
   let o = getOrders();
   let html = "<h2>📦 Incoming Orders</h2>";
-
   let has = false;
 
   o.forEach((x,i)=>{
@@ -210,7 +189,7 @@ function loadOrders(){
     html += `
       <div class="card">
         📦 ${x.orderNumber}<br>
-        👤 ${x.name}<br>
+        👤 ${getName(x)}<br>
         📞 ${x.contact}<br>
         📍 ${x.address}<br>
 
@@ -226,21 +205,26 @@ function loadOrders(){
   document.getElementById("content").innerHTML = html;
 }
 
-/* ACCEPT */
+/* ================= ACCEPT (FIXED) ================= */
 function accept(i){
+
   let o = getOrders();
+
   o[i].status = "Go to Pickup";
+
+  // 🔥 FIX: SAVE RIDER NAME
+  o[i].rider = getRiderName();
+
   save(o);
-  loadOrders();
+
   active();
 }
 
-/* ---------------- ACTIVE ---------------- */
+/* ================= ACTIVE ================= */
 function active(){
 
   let o = getOrders();
   let html = "<h2>🛵 Active Deliveries</h2>";
-
   let found = false;
 
   o.forEach((x,i)=>{
@@ -252,7 +236,8 @@ function active(){
     html += `
       <div class="card">
         📦 ${x.orderNumber}<br>
-        👤 ${x.name}<br>
+        👤 ${getName(x)}<br>
+        🚴 Rider: ${x.rider || "Unassigned"}<br>
         📍 ${x.address}<br>
         🚦 ${x.status}
 
@@ -268,7 +253,7 @@ function active(){
   document.getElementById("content").innerHTML = html;
 }
 
-/* STATUS UI */
+/* ================= STATUS BUTTONS ================= */
 function statusUI(i, current){
 
   let flow = [
@@ -280,23 +265,15 @@ function statusUI(i, current){
     "Delivered"
   ];
 
-  let html = "";
-
-  flow.forEach(step=>{
-
-    let active = current === step ? "active-step" : "";
-
-    html += `
-      <button class="step-btn ${active}" onclick="setStatus(${i}, '${step}')">
-        ${step}
-      </button>
-    `;
-  });
-
-  return html;
+  return flow.map(step=>`
+    <button class="step-btn ${current===step?'active-step':''}"
+      onclick="setStatus(${i}, '${step}')">
+      ${step}
+    </button>
+  `).join("");
 }
 
-/* UPDATE STATUS */
+/* ================= UPDATE STATUS ================= */
 function setStatus(i, status){
 
   let o = getOrders();
@@ -310,7 +287,7 @@ function setStatus(i, status){
   active();
 }
 
-/* ---------------- FAKE MAP ---------------- */
+/* ================= MAP ================= */
 function showMap(order){
 
   let popup = document.createElement("div");
@@ -321,118 +298,105 @@ function showMap(order){
 
       <div style="text-align:center;padding:10px;">
         <h3>🚴 Live Tracking</h3>
-        <p><b>${order.name}</b></p>
+        <p><b>${getName(order)}</b></p>
+        <p>🚴 ${order.rider || "No Rider"}</p>
         <p>${order.address}</p>
       </div>
 
       <div class="map-area">
-
         <div class="road"></div>
-
         <div class="start">🚴</div>
         <div class="dest">🏠</div>
-
         <div id="rider">🚴</div>
-
       </div>
 
       <div class="status" id="statusText">
-        Rider is starting delivery...
+        Starting delivery...
       </div>
 
-      <button class="close-btn" onclick="closeMap()">
-        Close
-      </button>
+      <button class="close-btn" onclick="closeMap()">Close</button>
 
     </div>
   `;
 
   document.body.appendChild(popup);
-
   animateRider();
 }
 
-/* ---------------- ANIMATION + AUTO DELIVERED ---------------- */
+/* ================= ANIMATION ================= */
 function animateRider(){
 
   let rider = document.getElementById("rider");
   let text = document.getElementById("statusText");
 
-  let steps = [
-    "🚴 Going to pickup...",
-    "📦 Collecting gallons...",
-    "🧼 Cleaning containers...",
-    "💧 Refilling water...",
-    "🚚 Out for delivery...",
-    "🏠 Arriving at house..."
-  ];
-
   let pos = 10;
-  let i = 0;
 
   let interval = setInterval(()=>{
 
     if(pos >= 80){
 
       clearInterval(interval);
-
       rider.style.left = "80%";
+      text.innerHTML = "🎉 DELIVERED!";
 
-      text.innerHTML = "🎉 DELIVERED - Order Completed!";
+      let o = getOrders();
+      let order = o.find(x=>x.status==="Out for Delivery");
+      if(order) order.status = "Delivered";
+      save(o);
 
-      // AUTO CLOSE POPUP
-      setTimeout(()=>{
-        closeMap();
-      }, 2000);
-
+      setTimeout(closeMap, 2000);
       return;
     }
 
     pos += 12;
     rider.style.left = pos + "%";
 
-    text.innerHTML = steps[i] || steps[steps.length - 1];
-
-    i++;
-
-  }, 1500);
+  },1500);
 }
 
-/* CLOSE MAP */
+/* ================= CLOSE ================= */
 function closeMap(){
   let el = document.getElementById("mapPopup");
   if(el) el.remove();
 }
 
-/* EARNINGS */
+/* ================= EARNINGS ================= */
 function earnings(){
 
-  let o = getOrders();
-  let d = o.filter(x=>x.status==="Delivered");
+  let rider = getRiderName();
 
-  let total = d.reduce((s,x)=>s+Number(x.total||0),0);
+  let o = getOrders().filter(x=>
+    x.status==="Delivered" && x.rider===rider
+  );
+
+  let total = o.reduce((s,x)=>s+Number(x.total||0),0);
 
   document.getElementById("content").innerHTML = `
     <h2>💰 Earnings</h2>
-
     <div class="card">
-      Delivered: ${d.length}<br>
+      🚴 Rider: ${rider}<br>
+      Delivered: ${o.length}<br>
       Income: ₱${total}
     </div>
   `;
 }
 
-/* DELIVERED */
+/* ================= DELIVERED ================= */
 function delivered(){
 
-  let o = getOrders().filter(x=>x.status==="Delivered");
+  let rider = getRiderName();
 
-  let html = "<h2>🎉 Delivered</h2>";
+  let o = getOrders().filter(x=>
+    x.status==="Delivered" && x.rider===rider
+  );
+
+  let html = "<h2>🎉 Delivered Orders</h2>";
 
   o.forEach(x=>{
     html += `
       <div class="card">
         📦 ${x.orderNumber}<br>
+        👤 ${getName(x)}<br>
         💰 ₱${x.total}
       </div>
     `;
