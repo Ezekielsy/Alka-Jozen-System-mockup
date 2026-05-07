@@ -1,262 +1,779 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AquaFlow Login</title>
+
+<title>Alka-Jozen Login</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body {
-  margin: 0;
-  font-family: Segoe UI, sans-serif;
-  background: #eef2f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+
+  /* =========================
+   MOBILE RESPONSIVE DESIGN
+========================= */
+
+@media(max-width:900px){
+
+  body{
+    padding:20px;
+    overflow:auto;
+  }
+
+  .container{
+    flex-direction:column;
+    height:auto;
+    width:100%;
+    max-width:430px;
+    border-radius:25px;
+  }
+
+  /* TOP IMAGE */
+
+  .left{
+    height:220px;
+  }
+
+  .left img{
+    height:100%;
+  }
+
+  .overlay{
+    padding:25px;
+    justify-content:flex-end;
+  }
+
+  .logo{
+    font-size:30px;
+  }
+
+  /* FORM */
+
+  .right{
+    width:100%;
+    padding:30px 25px;
+  }
+
+  .title{
+    font-size:24px;
+  }
+
+  .subtitle{
+    font-size:12px;
+  }
+
+  .input-box input{
+    padding:14px 42px;
+    font-size:15px;
+  }
+
+  button{
+    padding:14px;
+    font-size:15px;
+  }
+
+  .links{
+    font-size:12px;
+    line-height:22px;
+  }
+
+  /* SMALLER BUBBLES */
+
+  .b1{
+    width:80px;
+    height:80px;
+  }
+
+  .b2{
+    width:60px;
+    height:60px;
+  }
+
+  .b3{
+    width:100px;
+    height:100px;
+  }
+
+  .b4{
+    width:70px;
+    height:70px;
+  }
+
 }
 
-.card {
-  width: 340px;
-  background: white;
-  padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  text-align: center;
+/* EXTRA SMALL PHONES */
+
+@media(max-width:480px){
+
+  body{
+    padding:10px;
+  }
+
+  .container{
+    border-radius:20px;
+  }
+
+  .left{
+    height:180px;
+  }
+
+  .logo{
+    font-size:25px;
+  }
+
+  .right{
+    padding:22px;
+  }
+
+  .title{
+    font-size:22px;
+  }
+
+  .input-box input{
+    padding:13px 40px;
+  }
+
+  button{
+    padding:13px;
+  }
+
 }
 
-.logo { font-size: 24px; font-weight: bold; color: #1e88e5; }
-.subtitle { font-size: 12px; color: #777; margin-bottom: 20px; }
-
-.input-group {
-  text-align: left;
-  margin-bottom: 12px;
-  position: relative;
+/* RESET */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI",sans-serif;
 }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#f4fbff,#e6f7ff,#ffffff);
+  overflow:hidden;
 }
 
-.toggle {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #1e88e5;
+/* BUBBLES */
+.bubble{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(56,189,248,0.10);
+  animation:float 10s infinite ease-in-out;
 }
 
-.strength { font-size: 11px; margin-top: 4px; }
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: #1e88e5;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
+@keyframes float{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-15px);}
+  100%{transform:translateY(0);}
 }
 
-.links {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #1e88e5;
-  cursor: pointer;
+.b1{width:120px;height:120px;top:10%;left:8%;}
+.b2{width:80px;height:80px;bottom:12%;left:15%;}
+.b3{width:160px;height:160px;top:15%;right:8%;}
+.b4{width:90px;height:90px;bottom:10%;right:18%;}
+
+/* CONTAINER */
+.container{
+  width:1000px;
+  max-width:95%;
+  height:600px;
+  background:rgba(255,255,255,0.8);
+  backdrop-filter:blur(18px);
+  border-radius:28px;
+  overflow:hidden;
+  display:flex;
+  box-shadow:0 20px 50px rgba(0,0,0,0.08);
 }
+
+/* LEFT */
+.left{
+  flex:1;
+  position:relative;
+}
+
+.left img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(255,255,255,0.85),rgba(255,255,255,0.1));
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:50px;
+}
+
+.logo{
+  font-size:40px;
+  font-weight:bold;
+  color:#0284c7;
+}
+
+/* RIGHT */
+.right{
+  width:420px;
+  background:white;
+  padding:40px;
+}
+
+/* CENTER */
+.center{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.title{
+  font-size:28px;
+  font-weight:bold;
+  color:#0f172a;
+}
+
+.subtitle{
+  color:#64748b;
+  font-size:13px;
+}
+
+/* INPUT */
+.input-group{
+  margin-bottom:15px;
+}
+
+.input-box{
+  position:relative;
+}
+
+.input-box i{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#38bdf8;
+}
+
+.input-box input{
+  width:100%;
+  padding:12px 40px;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  background:#f8fbff;
+  outline:none;
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(to right,#38bdf8,#0ea5e9);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* LINKS */
+.links{
+  text-align:center;
+  margin-top:15px;
+  font-size:13px;
+}
+
+.links span{
+  color:#0284c7;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* HIDE */
+.hidden{
+  display:none;
+}
+
+/* =========================
+   SIMPLE ANIMATIONS ONLY
+========================= */
+
+/* container fade in */
+.container{
+  animation: popIn 0.8s ease;
+}
+
+@keyframes popIn{
+  from{
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* left image slide */
+.left img{
+  animation: imageSlide 1s ease;
+}
+
+@keyframes imageSlide{
+  from{
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to{
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* right form fade + slide */
+.right{
+  animation: formSlide 1s ease;
+}
+
+@keyframes formSlide{
+  from{
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to{
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* title glow effect */
+.title{
+  animation: glowText 2.5s infinite ease-in-out;
+}
+
+@keyframes glowText{
+  0%,100%{
+    text-shadow: 0 0 0px #38bdf8;
+  }
+  50%{
+    text-shadow: 0 0 10px #38bdf8;
+  }
+}
+
+/* button hover animation */
+button{
+  transition: 0.3s ease;
+}
+
+button:hover{
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(56,189,248,0.3);
+}
+
+/* input focus animation */
+.input-box input{
+  transition: 0.3s ease;
+}
+
+.input-box input:focus{
+  transform: scale(1.02);
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56,189,248,0.3);
+}
+
+/* bubble slow float upgrade */
+.bubble{
+  animation: float 8s infinite ease-in-out;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
 
-<div class="logo">💧 Alka-Jozen</div>
-<div class="subtitle">Water Station Login System</div>
+<div class="container">
+
+<!-- LEFT -->
+<div class="left">
+
+  <img src="water drop.png">
+
+  <div class="overlay">
+    <div class="logo">Alka-Jozen</div>
+  </div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="right">
 
 <!-- LOGIN -->
 <div id="loginForm">
-  <div class="input-group">
-    <input id="email" placeholder="Email">
+
+  <div class="center">
+    <div class="title">Welcome Back</div>
+    <div class="subtitle">Login to continue</div>
   </div>
 
+  <!-- USERNAME -->
   <div class="input-group">
-    <input id="password" type="password" placeholder="Password">
-    <span class="toggle" onclick="togglePassword('password',this)">👁</span>
+    <div class="input-box">
+      <i class="fa-solid fa-user"></i>
+      <input id="loginUsername" placeholder="Username">
+    </div>
   </div>
 
-  <button onclick="login()">Login</button>
+  <!-- PASSWORD -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa-solid fa-lock"></i>
+      <input id="loginPass" type="password" placeholder="Password">
+    </div>
+  </div>
 
-  <div class="links" onclick="showForgot()">Forgot Password?</div>
-  <div class="links" onclick="showRegister()">Register</div>
+  <button onclick="login()">
+    Login
+  </button>
+
+  <div class="links">
+    <span onclick="showForgot()">Forgot Password?</span> |
+    <span onclick="showRegister()">Register</span>
+  </div>
+
 </div>
 
 <!-- REGISTER -->
-<div id="registerForm" style="display:none;">
-  <div class="input-group"><input id="fname" placeholder="First Name"></div>
-  <div class="input-group"><input id="mname" placeholder="Middle Name"></div>
-  <div class="input-group"><input id="lname" placeholder="Surname"></div>
-  <div class="input-group"><input id="contact" placeholder="Contact Number" oninput="formatPH(this)"></div>
-  <div class="input-group"><input id="remail" placeholder="Email"></div>
+<div id="registerForm" class="hidden">
 
-  <div class="input-group">
-    <input id="rpass" type="password" placeholder="Password" oninput="checkStrength(this.value)">
-    <span class="toggle" onclick="togglePassword('rpass',this)">👁</span>
-    <div id="strengthText" class="strength"></div>
+  <div class="center">
+    <div class="title">Create Account</div>
+    <div class="subtitle">Register as Customer</div>
   </div>
 
+  <!-- FIRST NAME -->
   <div class="input-group">
-    <select id="role">
-      <option value="customer">Customer</option>
-      <option value="rider">Rider</option>
-      <option value="admin">Admin</option>
-    </select>
+    <div class="input-box">
+      <i class="fa fa-user"></i>
+      <input id="fname" placeholder="First Name *">
+    </div>
   </div>
 
-  <button onclick="register()">Create Account</button>
-  <div class="links" onclick="showLogin()">Back</div>
+  <!-- LAST NAME -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa fa-user"></i>
+      <input id="lname" placeholder="Last Name *">
+    </div>
+  </div>
+
+  <!-- USERNAME -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa fa-user-circle"></i>
+      <input id="rusername" placeholder="Username *">
+    </div>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa fa-envelope"></i>
+      <input
+      id="remail"
+      type="email"
+      placeholder="Email Address *">
+    </div>
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa fa-lock"></i>
+      <input id="rpass"
+      type="password"
+      placeholder="Password *">
+    </div>
+  </div>
+
+  <button onclick="register()">
+    Create Account
+  </button>
+
+  <div class="links">
+    <span onclick="showLogin()">
+      Back to Login
+    </span>
+  </div>
+
 </div>
 
 <!-- FORGOT PASSWORD -->
-<div id="forgotForm" style="display:none;">
+<div id="forgotForm" class="hidden">
 
-  <div class="input-group">
-    <input id="femail" placeholder="Enter your email">
+  <div class="center">
+    <div class="title">Reset Password</div>
+    <div class="subtitle">OTP Verification Required</div>
   </div>
 
+  <!-- EMAIL -->
   <div class="input-group">
-    <input id="newpass" type="password" placeholder="New Password" oninput="checkStrength(this.value)">
-    <span class="toggle" onclick="togglePassword('newpass',this)">👁</span>
-    <div id="strengthText2" class="strength"></div>
+    <div class="input-box">
+      <i class="fa fa-envelope"></i>
+      <input id="femail"
+      placeholder="Enter Email">
+    </div>
   </div>
 
-  <button onclick="resetPassword()">Reset Password</button>
+  <!-- OTP -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa fa-key"></i>
+      <input id="otpInput"
+      placeholder="Enter OTP">
+    </div>
+  </div>
 
-  <div class="links" onclick="showLogin()">Back to Login</div>
+  <!-- NEW PASSWORD -->
+  <div class="input-group">
+    <div class="input-box">
+      <i class="fa fa-lock"></i>
+      <input id="newpass"
+      type="password"
+      placeholder="New Password">
+    </div>
+  </div>
+
+  <button onclick="sendOTP()">
+    Send OTP
+  </button>
+
+  <br><br>
+
+  <button onclick="verifyOTP()">
+    Verify OTP & Reset Password
+  </button>
+
+  <div class="links">
+    <span onclick="showLogin()">
+      Back to Login
+    </span>
+  </div>
+
 </div>
 
+</div>
 </div>
 
 <script>
 
-/* INIT USERS */
+/* INIT DATABASE */
+
 if(!localStorage.getItem("users")){
-  localStorage.setItem("users", JSON.stringify([
-    {email:"admin@gmail.com", password:"1234", role:"admin", fname:"Admin", lname:"User"},
-    {email:"rider@gmail.com", password:"1234", role:"rider", fname:"Rider", lname:"User"}
-  ]));
+
+  localStorage.setItem(
+    "users",
+    JSON.stringify([])
+  );
 }
 
-/* SWITCH */
+/* OTP STORAGE */
+
+let generatedOTP = "";
+
+/* SWITCH FORMS */
+
 function showRegister(){
-  loginForm.style.display="none";
-  forgotForm.style.display="none";
-  registerForm.style.display="block";
+
+  loginForm.classList.add("hidden");
+  forgotForm.classList.add("hidden");
+  registerForm.classList.remove("hidden");
 }
 
 function showLogin(){
-  loginForm.style.display="block";
-  registerForm.style.display="none";
-  forgotForm.style.display="none";
+
+  loginForm.classList.remove("hidden");
+  registerForm.classList.add("hidden");
+  forgotForm.classList.add("hidden");
 }
 
 function showForgot(){
-  loginForm.style.display="none";
-  registerForm.style.display="none";
-  forgotForm.style.display="block";
+
+  loginForm.classList.add("hidden");
+  registerForm.classList.add("hidden");
+  forgotForm.classList.remove("hidden");
 }
 
-/* FORMAT PH */
-function formatPH(input){
-  let val = input.value.replace(/\D/g, "");
-  if(val.startsWith("63")) val = "0" + val.slice(2);
-  if(!val.startsWith("0")) val = "0" + val;
-  input.value = val.slice(0,11);
-}
-
-/* PASSWORD STRENGTH */
-function checkStrength(p){
-  let text = document.getElementById("strengthText") || document.getElementById("strengthText2");
-  let s = 0;
-
-  if(p.length>=8) s++;
-  if(/[A-Z]/.test(p)) s++;
-  if(/[0-9]/.test(p)) s++;
-  if(/[^A-Za-z0-9]/.test(p)) s++;
-
-  if(p.length===0) text.innerHTML="";
-  else if(s<=1){ text.innerHTML="Weak"; text.style.color="red";}
-  else if(s==2){ text.innerHTML="Medium"; text.style.color="orange";}
-  else{ text.innerHTML="Strong"; text.style.color="green";}
-}
-
-/* TOGGLE */
-function togglePassword(id,el){
-  let i=document.getElementById(id);
-  if(i.type==="password"){ i.type="text"; el.textContent="🙈";}
-  else{ i.type="password"; el.textContent="👁";}
-}
-
-/* REGISTER */
 function register(){
-  let users=JSON.parse(localStorage.getItem("users"))||[];
 
-  let user={
-    fname:fname.value,
-    mname:mname.value,
-    lname:lname.value,
-    contact:contact.value,
-    email:remail.value,
-    password:rpass.value,
-    role:role.value
-  };
+  let users =
+  JSON.parse(localStorage.getItem("users"));
 
-  if(users.find(u=>u.email===user.email)){
-    alert("Email already exists!");
+  let emailPattern =
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // CHECK REQUIRED FIELDS
+  if(
+    fname.value.trim() === "" ||
+    lname.value.trim() === "" ||
+    rusername.value.trim() === "" ||
+    remail.value.trim() === "" ||
+    rpass.value.trim() === ""
+  ){
+    alert("Please fill out all required fields (*)!");
     return;
   }
 
-  users.push(user);
-  localStorage.setItem("users",JSON.stringify(users));
-  alert("Account created!");
+  if(!emailPattern.test(remail.value)){
+    alert("Invalid email address!");
+    return;
+  }
+
+  if(rpass.value.length < 6){
+    alert("Password must be at least 6 characters!");
+    return;
+  }
+
+  if(users.find(u => u.username === rusername.value)){
+    alert("Username already exists!");
+    return;
+  }
+
+  let newUser = {
+    fname: fname.value,
+    lname: lname.value,
+    username: rusername.value,
+    email: remail.value,
+    password: rpass.value,
+    role: "customer"
+  };
+
+  users.push(newUser);
+
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("Registered Successfully!");
+
+  fname.value = "";
+  lname.value = "";
+  rusername.value = "";
+  remail.value = "";
+  rpass.value = "";
+
   showLogin();
 }
 
 /* LOGIN */
+
 function login(){
-  let users=JSON.parse(localStorage.getItem("users"))||[];
 
-  let user=users.find(u=>u.email===email.value && u.password===password.value);
+  let users =
+  JSON.parse(localStorage.getItem("users"));
 
-  if(!user){ alert("Invalid login"); return; }
+  let user = users.find(u =>
 
-  localStorage.setItem("username",user.fname+" "+user.lname);
-  localStorage.setItem("role",user.role);
-
-  if(user.role==="admin") location="admin.html";
-  else if(user.role==="rider") location="rider1.html";
-  else location="customer.html";
-}
-
-/* RESET PASSWORD */
-function resetPassword(){
-  let users=JSON.parse(localStorage.getItem("users"))||[];
-
-  let user=users.find(u=>u.email===femail.value);
+    u.username === loginUsername.value &&
+    u.password === loginPass.value
+  );
 
   if(!user){
+
+    alert("Invalid Username or Password!");
+    return;
+  }
+
+  /* SAVE SESSION */
+
+  localStorage.setItem(
+    "username",
+    user.username
+  );
+
+  localStorage.setItem(
+    "currentUser",
+    JSON.stringify(user)
+  );
+
+  alert("Welcome " + user.fname);
+
+  /* REDIRECT */
+
+  window.location.href = "customer.html";
+}
+
+/* SEND OTP */
+
+function sendOTP(){
+
+  let users =
+  JSON.parse(localStorage.getItem("users"));
+
+  let user = users.find(
+    u => u.email === femail.value
+  );
+
+  if(!user){
+
     alert("Email not found!");
     return;
   }
 
-  user.password=newpass.value;
-  localStorage.setItem("users",JSON.stringify(users));
+  generatedOTP =
+  Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
 
-  alert("Password updated!");
+  alert("Your OTP is: " + generatedOTP);
+
+  console.log("OTP:", generatedOTP);
+}
+
+/* VERIFY OTP */
+
+function verifyOTP(){
+
+  if(otpInput.value !== generatedOTP){
+
+    alert("Invalid OTP!");
+    return;
+  }
+
+  let users =
+  JSON.parse(localStorage.getItem("users"));
+
+  let user = users.find(
+    u => u.email === femail.value
+  );
+
+  if(!user){
+
+    alert("User not found!");
+    return;
+  }
+
+  user.password = newpass.value;
+
+  localStorage.setItem(
+    "users",
+    JSON.stringify(users)
+  );
+
+  alert("Password successfully updated!");
+
+  femail.value = "";
+  otpInput.value = "";
+  newpass.value = "";
+
+  generatedOTP = "";
+
   showLogin();
 }
 

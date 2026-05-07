@@ -1,545 +1,1294 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Alka-Jozen Customer</title>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
 <style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #f1f5f9;
+
+/* RESET */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
 }
 
-.wrapper {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+body{
+    background:linear-gradient(135deg,#f4fbff,#e0f2fe,#ffffff);
+    overflow-x:hidden;
 }
 
-.sidebar {
-  width: 240px;
-  background: #0f172a;
-  color: white;
-  padding: 20px;
+/* FLOATING BUBBLES */
+
+.bubble{
+    position:fixed;
+    border-radius:50%;
+    background:rgba(56,189,248,0.10);
+    animation:float 10s infinite ease-in-out;
+    z-index:0;
 }
 
-.brand {
-  font-size: 20px;
-  font-weight: bold;
-  color: #38bdf8;
-  margin-bottom: 20px;
+@keyframes float{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-20px);}
+    100%{transform:translateY(0);}
 }
 
-.sidebar button {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 12px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 8px;
-  margin: 4px 0;
+.b1{
+    width:140px;
+    height:140px;
+    top:8%;
+    left:5%;
 }
 
-.sidebar button:hover {
-  background: rgba(56,189,248,0.15);
+.b2{
+    width:90px;
+    height:90px;
+    bottom:10%;
+    left:15%;
 }
 
-.content {
-  flex: 1;
-  padding: 25px;
-  height: 100vh;
-  overflow-y: auto;
+.b3{
+    width:180px;
+    height:180px;
+    top:15%;
+    right:8%;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-  margin-bottom: 10px;
+.b4{
+    width:100px;
+    height:100px;
+    bottom:12%;
+    right:15%;
 }
 
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
+/* WRAPPER */
+
+.wrapper{
+    display:flex;
+    min-height:100vh;
+    position:relative;
+    z-index:1;
 }
 
-.btn {
-  width: 100%;
-  padding: 12px;
-  background: #0ea5e9;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+/* =========================
+   MODERN SIDEBAR UPGRADE
+========================= */
+
+.sidebar{
+    width:260px;
+    background:linear-gradient(180deg,#0f172a,#0b1220);
+    color:white;
+    padding:25px 18px;
+    box-shadow:5px 0 25px rgba(0,0,0,0.15);
+    position:relative;
+    z-index:2;
 }
 
-.order-card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: 0.2s;
+/* BRAND */
+.brand{
+    font-size:28px;
+    font-weight:800;
+    margin-bottom:35px;
+    color:#38bdf8;
+    text-align:center;
+    letter-spacing:1px;
+    animation: brandGlow 3s infinite ease-in-out;
 }
 
-.order-card:hover {
-  transform: scale(1.02);
+@keyframes brandGlow{
+    0%,100%{ text-shadow:0 0 0px #38bdf8; }
+    50%{ text-shadow:0 0 12px #38bdf8; }
 }
 
-.step {
-  margin: 10px 0;
-  padding: 10px;
-  background: #fff;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+/* MENU BUTTONS */
+.menu-btn{
+    width:100%;
+    padding:14px 16px;
+    margin-bottom:12px;
+    border:none;
+    background:rgba(255,255,255,0.04);
+    color:white;
+    text-align:left;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.3s ease;
+    font-size:15px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    position:relative;
+    overflow:hidden;
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #cbd5e1;
-  margin-right: 10px;
+/* ICON */
+.menu-btn i{
+    width:22px;
+    text-align:center;
+    color:#38bdf8;
 }
 
-.active {
-  background: #22c55e;
+/* HOVER EFFECT */
+.menu-btn:hover{
+    background:rgba(56,189,248,0.15);
+    transform:translateX(6px);
+    box-shadow:0 8px 20px rgba(56,189,248,0.15);
 }
 
-/* PAYMENT MODAL */
-.modal {
-  position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background: rgba(0,0,0,0.6);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+/* ACTIVE CLICK FEEL */
+.menu-btn:active{
+    transform:scale(0.97);
 }
 
-.modal-box{
-  width:90%;
-  max-width:350px;
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  text-align:center;
+/* LEFT GLOW BAR ON HOVER */
+.menu-btn::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    width:0;
+    background:linear-gradient(to bottom,#38bdf8,#0ea5e9);
+    transition:0.3s ease;
+    border-radius:14px;
+    opacity:0.6;
+}
+
+.menu-btn:hover::before{
+    width:4px;
+}
+
+/* CONTENT */
+
+.content{
+    flex:1;
+    padding:35px;
+}
+
+/* CARD */
+
+.card{
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(15px);
+    border-radius:25px;
+    padding:30px;
+    margin-bottom:25px;
+    box-shadow:0 10px 35px rgba(0,0,0,0.07);
+    border:1px solid rgba(255,255,255,0.5);
+}
+
+/* TITLES */
+
+h2{
+    color:#0f172a;
+    font-size:28px;
+}
+
+.sub{
+    margin-top:10px;
+    color:#64748b;
+    line-height:1.6;
+}
+
+/* ORDER CARD */
+
+.order-card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 4px 20px rgba(0,0,0,0.05);
+}
+
+.order-card:hover{
+    transform:translateY(-3px);
+}
+
+/* STATUS */
+
+.status{
+    padding:8px 16px;
+    border-radius:20px;
+    color:white;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.pending{
+    background:#f59e0b;
+}
+
+.delivery{
+    background:#3b82f6;
+}
+
+.done-status{
+    background:#22c55e;
+}
+
+/* INPUTS */
+
+input,select{
+    width:100%;
+    padding:14px;
+    margin-top:14px;
+    border-radius:14px;
+    border:1px solid #dbeafe;
+    outline:none;
+    background:#f8fbff;
+    transition:0.3s;
+}
+
+input:focus,
+select:focus{
+    border-color:#38bdf8;
+    box-shadow:0 0 0 4px rgba(56,189,248,0.15);
+}
+
+/* BUTTON */
+
+.primary-btn{
+    width:100%;
+    padding:15px;
+    margin-top:18px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(to right,#38bdf8,#0ea5e9);
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.primary-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(14,165,233,0.25);
+}
+
+/* TRACKING */
+
+.track-wrapper{
+    margin-top:40px;
+    position:relative;
+}
+
+.track-line{
+    position:absolute;
+    top:28px;
+    left:8%;
+    width:84%;
+    height:6px;
+    background:#d1d5db;
+    border-radius:10px;
+    z-index:0;
+}
+
+.track-progress{
+    display:flex;
+    justify-content:space-between;
+    position:relative;
+    z-index:1;
+}
+
+.track-step{
+    width:20%;
+    text-align:center;
+}
+
+.circle{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#d1d5db;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    color:white;
+    font-size:22px;
+    border:5px solid white;
+    box-shadow:0 4px 15px rgba(0,0,0,0.10);
+}
+
+.active{
+    background:#22c55e;
+}
+
+.current{
+    background:#0019f7;
+}
+
+.track-label{
+    margin-top:10px;
+    font-size:13px;
+    font-weight:600;
+    color:#334155;
+}
+
+/* CHAT */
+
+.chat-btn{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    width:65px;
+    height:65px;
+    border:none;
+    border-radius:50%;
+    background:linear-gradient(to right,#38bdf8,#0ea5e9);
+    color:white;
+    font-size:24px;
+    cursor:pointer;
+    box-shadow:0 8px 25px rgba(14,165,233,0.35);
+    z-index:999;
+}
+
+.chat-box{
+    position:fixed;
+    bottom:100px;
+    right:25px;
+    width:340px;
+    height:420px;
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+    display:none;
+    flex-direction:column;
+    box-shadow:0 10px 35px rgba(0,0,0,0.18);
+    z-index:999;
+}
+
+.chat-header{
+    background:linear-gradient(to right,#38bdf8,#0ea5e9);
+    color:white;
+    padding:18px;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.chat-body{
+    flex:1;
+    padding:15px;
+    overflow-y:auto;
+    background:#f8fbff;
+}
+
+.chat-body p{
+    margin-bottom:12px;
+}
+
+.chat-input{
+    display:flex;
+    border-top:1px solid #eee;
+}
+
+.chat-input input{
+    border:none;
+    margin:0;
+    border-radius:0;
+    background:white;
+}
+
+.chat-input button{
+    width:90px;
+    border:none;
+    background:#0ea5e9;
+    color:white;
+    font-weight:bold;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .wrapper{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+        display:flex;
+        overflow:auto;
+        gap:10px;
+    }
+
+    .brand{
+        display:none;
+    }
+
+    .menu-btn{
+        white-space:nowrap;
+        margin-bottom:0;
+    }
+
+    .content{
+        padding:20px;
+    }
+
+    .track-label{
+        font-size:11px;
+    }
+
+    .circle{
+        width:50px;
+        height:50px;
+    }
+}
+
+/* PROFILE */
+
+.profile-card{
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(15px);
+    border-radius:25px;
+    padding:35px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.profile-top{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.profile-avatar{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    margin:auto;
+    background:linear-gradient(
+        135deg,
+        #38bdf8,
+        #0ea5e9
+    );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:42px;
+    margin-bottom:15px;
+    box-shadow:0 8px 25px rgba(14,165,233,0.3);
+}
+
+.profile-top h2{
+    color:#0f172a;
+    margin-bottom:5px;
+}
+
+.profile-top p{
+    color:#64748b;
+}
+
+.profile-info{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+.info-box{
+    background:#f8fbff;
+    border:1px solid #e0f2fe;
+    border-radius:18px;
+    padding:18px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.info-box i{
+    width:50px;
+    height:50px;
+    border-radius:14px;
+    background:#0ea5e9;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.info-box span{
+    font-size:12px;
+    color:#64748b;
+}
+
+.info-box h4{
+    margin-top:4px;
+    color:#0f172a;
+}
+
+/* GCASH BOX */
+
+.gcash-box{
+    margin-top:20px;
+    padding:25px;
+    border-radius:20px;
+    background:linear-gradient(
+        135deg,
+        #007dfe,
+        #00a1ff
+    );
+    color:white;
+    text-align:center;
+    animation:fadeIn 0.3s ease;
 }
 
 .qr{
-  width:200px;
-  height:200px;
-  margin:auto;
-  background:#e2e8f0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:12px;
-  font-size:20px;
-  margin-bottom:15px;
+    width:180px;
+    height:180px;
+    object-fit:cover;
+    border-radius:15px;
+    background:white;
+    padding:10px;
+    margin-bottom:15px;
 }
+
+.gcash-box h3{
+    margin-bottom:10px;
+}
+
+.gcash-box p{
+    margin-top:5px;
+    font-size:14px;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================
+   ACTIVE MENU HIGHLIGHT
+========================= */
+
+.menu-btn.active{
+    background:rgba(56,189,248,0.18);
+    border-left:4px solid #38bdf8;
+    padding-left:12px;
+    box-shadow:0 8px 20px rgba(56,189,248,0.12);
+    transform:translateX(6px);
+}
+
+.menu-btn.active i{
+    color:white;
+}
+
+.menu-btn.active::before{
+    width:4px;
+}
+
+/* =========================
+   MODERN TRACKING ORDER LIST
+========================= */
+
+.track-card{
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226,232,240,0.8);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.track-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(56,189,248,0.15);
+    border-color: #38bdf8;
+}
+
+/* ORDER LEFT SIDE */
+.track-left{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.track-id{
+    font-weight:700;
+    color:#0f172a;
+    font-size:15px;
+}
+
+.track-small{
+    font-size:12px;
+    color:#64748b;
+}
+
+/* STATUS BADGE IMPROVED */
+.status{
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    text-transform:capitalize;
+}
+
+/* nicer colors */
+.pending{
+    background: #fff7ed;
+    color:#f59e0b;
+}
+
+.delivery{
+    background:#eff6ff;
+    color:#3b82f6;
+}
+
+.done-status{
+    background:#ecfdf5;
+    color:#22c55e;
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- BUBBLES -->
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
 <div class="wrapper">
 
-<div class="sidebar">
-  <div class="brand">💧 Alka-Jozen</div>
+    <!-- SIDEBAR -->
 
-  <button onclick="home()">🏠 Home</button>
-  <button onclick="newOrder()">🛒 New Order</button>
-  <button onclick="trackOrder()">📦 Track Order</button>
-  <button onclick="profile()">👤 Profile</button>
-  <button onclick="logout()">🚪 Logout</button>
+    <div class="sidebar">
+
+        <div class="brand">
+            💧 Alka-Jozen
+        </div>
+
+        <button class="menu-btn" onclick="home(); setActiveMenu(0)">
+            <i class="fa fa-house"></i>
+            Home
+        </button>
+
+        <button class="menu-btn" onclick="newOrder(); setActiveMenu(1)">
+            <i class="fa fa-cart-shopping"></i>
+            New Order
+        </button>
+
+        <button class="menu-btn" onclick="trackOrder(); setActiveMenu(2)">
+            <i class="fa fa-box"></i>
+            Tracking
+        </button>
+
+        <button class="menu-btn" onclick="profile(); setActiveMenu(3)">
+            <i class="fa fa-user"></i>
+            Profile
+        </button>
+
+        <button class="menu-btn" onclick="logout()">
+            <i class="fa fa-right-from-bracket"></i>
+            Logout
+        </button>
+
+    </div>
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+        <div id="content"></div>
+
+    </div>
+
 </div>
 
-<div class="content">
-  <div class="card" id="content"></div>
-</div>
+<!-- CHAT -->
+
+<button class="chat-btn" onclick="toggleChat()">
+    <i class="fa fa-comment"></i>
+</button>
+
+<div class="chat-box" id="chatBox">
+
+    <div class="chat-header">
+        Chat Support
+    </div>
+
+    <div class="chat-body" id="chatBody">
+
+        <p>
+            <b>Support:</b>
+            Hello! How can we help you?
+        </p>
+
+    </div>
+
+    <div class="chat-input">
+
+        <input id="msg" placeholder="Type message...">
+
+        <button onclick="sendMsg()">
+            Send
+        </button>
+
+    </div>
 
 </div>
 
 <script>
 
-/* GLOBAL */
-let currentTrackingId = null;
-let trackingInterval = null;
+/* STORAGE */
 
-function getPrice(){
-  return Number(localStorage.getItem("price")) || 25;
+function getOrders(){
+    return JSON.parse(localStorage.getItem("history")) || [];
 }
 
-function getHistory(){
-  return JSON.parse(localStorage.getItem("history")) || [];
+function getUser(){
+    return localStorage.getItem("username") || "Guest";
 }
 
-function stopTracking(){
-  if(trackingInterval){
-    clearInterval(trackingInterval);
-    trackingInterval = null;
-  }
+/* TRACKING */
+
+const steps = [
+
+    {icon:"fa-truck",label:"Pickup"},
+    {icon:"fa-soap",label:"Wash"},
+    {icon:"fa-droplet",label:"Refill"},
+    {icon:"fa-motorcycle",label:"Deliver"},
+    {icon:"fa-check",label:"Done"}
+
+];
+
+/* SAFE STEP */
+
+function safeStep(step){
+
+    step = parseInt(step);
+
+    if(isNaN(step)) return 0;
+    if(step < 0) return 0;
+    if(step >= steps.length) return steps.length - 1;
+
+    return step;
+}
+
+/* STATUS */
+
+function getStatusClass(step){
+
+    step = safeStep(step);
+
+    if(step >= 4) return "done-status";
+    if(step >= 2) return "delivery";
+
+    return "pending";
 }
 
 /* HOME */
-home();
 
 function home(){
-  stopTracking();
 
-  document.getElementById("content").innerHTML = `
-    <h2>💧 Welcome to Alka-Jozen</h2>
-    <p>🚚 Fast Water Delivery</p>
-    <p>💰 ₱${getPrice()} per Gallon</p>
-  `;
-}
+    let user = getUser();
 
-/* NEW ORDER */
-function newOrder(){
+    let orders = getOrders()
+    .filter(o => o.user === user);
 
-  stopTracking();
-
-  document.getElementById("content").innerHTML = `
-    <h3>🛒 Place Order</h3>
-
-    <input id="gallon" type="number"
-      placeholder="💧 Gallons"
-      oninput="compute()">
-
-    <div id="totalBox">
-      <b>💰 Total: ₱0</b>
-    </div>
-
-    <input id="address" placeholder="📍 Address">
-
-    <input id="contact"
-      placeholder="📞 09XXXXXXXXX"
-      maxlength="11">
-
-    <select id="payment">
-      <option>💵 Cash</option>
-      <option>📱 GCash</option>
-    </select>
-
-    <button class="btn" onclick="placeOrder()">
-      📦 Place Order
-    </button>
-  `;
-}
-
-/* COMPUTE */
-function compute(){
-
-  let g = document.getElementById("gallon").value || 0;
-
-  document.getElementById("totalBox").innerHTML =
-    `<b>💰 Total: ₱${g * getPrice()}</b>`;
-}
-
-/* PLACE ORDER */
-function placeOrder(){
-
-  let contact = document.getElementById("contact").value;
-
-  if(!/^09\d{9}$/.test(contact)){
-    alert("❌ Invalid Contact Number");
-    return;
-  }
-
-  let g = document.getElementById("gallon").value;
-
-  if(!g || g <= 0){
-    alert("Enter gallons!");
-    return;
-  }
-
-  let payment = document.getElementById("payment").value;
-
-  // IF GCASH
-  if(payment.includes("GCash")){
-    showGCashModal();
-  }else{
-    finalizeOrder("");
-  }
-}
-
-/* SHOW GCASH */
-function showGCashModal(){
-
-  // AUTO GENERATED REFERENCE NUMBER
-  let ref =
-    "GCASH-" +
-    Math.floor(Math.random() * 1000000000);
-
-  let modal = document.createElement("div");
-
-  modal.className = "modal";
-
-  modal.innerHTML = `
-    <div class="modal-box">
-
-      <h3>📱 GCash Payment</h3>
-
-      <div class="qr">
-        QR CODE
-      </div>
-
-      <p>Scan QR to Pay</p>
-
-      <div style="
-        background:#f1f5f9;
-        padding:10px;
-        border-radius:8px;
-        margin:10px 0;
-      ">
-        <b>Reference Number</b><br>
-        ${ref}
-      </div>
-
-      <button class="btn"
-        onclick="submitGCash('${ref}')">
-
-        Payment Completed
-
-      </button>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-}
-
-/* SUBMIT GCASH */
-function submitGCash(ref){
-
-  document.querySelector(".modal").remove();
-
-  finalizeOrder(ref);
-}
-
-/* FINAL SAVE ORDER */
-function finalizeOrder(refNumber){
-
-  let user =
-    localStorage.getItem("username") || "Guest";
-
-  let g =
-    document.getElementById("gallon").value;
-
-  let address =
-    document.getElementById("address").value;
-
-  let contact =
-    document.getElementById("contact").value;
-
-  let payment =
-    document.getElementById("payment").value;
-
-  let today = new Date();
-
-  let datePart =
-    today.getFullYear().toString().slice(2) +
-    String(today.getMonth()+1).padStart(2,'0') +
-    String(today.getDate()).padStart(2,'0');
-
-  let count = getHistory().length + 1;
-
-  let orderNumber =
-    "AF-" + datePart + "-" +
-    String(count).padStart(3,'0');
-
-  let order = {
-
-    orderNumber: orderNumber,
-    user: user,
-    gallon: g,
-    address: address,
-    contact: contact,
-    payment: payment,
-    referenceNumber: refNumber,
-    total: g * getPrice(),
-    status: "Order Received"
-  };
-
-  let h = getHistory();
-
-  h.push(order);
-
-  localStorage.setItem(
-    "history",
-    JSON.stringify(h)
-  );
-
-  alert(
-    "✅ Order Placed!\n\n" +
-    "Tracking #: " + orderNumber +
-    (refNumber ?
-      "\nReference #: " + refNumber : "")
-  );
-
-  trackOrder();
-}
-
-/* TRACK LIST */
-function trackOrder(){
-
-  stopTracking();
-
-  let user =
-    localStorage.getItem("username");
-
-  let orders =
-    getHistory().filter(o => o.user === user);
-
-  let html = "<h3>📦 My Orders</h3>";
-
-  orders.forEach(o=>{
-
-    html += `
-      <div class="order-card"
-        onclick="showTrack('${o.orderNumber}')">
-
-        📦 ${o.orderNumber}<br>
-
-        🚦 ${o.status}
-
-      </div>
-    `;
-  });
-
-  document.getElementById("content").innerHTML = html;
-}
-
-/* SHOW TRACK */
-function showTrack(id){
-
-  currentTrackingId = id;
-
-  renderTracking();
-
-  stopTracking();
-
-  trackingInterval =
-    setInterval(renderTracking, 2000);
-}
-
-/* RENDER TRACK */
-function renderTracking(){
-
-  let o =
-    getHistory().find(
-      x=>x.orderNumber===currentTrackingId
-    );
-
-  if(!o) return;
-
-  let s = o.status;
-
-  document.getElementById("content").innerHTML = `
-    <h3>📍 Tracking Order</h3>
+    let html = `
 
     <div class="card">
 
-      📦 <b>${o.orderNumber}</b><br>
+        <h2>👋 Welcome ${user}</h2>
 
-      👤 ${o.user}<br>
-
-      📞 ${o.contact}<br>
-
-      📍 ${o.address}<br>
-
-      💳 ${o.payment}<br>
-
-      ${
-        o.referenceNumber
-        ? "🧾 " + o.referenceNumber + "<br>"
-        : ""
-      }
-
-      💰 ₱${o.total}<br><br>
-
-      🚦 <b>Status:</b> ${s}
+        <p class="sub">
+            Your Orders Dashboard
+        </p>
 
     </div>
 
-    <div>
+    `;
 
-      ${stepUI(s,"Order Received")}
-      ${stepUI(s,"Go to Pickup")}
-      ${stepUI(s,"Collecting Gallon")}
-      ${stepUI(s,"Cleaning")}
-      ${stepUI(s,"Refilling")}
-      ${stepUI(s,"Out for Delivery")}
-      ${stepUI(s,"Delivered")}
+    if(orders.length === 0){
 
-    </div>
-  `;
+        html += `
+        <div class="card">
+            No Orders Yet
+        </div>
+        `;
+    }
+
+    orders.slice(-5).reverse().forEach(o => {
+
+        let step = safeStep(o.step);
+
+        let progress = ((step + 1) / steps.length) * 100;
+
+        html += `
+        <div class="order-card" style="
+            flex-direction:column;
+            align-items:flex-start;
+            gap:10px;
+            cursor:default;
+        ">
+
+            <!-- TOP ROW -->
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                width:100%;
+                align-items:center;
+            ">
+
+                <div>
+                    <b style="font-size:15px; color:#0f172a;">
+                        Order #${o.orderNumber}
+                    </b>
+
+                    <div style="font-size:12px; color:#64748b; margin-top:4px;">
+                        📍 ${o.address}
+                    </div>
+                </div>
+
+                <div class="status ${getStatusClass(step)}" style="pointer-events:none;">
+                    ${steps[step].label}
+                </div>
+
+            </div>
+
+            <!-- MINI PROGRESS BAR -->
+            <div style="
+                width:100%;
+                height:7px;
+                background:#e2e8f0;
+                border-radius:999px;
+                overflow:hidden;
+            ">
+
+                <div style="
+                    width:${progress}%;
+                    height:100%;
+                    background:linear-gradient(to right,#38bdf8,#0ea5e9);
+                    transition:0.3s ease;
+                "></div>
+
+            </div>
+
+        </div>
+        `;
+    });
+
+    document.getElementById("content").innerHTML = html;
 }
 
-/* STEP UI */
-function stepUI(current, step){
+function newOrder(){
 
-  let flow = [
-    "Order Received",
-    "Go to Pickup",
-    "Collecting Gallon",
-    "Cleaning",
-    "Refilling",
-    "Out for Delivery",
-    "Delivered"
-  ];
+    document.getElementById("content").innerHTML = `
 
-  return `
-    <div class="step">
+    <div class="card">
 
-      <div class="dot
-        ${flow.indexOf(current)>=flow.indexOf(step)
-          ? 'active' : ''}
-      "></div>
+        <h2>🛒 New Order</h2>
 
-      ${step}
+        <input id="gallon"
+        placeholder="💧 Gallons">
+
+        <input id="address"
+        placeholder="📍 Address">
+
+        <input id="contact"
+        placeholder="📞 Contact Number">
+
+        <select id="payment"
+        onchange="toggleGCash()">
+
+            <option value="Cash">
+                Cash
+            </option>
+
+            <option value="GCash">
+                GCash
+            </option>
+
+        </select>
+
+        <!-- GCASH BOX -->
+
+        <div id="gcashBox"
+        class="gcash-box"
+        style="display:none;">
+
+            <img src="gcash.png"
+            class="qr">
+
+            <h3>Scan to Pay</h3>
+
+            <p>📱 09123456789</p>
+
+            <p>👤 ALKA-JOZEN WATER</p>
+
+        </div>
+
+        <button class="primary-btn"
+        onclick="saveOrder()">
+
+            Place Order
+
+        </button>
 
     </div>
-  `;
+
+    `;
+}
+
+function toggleGCash(){
+
+    let payment =
+    document.getElementById("payment").value;
+
+    let box =
+    document.getElementById("gcashBox");
+
+    if(payment === "GCash"){
+
+        box.style.display = "block";
+
+    }else{
+
+        box.style.display = "none";
+    }
+}
+
+/* SAVE ORDER */
+
+function saveOrder(){
+
+    let orders = getOrders();
+
+    let order = {
+
+        orderNumber:
+        String(orders.length + 1)
+        .padStart(3,'0'),
+
+        user:getUser(),
+
+        gallon:
+        document.getElementById("gallon").value,
+
+        address:
+        document.getElementById("address").value,
+
+        contact:
+        document.getElementById("contact").value,
+
+        payment:
+        document.getElementById("payment").value,
+
+        step:0
+    };
+
+    orders.push(order);
+
+    localStorage.setItem(
+        "history",
+        JSON.stringify(orders)
+    );
+
+    alert("Order Placed!");
+
+    home();
+}
+
+/* TRACK */
+
+function trackOrder(){
+
+    let user = getUser();
+
+    let orders = getOrders()
+    .filter(o => o.user === user);
+
+    let html = `
+
+    <div class="card">
+        <h2>📦 Tracking Orders</h2>
+    </div>
+
+    `;
+
+    if(orders.length === 0){
+
+        html += `
+        <div class="card">
+            No Orders Found
+        </div>
+        `;
+    }
+
+    orders.forEach(o => {
+
+        let step = safeStep(o.step);
+
+        html += `
+
+        <div class="order-card"
+        onclick="viewTrack('${o.orderNumber}')">
+
+            <div>
+                <b>#${o.orderNumber}</b>
+            </div>
+
+            <div class="status ${getStatusClass(step)}">
+
+                ${steps[step].label}
+
+            </div>
+
+        </div>
+
+        `;
+    });
+
+    document.getElementById("content").innerHTML = html;
+}
+
+/* VIEW TRACK */
+
+function viewTrack(id){
+
+    let orders = getOrders();
+
+    let o = orders.find(x => x.orderNumber == id);
+
+    let currentStep = safeStep(o.step);
+
+    let html = `
+
+    <div class="card">
+
+        <h2>📍 Tracking #${o.orderNumber}</h2>
+
+        <p class="sub">
+            Current Status:
+            <b>${steps[currentStep].label}</b>
+        </p>
+
+        <div class="track-wrapper">
+
+            <div class="track-line"></div>
+
+            <div class="track-progress">
+
+    `;
+
+    steps.forEach((s,index)=>{
+
+        let className = "";
+
+        if(index < currentStep)
+            className = "active";
+
+        if(index == currentStep)
+            className = "current";
+
+        if(currentStep == 4)
+            className = "active";
+
+        html += `
+
+        <div class="track-step">
+
+            <div class="circle ${className}">
+
+                <i class="fa-solid ${s.icon}"></i>
+
+            </div>
+
+            <div class="track-label">
+
+                ${s.label}
+
+            </div>
+
+        </div>
+
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+    </div>
+    `;
+
+    document.getElementById("content").innerHTML = html;
 }
 
 /* PROFILE */
+
 function profile(){
 
-  stopTracking();
+    let username = getUser();
 
-  document.getElementById("content").innerHTML = `
-    <h3>👤 Profile</h3>
+    let users =
+    JSON.parse(localStorage.getItem("users")) || [];
 
-    <p>
-      Name:
-      ${localStorage.getItem("username")}
-    </p>
-  `;
+    /* HANAP USER */
+    let userObj = users.find(
+        u => u.username === username
+    );
+
+    /* USER ORDERS */
+    let orders = getOrders()
+    .filter(o => o.user === username);
+
+    let totalOrders = orders.length;
+
+    let lastOrder =
+    orders[orders.length - 1];
+
+    let contact =
+    lastOrder ? lastOrder.contact : "N/A";
+
+    let address =
+    lastOrder ? lastOrder.address : "N/A";
+
+    let fullName = userObj
+    ? userObj.fname + " " + userObj.lname
+    : username;
+
+    let email = userObj
+    ? userObj.email
+    : "N/A";
+
+    document.getElementById("content").innerHTML = `
+
+    <div class="profile-card">
+
+        <div class="profile-top">
+
+            <div class="profile-avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <h2>${fullName}</h2>
+
+            <p>@${username}</p>
+
+        </div>
+
+        <div class="profile-info">
+
+            <div class="info-box">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <span>Email</span>
+                    <h4>${email}</h4>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <i class="fa-solid fa-phone"></i>
+                <div>
+                    <span>Contact Number</span>
+                    <h4>${contact}</h4>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <i class="fa-solid fa-location-dot"></i>
+                <div>
+                    <span>Address</span>
+                    <h4>${address}</h4>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <i class="fa-solid fa-box"></i>
+                <div>
+                    <span>Total Orders</span>
+                    <h4>${totalOrders}</h4>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
 }
 
 /* LOGOUT */
+
 function logout(){
 
-  stopTracking();
-
-  localStorage.removeItem("username");
-
-  window.location.href = "login.html";
+    location.href="index.html";
 }
+
+/* CHAT */
+
+function toggleChat(){
+
+    let box =
+    document.getElementById("chatBox");
+
+    box.style.display =
+    box.style.display === "flex"
+    ? "none"
+    : "flex";
+}
+
+function sendMsg(){
+
+    let msg =
+    document.getElementById("msg").value;
+
+    if(!msg) return;
+
+    document.getElementById("chatBody")
+    .innerHTML +=
+    `<p><b>You:</b> ${msg}</p>`;
+
+    document.getElementById("msg").value = "";
+}
+
+function setActiveMenu(index){
+
+    let buttons = document.querySelectorAll(".menu-btn");
+
+    buttons.forEach(btn => btn.classList.remove("active"));
+
+    if(buttons[index]){
+        buttons[index].classList.add("active");
+    }
+}
+
+/* START */
+
+home();
 
 </script>
 
