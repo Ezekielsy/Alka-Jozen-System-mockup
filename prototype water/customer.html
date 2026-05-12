@@ -19,27 +19,44 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     padding:0;
     box-sizing:border-box;
     font-family:'Segoe UI',sans-serif;
+    scroll-behavior:smooth;
 }
 
 body{
-    background:linear-gradient(135deg,#f4fbff,#e0f2fe,#ffffff);
+    background:
+    linear-gradient(
+        135deg,
+        #eff6ff,
+        #dbeafe,
+        #f8fafc
+    );
+
     overflow-x:hidden;
 }
 
-/* FLOATING BUBBLES */
+/* BUBBLES */
 
 .bubble{
     position:fixed;
     border-radius:50%;
-    background:rgba(56,189,248,0.10);
+    background:rgba(56,189,248,0.08);
     animation:float 10s infinite ease-in-out;
     z-index:0;
 }
 
 @keyframes float{
-    0%{transform:translateY(0);}
-    50%{transform:translateY(-20px);}
-    100%{transform:translateY(0);}
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-20px);
+    }
+
+    100%{
+        transform:translateY(0);
+    }
 }
 
 .b1{
@@ -79,91 +96,84 @@ body{
     z-index:1;
 }
 
-/* =========================
-   MODERN SIDEBAR UPGRADE
-========================= */
+/* SIDEBAR */
 
 .sidebar{
+
     width:260px;
-    background:linear-gradient(180deg,#0f172a,#0b1220);
-    color:white;
+
+    background:
+    linear-gradient(
+        180deg,
+        #0f172a,
+        #0b1220
+    );
+
     padding:25px 18px;
-    box-shadow:5px 0 25px rgba(0,0,0,0.15);
-    position:relative;
-    z-index:2;
+
+    color:white;
+
+    box-shadow:
+    5px 0 25px rgba(0,0,0,0.15);
 }
 
-/* BRAND */
 .brand{
+
     font-size:28px;
     font-weight:800;
-    margin-bottom:35px;
+
     color:#38bdf8;
+
     text-align:center;
-    letter-spacing:1px;
-    animation: brandGlow 3s infinite ease-in-out;
+
+    margin-bottom:35px;
 }
 
-@keyframes brandGlow{
-    0%,100%{ text-shadow:0 0 0px #38bdf8; }
-    50%{ text-shadow:0 0 12px #38bdf8; }
-}
+/* MENU */
 
-/* MENU BUTTONS */
 .menu-btn{
+
     width:100%;
-    padding:14px 16px;
+
+    padding:15px;
+
     margin-bottom:12px;
+
     border:none;
-    background:rgba(255,255,255,0.04);
+
+    border-radius:16px;
+
+    background:
+    rgba(255,255,255,0.05);
+
     color:white;
+
     text-align:left;
-    border-radius:14px;
+
     cursor:pointer;
-    transition:0.3s ease;
-    font-size:15px;
+
     display:flex;
     align-items:center;
     gap:10px;
-    position:relative;
-    overflow:hidden;
+
+    transition:.25s;
 }
 
-/* ICON */
-.menu-btn i{
-    width:22px;
-    text-align:center;
-    color:#38bdf8;
-}
-
-/* HOVER EFFECT */
 .menu-btn:hover{
-    background:rgba(56,189,248,0.15);
-    transform:translateX(6px);
-    box-shadow:0 8px 20px rgba(56,189,248,0.15);
+
+    transform:translateX(5px);
+
+    background:
+    rgba(56,189,248,0.15);
 }
 
-/* ACTIVE CLICK FEEL */
-.menu-btn:active{
-    transform:scale(0.97);
-}
+.menu-btn.active{
 
-/* LEFT GLOW BAR ON HOVER */
-.menu-btn::before{
-    content:"";
-    position:absolute;
-    left:0;
-    top:0;
-    height:100%;
-    width:0;
-    background:linear-gradient(to bottom,#38bdf8,#0ea5e9);
-    transition:0.3s ease;
-    border-radius:14px;
-    opacity:0.6;
-}
+    background:
+    rgba(56,189,248,0.18);
 
-.menu-btn:hover::before{
-    width:4px;
+    border-left:
+    4px solid #38bdf8;
 }
 
 /* CONTENT */
@@ -173,488 +183,124 @@ body{
     padding:35px;
 }
 
-/* CARD */
+/* GLASS CARDS */
 
-.card{
-    background:rgba(255,255,255,0.75);
-    backdrop-filter:blur(15px);
-    border-radius:25px;
-    padding:30px;
-    margin-bottom:25px;
-    box-shadow:0 10px 35px rgba(0,0,0,0.07);
-    border:1px solid rgba(255,255,255,0.5);
+.card,
+.order-card,
+.track-card,
+.profile-card{
+
+    background:
+    rgba(255,255,255,0.60);
+
+    backdrop-filter:
+    blur(18px);
+
+    border:
+    1px solid rgba(255,255,255,0.45);
+
+    border-radius:28px;
+
+    padding:25px;
+
+    margin-bottom:22px;
+
+    box-shadow:
+    0 10px 40px rgba(0,0,0,0.08);
+
+    transition:.25s ease;
 }
 
-/* TITLES */
+.card:hover,
+.order-card:hover,
+.track-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 15px 35px rgba(56,189,248,0.15);
+}
 
 h2{
     color:#0f172a;
-    font-size:28px;
+    margin-bottom:10px;
 }
 
 .sub{
-    margin-top:10px;
     color:#64748b;
-    line-height:1.6;
-}
-
-/* ORDER CARD */
-
-.order-card{
-    background:white;
-    border-radius:18px;
-    padding:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-    cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 4px 20px rgba(0,0,0,0.05);
-}
-
-.order-card:hover{
-    transform:translateY(-3px);
-}
-
-/* STATUS */
-
-.status{
-    padding:8px 16px;
-    border-radius:20px;
-    color:white;
-    font-size:12px;
-    font-weight:bold;
-}
-
-.pending{
-    background:#f59e0b;
-}
-
-.delivery{
-    background:#3b82f6;
-}
-
-.done-status{
-    background:#22c55e;
 }
 
 /* INPUTS */
 
-input,select{
-    width:100%;
-    padding:14px;
-    margin-top:14px;
-    border-radius:14px;
-    border:1px solid #dbeafe;
-    outline:none;
-    background:#f8fbff;
-    transition:0.3s;
-}
+input,
+select,
+textarea{
 
-input:focus,
-select:focus{
-    border-color:#38bdf8;
-    box-shadow:0 0 0 4px rgba(56,189,248,0.15);
+    width:100%;
+
+    padding:15px;
+
+    margin-top:15px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    outline:none;
 }
 
 /* BUTTON */
 
 .primary-btn{
+
     width:100%;
+
     padding:15px;
+
     margin-top:18px;
+
     border:none;
-    border-radius:14px;
-    background:linear-gradient(to right,#38bdf8,#0ea5e9);
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #0ea5e9,
+        #38bdf8
+    );
+
     color:white;
-    font-size:15px;
-    font-weight:bold;
+
+    font-weight:700;
+
     cursor:pointer;
-    transition:0.3s;
+
+    transition:.25s;
 }
 
 .primary-btn:hover{
+
     transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(14,165,233,0.25);
 }
 
-/* TRACKING */
+/* STATUS */
 
-.track-wrapper{
-    margin-top:40px;
-    position:relative;
-}
-
-.track-line{
-    position:absolute;
-    top:28px;
-    left:8%;
-    width:84%;
-    height:6px;
-    background:#d1d5db;
-    border-radius:10px;
-    z-index:0;
-}
-
-.track-progress{
-    display:flex;
-    justify-content:space-between;
-    position:relative;
-    z-index:1;
-}
-
-.track-step{
-    width:20%;
-    text-align:center;
-}
-
-.circle{
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#d1d5db;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:auto;
-    color:white;
-    font-size:22px;
-    border:5px solid white;
-    box-shadow:0 4px 15px rgba(0,0,0,0.10);
-}
-
-.active{
-    background:#22c55e;
-}
-
-.current{
-    background:#0019f7;
-}
-
-.track-label{
-    margin-top:10px;
-    font-size:13px;
-    font-weight:600;
-    color:#334155;
-}
-
-/* CHAT */
-
-.chat-btn{
-    position:fixed;
-    bottom:25px;
-    right:25px;
-    width:65px;
-    height:65px;
-    border:none;
-    border-radius:50%;
-    background:linear-gradient(to right,#38bdf8,#0ea5e9);
-    color:white;
-    font-size:24px;
-    cursor:pointer;
-    box-shadow:0 8px 25px rgba(14,165,233,0.35);
-    z-index:999;
-}
-
-.chat-box{
-    position:fixed;
-    bottom:100px;
-    right:25px;
-    width:340px;
-    height:420px;
-    background:white;
-    border-radius:25px;
-    overflow:hidden;
-    display:none;
-    flex-direction:column;
-    box-shadow:0 10px 35px rgba(0,0,0,0.18);
-    z-index:999;
-}
-
-.chat-header{
-    background:linear-gradient(to right,#38bdf8,#0ea5e9);
-    color:white;
-    padding:18px;
-    font-weight:bold;
-    font-size:18px;
-}
-
-.chat-body{
-    flex:1;
-    padding:15px;
-    overflow-y:auto;
-    background:#f8fbff;
-}
-
-.chat-body p{
-    margin-bottom:12px;
-}
-
-.chat-input{
-    display:flex;
-    border-top:1px solid #eee;
-}
-
-.chat-input input{
-    border:none;
-    margin:0;
-    border-radius:0;
-    background:white;
-}
-
-.chat-input button{
-    width:90px;
-    border:none;
-    background:#0ea5e9;
-    color:white;
-    font-weight:bold;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-    .wrapper{
-        flex-direction:column;
-    }
-
-    .sidebar{
-        width:100%;
-        display:flex;
-        overflow:auto;
-        gap:10px;
-    }
-
-    .brand{
-        display:none;
-    }
-
-    .menu-btn{
-        white-space:nowrap;
-        margin-bottom:0;
-    }
-
-    .content{
-        padding:20px;
-    }
-
-    .track-label{
-        font-size:11px;
-    }
-
-    .circle{
-        width:50px;
-        height:50px;
-    }
-}
-
-/* PROFILE */
-
-.profile-card{
-    background:rgba(255,255,255,0.8);
-    backdrop-filter:blur(15px);
-    border-radius:25px;
-    padding:35px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
-
-.profile-top{
-    text-align:center;
-    margin-bottom:30px;
-}
-
-.profile-avatar{
-    width:110px;
-    height:110px;
-    border-radius:50%;
-    margin:auto;
-    background:linear-gradient(
-        135deg,
-        #38bdf8,
-        #0ea5e9
-    );
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:42px;
-    margin-bottom:15px;
-    box-shadow:0 8px 25px rgba(14,165,233,0.3);
-}
-
-.profile-top h2{
-    color:#0f172a;
-    margin-bottom:5px;
-}
-
-.profile-top p{
-    color:#64748b;
-}
-
-.profile-info{
-    display:grid;
-    grid-template-columns:
-    repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-}
-
-.info-box{
-    background:#f8fbff;
-    border:1px solid #e0f2fe;
-    border-radius:18px;
-    padding:18px;
-    display:flex;
-    gap:15px;
-    align-items:center;
-}
-
-.info-box i{
-    width:50px;
-    height:50px;
-    border-radius:14px;
-    background:#0ea5e9;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-}
-
-.info-box span{
-    font-size:12px;
-    color:#64748b;
-}
-
-.info-box h4{
-    margin-top:4px;
-    color:#0f172a;
-}
-
-/* GCASH BOX */
-
-.gcash-box{
-    margin-top:20px;
-    padding:25px;
-    border-radius:20px;
-    background:linear-gradient(
-        135deg,
-        #007dfe,
-        #00a1ff
-    );
-    color:white;
-    text-align:center;
-    animation:fadeIn 0.3s ease;
-}
-
-.qr{
-    width:180px;
-    height:180px;
-    object-fit:cover;
-    border-radius:15px;
-    background:white;
-    padding:10px;
-    margin-bottom:15px;
-}
-
-.gcash-box h3{
-    margin-bottom:10px;
-}
-
-.gcash-box p{
-    margin-top:5px;
-    font-size:14px;
-}
-
-@keyframes fadeIn{
-
-    from{
-        opacity:0;
-        transform:translateY(10px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-/* =========================
-   ACTIVE MENU HIGHLIGHT
-========================= */
-
-.menu-btn.active{
-    background:rgba(56,189,248,0.18);
-    border-left:4px solid #38bdf8;
-    padding-left:12px;
-    box-shadow:0 8px 20px rgba(56,189,248,0.12);
-    transform:translateX(6px);
-}
-
-.menu-btn.active i{
-    color:white;
-}
-
-.menu-btn.active::before{
-    width:4px;
-}
-
-/* =========================
-   MODERN TRACKING ORDER LIST
-========================= */
-
-.track-card{
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(226,232,240,0.8);
-    border-radius: 20px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: 0.25s ease;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-}
-
-.track-card:hover{
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(56,189,248,0.15);
-    border-color: #38bdf8;
-}
-
-/* ORDER LEFT SIDE */
-.track-left{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-}
-
-.track-id{
-    font-weight:700;
-    color:#0f172a;
-    font-size:15px;
-}
-
-.track-small{
-    font-size:12px;
-    color:#64748b;
-}
-
-/* STATUS BADGE IMPROVED */
 .status{
-    padding:8px 14px;
+
+    padding:8px 15px;
+
     border-radius:999px;
+
     font-size:12px;
+
     font-weight:700;
-    letter-spacing:0.3px;
-    text-transform:capitalize;
 }
 
-/* nicer colors */
 .pending{
-    background: #fff7ed;
+    background:#fff7ed;
     color:#f59e0b;
 }
 
@@ -668,12 +314,346 @@ select:focus{
     color:#22c55e;
 }
 
+/* TRACK */
+
+.track-wrapper{
+    margin-top:40px;
+    position:relative;
+}
+
+.track-line{
+
+    position:absolute;
+
+    top:28px;
+    left:8%;
+
+    width:84%;
+    height:6px;
+
+    background:#d1d5db;
+
+    border-radius:999px;
+}
+
+.track-progress{
+
+    display:flex;
+    justify-content:space-between;
+
+    position:relative;
+}
+
+.track-step{
+    width:20%;
+    text-align:center;
+}
+
+.circle{
+
+    width:60px;
+    height:60px;
+
+    border-radius:50%;
+
+    background:#d1d5db;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:auto;
+
+    color:white;
+
+    font-size:22px;
+
+    border:5px solid white;
+}
+
+.active{
+    background:#22c55e;
+}
+
+.current{
+    background:#2563eb;
+}
+
+.track-label{
+
+    margin-top:10px;
+
+    font-size:12px;
+    font-weight:700;
+}
+
+/* ETA */
+
+.eta-box{
+
+    margin-top:18px;
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #dbeafe,
+        #eff6ff
+    );
+
+    font-weight:700;
+}
+
+/* CHAT */
+
+.chat-btn{
+
+    position:fixed;
+
+    right:25px;
+    bottom:90px;
+
+    width:65px;
+    height:65px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        90deg,
+        #0ea5e9,
+        #38bdf8
+    );
+
+    color:white;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+    z-index:9999;
+}
+
+.chat-box{
+
+    position:fixed;
+
+    right:25px;
+    bottom:165px;
+
+    width:340px;
+    height:420px;
+
+    background:white;
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    display:none;
+    flex-direction:column;
+
+    box-shadow:
+    0 10px 40px rgba(0,0,0,0.18);
+
+    z-index:9999;
+}
+
+.chat-header{
+
+    padding:18px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #0ea5e9,
+        #38bdf8
+    );
+
+    color:white;
+    font-weight:700;
+}
+
+.chat-body{
+
+    flex:1;
+
+    padding:15px;
+
+    overflow-y:auto;
+
+    background:#f8fafc;
+}
+
+.chat-input{
+    display:flex;
+}
+
+.chat-input input{
+
+    margin:0;
+    border-radius:0;
+}
+
+.chat-input button{
+
+    width:90px;
+
+    border:none;
+
+    background:#0ea5e9;
+
+    color:white;
+}
+
+/* NOTIFY */
+
+.notify{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #22c55e,
+        #16a34a
+    );
+
+    color:white;
+
+    padding:15px 22px;
+
+    border-radius:18px;
+
+    z-index:99999;
+
+    animation:slide .4s ease;
+}
+
+@keyframes slide{
+
+    from{
+        transform:translateX(100%);
+        opacity:0;
+    }
+
+    to{
+        transform:translateX(0);
+        opacity:1;
+    }
+}
+
+/* STARS */
+
+.stars{
+
+    display:flex;
+    gap:8px;
+
+    margin-top:18px;
+}
+
+.stars i{
+
+    font-size:30px;
+
+    color:#d1d5db;
+
+    cursor:pointer;
+}
+
+.stars i.active{
+    color:#f59e0b;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+
+    position:fixed;
+
+    bottom:0;
+    left:0;
+
+    width:100%;
+    height:75px;
+
+    background:
+    rgba(255,255,255,0.75);
+
+    backdrop-filter:
+    blur(18px);
+
+    border-top:
+    1px solid rgba(255,255,255,0.45);
+
+    display:none;
+
+    justify-content:space-around;
+    align-items:center;
+
+    z-index:9999;
+}
+
+.bottom-nav button{
+
+    background:none;
+    border:none;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    gap:4px;
+
+    color:#64748b;
+
+    cursor:pointer;
+}
+
+.bottom-nav button.active{
+    color:#0ea5e9;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .content{
+        padding:20px;
+        padding-bottom:100px;
+    }
+
+    .bottom-nav{
+        display:flex;
+    }
+
+    .circle{
+        width:50px;
+        height:50px;
+    }
+
+    .track-label{
+        font-size:10px;
+    }
+}
+
 </style>
 </head>
 
 <body>
-
-<!-- BUBBLES -->
 
 <div class="bubble b1"></div>
 <div class="bubble b2"></div>
@@ -682,81 +662,107 @@ select:focus{
 
 <div class="wrapper">
 
-    <!-- SIDEBAR -->
+<div class="sidebar">
 
-    <div class="sidebar">
+<div class="brand">
+💧 Alka-Jozen
+</div>
 
-        <div class="brand">
-            💧 Alka-Jozen
-        </div>
+<button class="menu-btn active"
+onclick="home()">
+<i class="fa fa-house"></i>
+Home
+</button>
 
-        <button class="menu-btn" onclick="home(); setActiveMenu(0)">
-            <i class="fa fa-house"></i>
-            Home
-        </button>
+<button class="menu-btn"
+onclick="newOrder()">
+<i class="fa fa-cart-shopping"></i>
+New Order
+</button>
 
-        <button class="menu-btn" onclick="newOrder(); setActiveMenu(1)">
-            <i class="fa fa-cart-shopping"></i>
-            New Order
-        </button>
+<button class="menu-btn"
+onclick="trackOrder()">
+<i class="fa fa-box"></i>
+Tracking
+</button>
 
-        <button class="menu-btn" onclick="trackOrder(); setActiveMenu(2)">
-            <i class="fa fa-box"></i>
-            Tracking
-        </button>
+<button class="menu-btn"
+onclick="paymentHistory()">
+<i class="fa fa-credit-card"></i>
+Payments
+</button>
 
-        <button class="menu-btn" onclick="profile(); setActiveMenu(3)">
-            <i class="fa fa-user"></i>
-            Profile
-        </button>
-
-        <button class="menu-btn" onclick="logout()">
-            <i class="fa fa-right-from-bracket"></i>
-            Logout
-        </button>
-
-    </div>
-
-    <!-- CONTENT -->
-
-    <div class="content">
-
-        <div id="content"></div>
-
-    </div>
+<button class="menu-btn"
+onclick="profile()">
+<i class="fa fa-user"></i>
+Profile
+</button>
 
 </div>
 
-<!-- CHAT -->
+<div class="content">
 
-<button class="chat-btn" onclick="toggleChat()">
-    <i class="fa fa-comment"></i>
+<div id="content"></div>
+
+</div>
+
+</div>
+
+<!-- FAQ AI -->
+
+<button class="chat-btn" onclick="toggleFAQ()">
+<i class="fa fa-robot"></i>
 </button>
 
-<div class="chat-box" id="chatBox">
+<div class="chat-box" id="faqBox">
 
-    <div class="chat-header">
-        Chat Support
-    </div>
+<div class="chat-header">
+FAQ Assistant
+</div>
 
-    <div class="chat-body" id="chatBody">
+<div class="chat-body" id="faqBody">
 
-        <p>
-            <b>Support:</b>
-            Hello! How can we help you?
-        </p>
+<p><b>AI:</b> Hi! Ask me about delivery time, payment, or orders.</p>
 
-    </div>
+</div>
 
-    <div class="chat-input">
+<div class="chat-input">
 
-        <input id="msg" placeholder="Type message...">
+<input id="faqInput" placeholder="Ask something...">
 
-        <button onclick="sendMsg()">
-            Send
-        </button>
+<button onclick="sendFAQ()">Send</button>
 
-    </div>
+</div>
+
+</div>
+<!-- BOTTOM NAV -->
+
+<div class="bottom-nav">
+
+<button onclick="home()">
+<i class="fa fa-house"></i>
+<span>Home</span>
+</button>
+
+<button onclick="newOrder()">
+<i class="fa fa-cart-shopping"></i>
+<span>Order</span>
+</button>
+
+<button onclick="trackOrder()">
+<i class="fa fa-truck"></i>
+<span>Track</span>
+</button>
+
+<button onclick="paymentHistory()">
+<i class="fa fa-credit-card"></i>
+<span>Payments</span>
+</button>
+
+<button onclick="profile()">
+<i class="fa fa-user"></i>
+<span>Profile</span>
+</button>
 
 </div>
 
@@ -765,49 +771,51 @@ select:focus{
 /* STORAGE */
 
 function getOrders(){
-    return JSON.parse(localStorage.getItem("history")) || [];
+
+    return JSON.parse(
+    localStorage.getItem("history")
+    ) || [];
+}
+
+function saveOrders(data){
+
+    localStorage.setItem(
+    "history",
+    JSON.stringify(data)
+    );
 }
 
 function getUser(){
-    return localStorage.getItem("username") || "Guest";
+
+    return localStorage.getItem(
+    "username"
+    ) || "Guest";
 }
 
-/* TRACKING */
+/* STEPS */
 
 const steps = [
 
-    {icon:"fa-truck",label:"Pickup"},
-    {icon:"fa-soap",label:"Wash"},
-    {icon:"fa-droplet",label:"Refill"},
-    {icon:"fa-motorcycle",label:"Deliver"},
-    {icon:"fa-check",label:"Done"}
+    {
+        label:"Pickup"
+    },
 
+    {
+        label:"Cleaning"
+    },
+
+    {
+        label:"Refilling"
+    },
+
+    {
+        label:"Out for Delivery"
+    },
+
+    {
+        label:"Delivered"
+    }
 ];
-
-/* SAFE STEP */
-
-function safeStep(step){
-
-    step = parseInt(step);
-
-    if(isNaN(step)) return 0;
-    if(step < 0) return 0;
-    if(step >= steps.length) return steps.length - 1;
-
-    return step;
-}
-
-/* STATUS */
-
-function getStatusClass(step){
-
-    step = safeStep(step);
-
-    if(step >= 4) return "done-status";
-    if(step >= 2) return "delivery";
-
-    return "pending";
-}
 
 /* HOME */
 
@@ -815,85 +823,46 @@ function home(){
 
     let user = getUser();
 
-    let orders = getOrders()
-    .filter(o => o.user === user);
+    let orders =
+    getOrders().filter(
+    o=>o.user===user
+    );
 
     let html = `
 
     <div class="card">
 
-        <h2>👋 Welcome ${user}</h2>
+        <h2>
+        👋 Welcome ${user}
+        </h2>
 
         <p class="sub">
-            Your Orders Dashboard
+        Your Orders Dashboard
         </p>
 
     </div>
-
     `;
 
-    if(orders.length === 0){
+    orders.reverse().slice(0,5)
+    .forEach(o=>{
 
         html += `
+
         <div class="card">
-            No Orders Yet
-        </div>
-        `;
-    }
 
-    orders.slice(-5).reverse().forEach(o => {
+            <b>
+            Order #${o.orderNumber}
+            </b>
 
-        let step = safeStep(o.step);
+            <br><br>
 
-        let progress = ((step + 1) / steps.length) * 100;
+            📍 ${o.address}
 
-        html += `
-        <div class="order-card" style="
-            flex-direction:column;
-            align-items:flex-start;
-            gap:10px;
-            cursor:default;
-        ">
+            <br><br>
 
-            <!-- TOP ROW -->
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                width:100%;
-                align-items:center;
-            ">
+            <div class="status delivery">
 
-                <div>
-                    <b style="font-size:15px; color:#0f172a;">
-                        Order #${o.orderNumber}
-                    </b>
-
-                    <div style="font-size:12px; color:#64748b; margin-top:4px;">
-                        📍 ${o.address}
-                    </div>
-                </div>
-
-                <div class="status ${getStatusClass(step)}" style="pointer-events:none;">
-                    ${steps[step].label}
-                </div>
-
-            </div>
-
-            <!-- MINI PROGRESS BAR -->
-            <div style="
-                width:100%;
-                height:7px;
-                background:#e2e8f0;
-                border-radius:999px;
-                overflow:hidden;
-            ">
-
-                <div style="
-                    width:${progress}%;
-                    height:100%;
-                    background:linear-gradient(to right,#38bdf8,#0ea5e9);
-                    transition:0.3s ease;
-                "></div>
+            ${o.status || "Pending"}
 
             </div>
 
@@ -901,8 +870,12 @@ function home(){
         `;
     });
 
-    document.getElementById("content").innerHTML = html;
+    document.getElementById(
+    "content"
+    ).innerHTML = html;
 }
+
+/* NEW ORDER */
 
 function newOrder(){
 
@@ -912,112 +885,110 @@ function newOrder(){
 
         <h2>🛒 New Order</h2>
 
-        <input id="gallon"
-        placeholder="💧 Gallons">
+        <input id="gallon" placeholder="💧 Gallons">
+        <input id="address" placeholder="📍 Address">
+        <input id="contact" placeholder="📞 Contact">
 
-        <input id="address"
-        placeholder="📍 Address">
-
-        <input id="contact"
-        placeholder="📞 Contact Number">
-
-        <select id="payment"
-        onchange="toggleGCash()">
-
-            <option value="Cash">
-                Cash
-            </option>
-
-            <option value="GCash">
-                GCash
-            </option>
-
+        <select id="payment" onchange="showGCash()">
+            <option value="Cash">Cash</option>
+            <option value="GCash">GCash</option>
         </select>
 
         <!-- GCASH BOX -->
+        <div id="gcashBox" style="display:none;margin-top:15px;">
 
-        <div id="gcashBox"
-        class="gcash-box"
-        style="display:none;">
+            <div style="
+                background:#f8fafc;
+                padding:20px;
+                border-radius:18px;
+                text-align:center;
+                border:2px dashed #38bdf8;
+            ">
 
-            <img src="gcash.png"
-            class="qr">
+                <h3>💳 GCash Payment</h3>
 
-            <h3>Scan to Pay</h3>
+                <img src="gcashqr.png"
+                style="width:200px;border-radius:12px;margin-top:10px;">
 
-            <p>📱 09123456789</p>
+                <p style="margin-top:10px;">
+                    Send to: <b>09123456789</b>
+                </p>
 
-            <p>👤 ALKA-JOZEN WATER</p>
+                <input id="reference"
+                placeholder="Enter GCash Reference Number">
+
+            </div>
 
         </div>
 
-        <button class="primary-btn"
-        onclick="saveOrder()">
-
+        <button class="primary-btn" onclick="saveOrder()">
             Place Order
-
         </button>
 
     </div>
-
     `;
 }
 
-function toggleGCash(){
+function showGCash(){
 
-    let payment =
-    document.getElementById("payment").value;
-
-    let box =
-    document.getElementById("gcashBox");
+    let payment = document.getElementById("payment").value;
+    let box = document.getElementById("gcashBox");
 
     if(payment === "GCash"){
-
         box.style.display = "block";
-
-    }else{
-
+    } else {
         box.style.display = "none";
     }
 }
 
-/* SAVE ORDER */
+/* SAVE */
 
 function saveOrder(){
 
-    let orders = getOrders();
+    let orders =
+    getOrders();
 
     let order = {
 
         orderNumber:
-        String(orders.length + 1)
-        .padStart(3,'0'),
+        String(
+        orders.length+1
+        ).padStart(3,"0"),
 
         user:getUser(),
 
         gallon:
-        document.getElementById("gallon").value,
+        document.getElementById(
+        "gallon"
+        ).value,
 
         address:
-        document.getElementById("address").value,
+        document.getElementById(
+        "address"
+        ).value,
 
         contact:
-        document.getElementById("contact").value,
+        document.getElementById(
+        "contact"
+        ).value,
 
         payment:
-        document.getElementById("payment").value,
+        document.getElementById(
+        "payment"
+        ).value,
 
-        step:0
+        status:"Go to Pickup",
+
+        total:150
     };
 
     orders.push(order);
 
-    localStorage.setItem(
-        "history",
-        JSON.stringify(orders)
-    );
+    saveOrders(orders);
 
-    alert("Order Placed!");
+    notify(
+    "✅ Order Placed"
+    );
 
     home();
 }
@@ -1026,96 +997,141 @@ function saveOrder(){
 
 function trackOrder(){
 
-    let user = getUser();
+    let user =
+    getUser();
 
-    let orders = getOrders()
-    .filter(o => o.user === user);
+    let orders =
+    getOrders().filter(
+    o=>o.user===user
+    );
 
     let html = `
 
     <div class="card">
-        <h2>📦 Tracking Orders</h2>
-    </div>
 
+        <h2>
+        📦 Tracking Orders
+        </h2>
+
+    </div>
     `;
 
-    if(orders.length === 0){
-
-        html += `
-        <div class="card">
-            No Orders Found
-        </div>
-        `;
-    }
-
-    orders.forEach(o => {
-
-        let step = safeStep(o.step);
+    orders.forEach(o=>{
 
         html += `
 
-        <div class="order-card"
-        onclick="viewTrack('${o.orderNumber}')">
+        <div class="card"
+        onclick="viewTrack(
+        '${o.orderNumber}'
+        )">
 
-            <div>
-                <b>#${o.orderNumber}</b>
-            </div>
+            <b>
+            #${o.orderNumber}
+            </b>
 
-            <div class="status ${getStatusClass(step)}">
+            <br><br>
 
-                ${steps[step].label}
-
-            </div>
+            ${o.status}
 
         </div>
-
         `;
     });
 
-    document.getElementById("content").innerHTML = html;
+    document.getElementById(
+    "content"
+    ).innerHTML = html;
+}
+
+/* ETA */
+
+function getETA(status){
+
+    if(status==="Go to Pickup")
+    return "20 mins";
+
+    if(status==="Collecting Gallon")
+    return "15 mins";
+
+    if(status==="Cleaning")
+    return "10 mins";
+
+    if(status==="Refilling")
+    return "8 mins";
+
+    if(status==="Out for Delivery")
+    return "5 mins";
+
+    if(status==="Delivered")
+    return "Delivered";
+
+    return "Pending";
 }
 
 /* VIEW TRACK */
 
 function viewTrack(id){
 
-    let orders = getOrders();
+    let orders =
+    getOrders();
 
-    let o = orders.find(x => x.orderNumber == id);
+    let o =
+    orders.find(
+    x=>x.orderNumber==id
+    );
 
-    let currentStep = safeStep(o.step);
+    let current =
+    steps.findIndex(
+    s=>s.label===o.status
+    );
+
+    if(current < 0)
+    current = 0;
 
     let html = `
 
     <div class="card">
 
-        <h2>📍 Tracking #${o.orderNumber}</h2>
+        <h2>
+        📍 Tracking
+        </h2>
 
         <p class="sub">
-            Current Status:
-            <b>${steps[currentStep].label}</b>
+
+        Rider:
+        <b>
+
+        ${o.rider || "Waiting Rider"}
+
+        </b>
+
         </p>
+
+        <div class="eta-box">
+
+        🚚 ETA:
+        ${getETA(o.status)}
+
+        </div>
 
         <div class="track-wrapper">
 
-            <div class="track-line"></div>
+        <div class="track-line"></div>
 
-            <div class="track-progress">
-
+        <div class="track-progress">
     `;
 
     steps.forEach((s,index)=>{
 
-        let className = "";
+        let className="";
 
-        if(index < currentStep)
-            className = "active";
+        if(index < current)
+        className="active";
 
-        if(index == currentStep)
-            className = "current";
+        if(index===current)
+        className="current";
 
-        if(currentStep == 4)
-            className = "active";
+        if(o.status==="Delivered")
+        className="active";
 
         html += `
 
@@ -1123,28 +1139,190 @@ function viewTrack(id){
 
             <div class="circle ${className}">
 
-                <i class="fa-solid ${s.icon}"></i>
+            ${index+1}
 
             </div>
 
             <div class="track-label">
 
-                ${s.label}
+            ${s.label}
 
             </div>
 
         </div>
-
         `;
     });
 
     html += `
-            </div>
+
         </div>
+        </div>
+    `;
+
+    if(o.status==="Delivered"){
+
+        html += `
+
+        <div style="margin-top:35px;">
+
+            <h3>
+            ⭐ Rate Rider
+            </h3>
+
+            <div class="stars">
+
+            <i class="fa-solid fa-star"
+            onclick="rateOrder(1)">
+            </i>
+
+            <i class="fa-solid fa-star"
+            onclick="rateOrder(2)">
+            </i>
+
+            <i class="fa-solid fa-star"
+            onclick="rateOrder(3)">
+            </i>
+
+            <i class="fa-solid fa-star"
+            onclick="rateOrder(4)">
+            </i>
+
+            <i class="fa-solid fa-star"
+            onclick="rateOrder(5)">
+            </i>
+
+            </div>
+
+            <textarea
+            id="review"
+            placeholder="Write review...">
+            </textarea>
+
+            <button
+            class="primary-btn"
+            onclick="submitReview(
+            '${o.orderNumber}'
+            )">
+
+            Submit Review
+
+            </button>
+
+        </div>
+        `;
+    }
+
+    html += `</div>`;
+
+    document.getElementById(
+    "content"
+    ).innerHTML = html;
+}
+
+/* RATE */
+
+let selectedRate = 0;
+
+function rateOrder(rate){
+
+    selectedRate = rate;
+
+    let stars =
+    document.querySelectorAll(
+    ".stars i"
+    );
+
+    stars.forEach((s,index)=>{
+
+        if(index < rate){
+
+            s.classList.add("active");
+
+        }else{
+
+            s.classList.remove("active");
+        }
+    });
+}
+
+/* SAVE REVIEW */
+
+function submitReview(id){
+
+    let orders =
+    getOrders();
+
+    let order =
+    orders.find(
+    x=>x.orderNumber==id
+    );
+
+    order.rating =
+    selectedRate;
+
+    order.review =
+    document.getElementById(
+    "review"
+    ).value;
+
+    saveOrders(orders);
+
+    notify(
+    "⭐ Review Submitted"
+    );
+
+    trackOrder();
+}
+
+/* PAYMENTS */
+
+function paymentHistory(){
+
+    let user =
+    getUser();
+
+    let orders =
+    getOrders().filter(
+    o=>o.user===user
+    );
+
+    let html = `
+
+    <div class="card">
+
+        <h2>
+        💳 Payment History
+        </h2>
+
     </div>
     `;
 
-    document.getElementById("content").innerHTML = html;
+    orders.reverse()
+    .forEach(o=>{
+
+        html += `
+
+        <div class="card">
+
+            <b>
+            #${o.orderNumber}
+            </b>
+
+            <br><br>
+
+            ${o.payment}
+
+            <br><br>
+
+            ₱${o.total || 0}
+
+        </div>
+        `;
+    });
+
+    document.getElementById(
+    "content"
+    ).innerHTML = html;
 }
 
 /* PROFILE */
@@ -1153,107 +1331,435 @@ function profile(){
 
     let username = getUser();
 
-    let users =
-    JSON.parse(localStorage.getItem("users")) || [];
-
-    /* HANAP USER */
-    let userObj = users.find(
-        u => u.username === username
-    );
-
-    /* USER ORDERS */
     let orders = getOrders()
     .filter(o => o.user === username);
 
-    let totalOrders = orders.length;
+    let completed =
+    orders.filter(
+    o => o.status === "Delivered"
+    ).length;
 
-    let lastOrder =
+    let totalSpent =
+    orders.reduce(
+    (s,o)=>s + Number(o.total || 0),
+    0
+    );
+
+    let latest =
     orders[orders.length - 1];
 
-    let contact =
-    lastOrder ? lastOrder.contact : "N/A";
-
     let address =
-    lastOrder ? lastOrder.address : "N/A";
+    latest ? latest.address : "No Address";
 
-    let fullName = userObj
-    ? userObj.fname + " " + userObj.lname
-    : username;
-
-    let email = userObj
-    ? userObj.email
-    : "N/A";
+    let contact =
+    latest ? latest.contact : "No Contact";
 
     document.getElementById("content").innerHTML = `
 
     <div class="profile-card">
 
-        <div class="profile-top">
+        <!-- TOP -->
 
-            <div class="profile-avatar">
-                <i class="fa-solid fa-user"></i>
+        <div style="
+            text-align:center;
+            margin-bottom:35px;
+        ">
+
+            <div style="
+                width:120px;
+                height:120px;
+                border-radius:50%;
+                margin:auto;
+
+                background:
+                linear-gradient(
+                    135deg,
+                    #0ea5e9,
+                    #38bdf8
+                );
+
+                display:flex;
+                align-items:center;
+                justify-content:center;
+
+                color:white;
+                font-size:42px;
+                font-weight:800;
+
+                box-shadow:
+                0 15px 35px rgba(14,165,233,0.35);
+
+                margin-bottom:18px;
+            ">
+
+                ${username.charAt(0).toUpperCase()}
+
             </div>
 
-            <h2>${fullName}</h2>
+            <h2 style="
+                font-size:32px;
+                margin-bottom:6px;
+            ">
+                ${username}
+            </h2>
 
-            <p>@${username}</p>
+            <p style="
+                color:#64748b;
+                font-size:15px;
+            ">
+                💧 Premium Water Customer
+            </p>
 
         </div>
 
-        <div class="profile-info">
+        <!-- STATS -->
 
-            <div class="info-box">
-                <i class="fa-solid fa-envelope"></i>
-                <div>
-                    <span>Email</span>
-                    <h4>${email}</h4>
+        <div style="
+            display:grid;
+            grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+            gap:18px;
+            margin-bottom:30px;
+        ">
+
+            <div class="card" style="
+                margin:0;
+                padding:22px;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
+
+                    <div>
+
+                        <p style="
+                            color:#64748b;
+                            font-size:13px;
+                            margin-bottom:8px;
+                        ">
+                            Total Orders
+                        </p>
+
+                        <h1 style="
+                            color:#0f172a;
+                            font-size:34px;
+                        ">
+                            ${orders.length}
+                        </h1>
+
+                    </div>
+
+                    <div style="
+                        width:60px;
+                        height:60px;
+                        border-radius:18px;
+
+                        background:
+                        linear-gradient(
+                            135deg,
+                            #38bdf8,
+                            #0ea5e9
+                        );
+
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+
+                        color:white;
+                        font-size:24px;
+                    ">
+
+                        <i class="fa fa-box"></i>
+
+                    </div>
+
                 </div>
+
             </div>
 
-            <div class="info-box">
-                <i class="fa-solid fa-phone"></i>
-                <div>
-                    <span>Contact Number</span>
-                    <h4>${contact}</h4>
+            <div class="card" style="
+                margin:0;
+                padding:22px;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
+
+                    <div>
+
+                        <p style="
+                            color:#64748b;
+                            font-size:13px;
+                            margin-bottom:8px;
+                        ">
+                            Completed
+                        </p>
+
+                        <h1 style="
+                            color:#22c55e;
+                            font-size:34px;
+                        ">
+                            ${completed}
+                        </h1>
+
+                    </div>
+
+                    <div style="
+                        width:60px;
+                        height:60px;
+                        border-radius:18px;
+
+                        background:
+                        linear-gradient(
+                            135deg,
+                            #22c55e,
+                            #16a34a
+                        );
+
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+
+                        color:white;
+                        font-size:24px;
+                    ">
+
+                        <i class="fa fa-check"></i>
+
+                    </div>
+
                 </div>
+
             </div>
 
-            <div class="info-box">
-                <i class="fa-solid fa-location-dot"></i>
-                <div>
-                    <span>Address</span>
-                    <h4>${address}</h4>
+            <div class="card" style="
+                margin:0;
+                padding:22px;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
+
+                    <div>
+
+                        <p style="
+                            color:#64748b;
+                            font-size:13px;
+                            margin-bottom:8px;
+                        ">
+                            Total Spent
+                        </p>
+
+                        <h1 style="
+                            color:#2563eb;
+                            font-size:34px;
+                        ">
+                            ₱${totalSpent}
+                        </h1>
+
+                    </div>
+
+                    <div style="
+                        width:60px;
+                        height:60px;
+                        border-radius:18px;
+
+                        background:
+                        linear-gradient(
+                            135deg,
+                            #2563eb,
+                            #1d4ed8
+                        );
+
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+
+                        color:white;
+                        font-size:24px;
+                    ">
+
+                        <i class="fa fa-wallet"></i>
+
+                    </div>
+
                 </div>
+
             </div>
 
-            <div class="info-box">
-                <i class="fa-solid fa-box"></i>
-                <div>
-                    <span>Total Orders</span>
-                    <h4>${totalOrders}</h4>
+        </div>
+
+        <!-- INFO -->
+
+        <div class="card" style="
+            margin:0;
+        ">
+
+            <h3 style="
+                margin-bottom:20px;
+                color:#0f172a;
+            ">
+                📋 Customer Information
+            </h3>
+
+            <div style="
+                display:grid;
+                grid-template-columns:
+                repeat(auto-fit,minmax(240px,1fr));
+                gap:18px;
+            ">
+
+                <div style="
+                    background:#f8fafc;
+                    padding:18px;
+                    border-radius:18px;
+                ">
+
+                    <p style="
+                        color:#64748b;
+                        margin-bottom:8px;
+                    ">
+                        📞 Contact Number
+                    </p>
+
+                    <h4>
+                        ${contact}
+                    </h4>
+
                 </div>
+
+                <div style="
+                    background:#f8fafc;
+                    padding:18px;
+                    border-radius:18px;
+                ">
+
+                    <p style="
+                        color:#64748b;
+                        margin-bottom:8px;
+                    ">
+                        📍 Address
+                    </p>
+
+                    <h4>
+                        ${address}
+                    </h4>
+
+                </div>
+
+                <div style="
+                    background:#f8fafc;
+                    padding:18px;
+                    border-radius:18px;
+                ">
+
+                    <p style="
+                        color:#64748b;
+                        margin-bottom:8px;
+                    ">
+                        ⭐ Membership
+                    </p>
+
+                    <h4>
+                        Loyalty Customer
+                    </h4>
+
+                </div>
+
+                <div style="
+                    background:#f8fafc;
+                    padding:18px;
+                    border-radius:18px;
+                ">
+
+                    <p style="
+                        color:#64748b;
+                        margin-bottom:8px;
+                    ">
+                        🚚 Favorite Service
+                    </p>
+
+                    <h4>
+                        Water Delivery
+                    </h4>
+
+                </div>
+
             </div>
 
         </div>
 
     </div>
-
     `;
 }
 
-/* LOGOUT */
 
-function logout(){
+/* NOTIFY */
 
-    location.href="index.html";
+function notify(text){
+
+    let div =
+    document.createElement("div");
+
+    div.className =
+    "notify";
+
+    div.innerHTML =
+    text;
+
+    document.body.appendChild(div);
+
+    setTimeout(()=>{
+
+        div.remove();
+
+    },3000);
 }
+
+/* REALTIME */
+
+setInterval(()=>{
+
+    let orders =
+    getOrders();
+
+    orders.forEach(o=>{
+
+        if(o.user===getUser()){
+
+            if(localStorage.getItem(
+            "last-"+o.orderNumber
+            ) !== o.status){
+
+                localStorage.setItem(
+                "last-"+o.orderNumber,
+                o.status
+                );
+
+                notify(
+                `🚚 Order #${o.orderNumber}
+                is now ${o.status}`
+                );
+            }
+        }
+    });
+
+},2000);
 
 /* CHAT */
 
-function toggleChat(){
+function toggleFAQ(){
 
-    let box =
-    document.getElementById("chatBox");
+    let box = document.getElementById("faqBox");
 
     box.style.display =
     box.style.display === "flex"
@@ -1261,29 +1767,46 @@ function toggleChat(){
     : "flex";
 }
 
-function sendMsg(){
+function sendFAQ(){
 
-    let msg =
-    document.getElementById("msg").value;
+    let input = document.getElementById("faqInput");
+    let msg = input.value.toLowerCase().trim();
 
     if(!msg) return;
 
-    document.getElementById("chatBody")
-    .innerHTML +=
-    `<p><b>You:</b> ${msg}</p>`;
+    let answer = getFAQAnswer(msg);
 
-    document.getElementById("msg").value = "";
+    document.getElementById("faqBody").innerHTML +=
+    `<p><b>You:</b> ${msg}</p>
+     <p><b>AI:</b> ${answer}</p>`;
+
+    input.value = "";
 }
 
-function setActiveMenu(index){
+/* SIMPLE FAQ BRAIN */
+function getFAQAnswer(msg){
 
-    let buttons = document.querySelectorAll(".menu-btn");
-
-    buttons.forEach(btn => btn.classList.remove("active"));
-
-    if(buttons[index]){
-        buttons[index].classList.add("active");
+    if(msg.includes("how long") || msg.includes("delivery time")){
+        return "⏱️ Delivery time is 3–5 minutes only.";
     }
+
+    if(msg.includes("payment")){
+        return "💳 You can pay via Cash or GCash.";
+    }
+
+    if(msg.includes("price") || msg.includes("how much")){
+        return "💧 Standard rate is ₱150 per order.";
+    }
+
+    if(msg.includes("track") || msg.includes("status")){
+        return "📦 You can check Tracking page for real-time status.";
+    }
+
+    if(msg.includes("hello") || msg.includes("hi")){
+        return "👋 Hello! How can I help you today?";
+    }
+
+    return "❌ Sorry, hindi ko masasagot yan sa system namin.";
 }
 
 /* START */

@@ -1,324 +1,700 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Alka-Jozen Admin Pro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ADMIN</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #f1f5f9;
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Segoe UI;
+  background:#0f172a;
+  color:white;
+  display:flex;
 }
 
 /* SIDEBAR */
-.sidebar {
-  width: 240px;
-  height: 100vh;
-  background: #0f172a;
-  color: white;
-  position: fixed;
-  padding: 20px;
+
+.sidebar{
+  width:250px;
+  height:100vh;
+  background:#111827;
+  padding:20px;
+  position:fixed;
 }
 
-.brand {
-  font-size: 20px;
-  font-weight: bold;
-  color: #38bdf8;
-  margin-bottom: 20px;
+.brand{
+  font-size:24px;
+  font-weight:bold;
+  color:#38bdf8;
+  margin-bottom:30px;
 }
 
-.sidebar button {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 12px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 8px;
-  margin: 5px 0;
+.sidebar button{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  border:none;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+  text-align:left;
+  font-size:15px;
 }
 
-.sidebar button:hover {
-  background: rgba(56,189,248,0.15);
+.sidebar button:hover{
+  background:#38bdf8;
+  transform:translateX(5px);
 }
 
-/* CONTENT */
-.content {
-  margin-left: 260px;
-  padding: 25px;
+/* MAIN */
+
+.main{
+  margin-left:250px;
+  width:100%;
+  padding:20px;
 }
 
-/* CARD */
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+/* TOPBAR */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.topbar h1{
+  font-size:28px;
+}
+
+.clock{
+  background:rgba(255,255,255,0.08);
+  padding:10px 20px;
+  border-radius:12px;
 }
 
 /* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 12px;
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
 }
 
-.stat {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+/* CARD */
+
+.card{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
 }
 
-input {
-  padding: 10px;
-  width: 100%;
-  margin: 6px 0;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+/* STAT */
+
+.stat{
+  text-align:center;
+  transition:.3s;
 }
 
-/* BUTTONS */
-.action {
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 3px;
+.stat:hover{
+  transform:translateY(-5px);
 }
 
-.accept { background: #22c55e; color: white; }
-.progress { background: #f59e0b; color: white; }
-.done { background: #3b82f6; color: white; }
+.stat h2{
+  font-size:35px;
+  color:#38bdf8;
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:12px;
+  text-align:left;
+}
+
+th{
+  color:#94a3b8;
+}
+
+tr{
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* STATUS */
+
+.status{
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.pending{
+  background:#f59e0b;
+}
+
+.delivered{
+  background:#22c55e;
+}
+
+.ontheway{
+  background:#3b82f6;
+}
+
+/* BUTTON */
+
+.btn{
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+}
+
+.green{background:#22c55e;}
+.blue{background:#3b82f6;}
+.orange{background:#f59e0b;}
+
+/* NOTIFICATIONS */
+
+.notify{
+  margin:10px 0;
+  padding:12px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.sidebar{
+  width:100%;
+  height:auto;
+  position:relative;
+}
+
+.main{
+  margin-left:0;
+}
+
+body{
+  flex-direction:column;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="brand">💧 Alka-Jozen Admin</div>
 
-  <button onclick="dashboard()">📊 Dashboard</button>
-  <button onclick="ordersPage()">📦 Orders</button>
-  <button onclick="customers()">👤 Customers</button>
-  <button onclick="riders()">🚴 Riders</button>
-  <button onclick="salesReport()">📈 Sales Report</button>
+<div class="sidebar">
+
+<div class="brand">💧 ADMIN</div>
+
+<button onclick="dashboard()">📊 Dashboard</button>
+<button onclick="orders()">📦 Orders</button>
+<button onclick="riders()">🚴 Riders</button>
+<button onclick="analytics()">📈 Analytics</button>
+<button onclick="ai()">🛠 Help Center</button>
+
 </div>
 
-<!-- CONTENT -->
-<div class="content"></div>
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>Dashboard</h1>
+
+<div class="clock" id="clock"></div>
+
+</div>
+
+<div id="content"></div>
+
+</div>
 
 <script>
 
-/* ===================== DATA ===================== */
-function getOrders(){
-  return JSON.parse(localStorage.getItem("history")) || [];
-}
+/* CLOCK */
 
-function save(data){
-  localStorage.setItem("history", JSON.stringify(data));
-}
+setInterval(()=>{
+document.getElementById("clock").innerHTML =
+new Date().toLocaleTimeString();
+},1000);
 
-/* AUTO DATE FIX */
-function fixDates(){
-  let orders = getOrders();
-  let updated = false;
+/* DATA */
 
-  orders.forEach(o=>{
-    if(!o.date){
-      o.date = new Date().toLocaleString();
-      updated = true;
-    }
-  });
+let order = {
+  orderNumber:"001",
+  user:"Juan Dela Cruz",
+  address:"Urduja, Caloocan City",
+  total:30,
+  status:"Pending",
+  rider:"Auto Rider System",
 
-  if(updated){
-    save(orders);
-  }
-}
+  payment:"GCash",
+  reference:"1234567890",
+  paymentStatus:"Unpaid"
+};
 
-/* ===================== DASHBOARD ===================== */
+/* DASHBOARD */
+
 dashboard();
 
 function dashboard(){
 
-  fixDates();
+document.getElementById("content").innerHTML = `
 
-  let orders = getOrders();
-  let total = orders.reduce((s,o)=>s+(o.total||0),0);
+<!-- STATS -->
 
-  let status = {
-    "Order Received":0,
-    "Go to Pickup":0,
-    "Cleaning":0,
-    "Refilling":0,
-    "Out for Delivery":0,
-    "Delivered":0
-  };
+<div class="grid">
 
-  orders.forEach(o=>{
-    if(status[o.status] !== undefined){
-      status[o.status]++;
-    }
-  });
+<div class="card stat">
+<h2>1</h2>
+<p>Total Orders</p>
+</div>
 
-  document.querySelector(".content").innerHTML = `
-    <h2>📊 Dashboard</h2>
+<div class="card stat">
+<h2>₱30</h2>
+<p>Total Sales</p>
+</div>
 
-    <div class="grid">
-      <div class="stat"><h2>${orders.length}</h2><p>Total Orders</p></div>
-      <div class="stat"><h2>₱${total}</h2><p>Total Sales</p></div>
-      <div class="stat"><h2>${orders.filter(o=>o.status==="Delivered").length}</h2><p>Delivered</p></div>
-    </div>
+<div class="card stat">
+<h2>2</h2>
+<p>Active Riders</p>
+</div>
 
-    <div class="card">
-      <canvas id="chart1"></canvas>
-    </div>
+<div class="card stat">
+<h2>${order.status=="Delivered" ? 1 : 0}</h2>
+<p>Delivered</p>
+</div>
 
-    <div class="card">
-      <canvas id="chart2"></canvas>
-    </div>
-  `;
+</div>
 
-  new Chart(document.getElementById("chart1"),{
-    type:"bar",
-    data:{
-      labels: orders.map(o=>o.orderNumber),
-      datasets:[{
-        label:"Sales",
-        data: orders.map(o=>o.total),
-        backgroundColor:"#38bdf8"
-      }]
-    }
-  });
+<br>
 
-  new Chart(document.getElementById("chart2"),{
-    type:"pie",
-    data:{
-      labels:Object.keys(status),
-      datasets:[{
-        data:Object.values(status),
-        backgroundColor:[
-          "#f87171","#fbbf24","#facc15",
-          "#60a5fa","#38bdf8","#22c55e"
-        ]
-      }]
-    }
-  });
+<!-- CHART -->
+
+<div class="card">
+
+<h3>📈 Weekly Sales</h3>
+
+<br>
+
+<canvas id="salesChart"></canvas>
+
+</div>
+
+<br>
+
+<!-- RECENT ORDERS -->
+
+<div class="card">
+
+<h3>📦 Recent Orders</h3>
+
+<br>
+
+<table>
+
+<tr>
+<th>Order</th>
+<th>Customer</th>
+<th>Status</th>
+<th>Total</th>
+</tr>
+
+<tr>
+<td>#${order.orderNumber}</td>
+<td>${order.user}</td>
+<td>
+
+<span class="status ${
+order.status=="Pending"
+? "pending"
+: order.status=="Delivered"
+? "delivered"
+: "ontheway"
+}">
+
+${order.status}
+
+</span>
+
+</td>
+
+<td>₱${order.total}</td>
+</tr>
+
+</table>
+
+</div>
+
+<br>
+
+<!-- NOTIFICATIONS -->
+
+<div class="card">
+
+<h3>🔔 Notifications</h3>
+
+<div class="notify">
+📦 New order received
+</div>
+
+<div class="notify">
+🚴 Rider assigned automatically
+</div>
+
+<div class="notify">
+💰 Revenue updated
+</div>
+
+</div>
+
+<br>
+
+
+`;
+
+setTimeout(loadChart,100);
+
 }
 
-/* ===================== ORDERS ===================== */
-function ordersPage(){
+/* CHART */
 
-  let orders = getOrders();
+function loadChart(){
 
-  let html = "<h2>📦 Orders Management</h2>";
+new Chart(document.getElementById("salesChart"),{
 
-  orders.forEach((o,i)=>{
+type:'line',
 
-    html += `
-      <div class="card">
-        📦 <b>${o.orderNumber}</b><br>
-        👤 ${o.user}<br>
-        📍 ${o.address}<br>
-        🚦 ${o.status}<br>
-        💰 ₱${o.total}
+data:{
+labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
 
-        <br><br>
+datasets:[{
+label:'Sales',
+data:[120,190,300,250,400,280,500],
+borderColor:'#38bdf8',
+backgroundColor:'rgba(56,189,248,0.2)',
+fill:true,
+tension:.4
+}]
+},
 
-        <button class="action accept" onclick="update(${i},'Go to Pickup')">Accept</button>
-        <button class="action progress" onclick="update(${i},'Out for Delivery')">Deliver</button>
-        <button class="action done" onclick="update(${i},'Delivered')">Done</button>
-      </div>
-    `;
-  });
-
-  document.querySelector(".content").innerHTML = html;
+options:{
+responsive:true,
+plugins:{
+legend:{
+labels:{
+color:'white'
+}
+}
+},
+scales:{
+x:{
+ticks:{color:'white'}
+},
+y:{
+ticks:{color:'white'}
+}
+}
 }
 
-function update(i,status){
-  let orders = getOrders();
-  orders[i].status = status;
-  save(orders);
-  ordersPage();
+});
+
 }
 
-/* ===================== CUSTOMERS ===================== */
-function customers(){
+/* ORDERS */
 
-  let orders = getOrders();
-  let map = {};
+function orders(){
 
-  orders.forEach(o=>{
-    map[o.user] = (map[o.user]||0)+1;
-  });
+let html = `
+<div class="card">
+<h2>📦 Order Management</h2>
+<p class="sub">Click an order to view details & payment verification</p>
+</div>
+`;
 
-  let html = "<h2>👤 Customers</h2>";
+html += `
+<div class="card">
+`;
 
-  Object.keys(map).forEach(u=>{
-    html += `
-      <div class="card">
-        👤 ${u}<br>
-        📦 Orders: ${map[u]}
-      </div>
-    `;
-  });
+// sample list (later pwede mo palitan ng localStorage orders)
+html += `
+<div onclick="viewOrder('001')" style="padding:15px; background:rgba(255,255,255,0.05); margin-bottom:10px; border-radius:12px; cursor:pointer;">
+<b>#001</b> - Juan Dela Cruz
+<br>
+<span class="status pending">Pending Payment</span>
+</div>
 
-  document.querySelector(".content").innerHTML = html;
+<div onclick="viewOrder('002')" style="padding:15px; background:rgba(255,255,255,0.05); margin-bottom:10px; border-radius:12px; cursor:pointer;">
+<b>#002</b> - Maria Santos
+<br>
+<span class="status ontheway">Paid (GCash)</span>
+</div>
+`;
+
+html += `</div>`;
+
+document.getElementById("content").innerHTML = html;
 }
 
-/* ===================== RIDERS ===================== */
+function viewOrder(id){
+
+let html = `
+<div class="card">
+
+<h2>📦 Order #${id}</h2>
+
+<hr><br>
+
+👤 Customer: Juan Dela Cruz<br>
+📍 Address: Urduja, Caloocan City<br>
+💰 Total: ₱30<br>
+🚚 Status: Pending<br><br>
+
+<h3>💳 Payment Verification</h3>
+
+<div style="margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px;">
+
+📌 Method: GCash<br>
+📌 Reference: 09123456789<br>
+📌 Proof: <br><br>
+
+<img src="https://via.placeholder.com/250x150?text=GCash+Proof" style="border-radius:12px; width:100%;">
+
+<br><br>
+
+<button class="btn green" onclick="approvePayment()">
+✔ Approve Payment
+</button>
+
+<button class="btn orange" onclick="rejectPayment()">
+✖ Reject
+</button>
+
+</div>
+
+</div>
+`;
+
+document.getElementById("content").innerHTML = html;
+}
+
+function approvePayment(){
+alert("Payment Approved ✔");
+orders();
+}
+
+function rejectPayment(){
+alert("Payment Rejected ✖");
+orders();
+}
+/* UPDATE STATUS */
+
+function updateStatus(status){
+
+order.status = status;
+
+alert("Order updated to: " + status);
+
+orders();
+
+}
+
+/* RIDERS */
+
 function riders(){
 
-  let orders = getOrders();
-  let map = {};
+document.getElementById("content").innerHTML = `
 
-  orders.forEach(o=>{
-    if(o.rider){
-      map[o.rider] = (map[o.rider]||0)+1;
-    }
-  });
+<div class="card">
 
-  let html = "<h2>🚴 Riders</h2>";
+<h2>🚴 Rider Panel</h2>
 
-  Object.keys(map).forEach(r=>{
-    html += `
-      <div class="card">
-        🚴 ${r}<br>
-        📦 Deliveries: ${map[r]}
-      </div>
-    `;
-  });
+<br>
 
-  document.querySelector(".content").innerHTML = html;
+<p>🚴 Rider Name: ${order.rider}</p>
+
+<br>
+
+<p>📦 Current Deliveries: 1</p>
+
+<br>
+
+<p>🚚 Status: ${order.status}</p>
+
+</div>
+
+`;
+
 }
 
-/* ===================== SALES REPORT ===================== */
-function salesReport(){
+/* ANALYTICS */
 
-  let orders = getOrders();
+function analytics(){
 
-  let today = new Date().toDateString();
+document.getElementById("content").innerHTML = `
 
-  let daily = orders.filter(o=>new Date(o.date).toDateString()===today);
+<div class="grid">
 
-  let weekly = orders.slice(-7);
+<div class="card stat">
+<h2>₱30</h2>
+<p>Today's Revenue</p>
+</div>
 
-  document.querySelector(".content").innerHTML = `
-    <h2>📈 Sales Report</h2>
+<div class="card stat">
+<h2>1</h2>
+<p>Total Orders</p>
+</div>
 
-    <div class="card">
-      📅 Today: ₱${daily.reduce((s,o)=>s+o.total,0)}<br>
-      📆 Weekly: ₱${weekly.reduce((s,o)=>s+o.total,0)}<br>
-      📦 Orders: ${orders.length}
-    </div>
-  `;
+<div class="card stat">
+<h2>95%</h2>
+<p>Success Rate</p>
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>📈 Business Analytics</h3>
+
+<br>
+
+<p>✔ Orders are stable today.</p>
+
+<p>✔ Delivery performance is good.</p>
+
+<p>✔ Revenue increased from yesterday.</p>
+
+</div>
+
+`;
+
 }
+
+/* AI */
+
+/* ================= ADMIN HELP CENTER ================= */
+
+function ai(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="card">
+
+<h2>🛠 ADMIN HELP CENTER</h2>
+
+<br>
+
+<div class="notify">
+
+📦 <b>Order Management</b>
+
+<br><br>
+
+• Accept customer orders<br>
+• Update delivery status<br>
+• Mark orders as completed
+
+</div>
+
+<div class="notify">
+
+🚴 <b>Rider Monitoring</b>
+
+<br><br>
+
+• Track assigned riders<br>
+• Monitor active deliveries<br>
+• View rider availability
+
+</div>
+
+<div class="notify">
+
+📈 <b>Analytics Overview</b>
+
+<br><br>
+
+• Monitor daily sales<br>
+• Check total deliveries<br>
+• Track business performance
+
+</div>
+
+<div class="notify">
+
+🔔 <b>System Notifications</b>
+
+<br><br>
+
+• Receive new order alerts<br>
+• Rider delivery updates<br>
+• Delivery completion notices
+
+</div>
+
+<div class="notify">
+
+💰 <b>Revenue Tracking</b>
+
+<br><br>
+
+• Daily sales reports<br>
+• Weekly income monitoring<br>
+• Delivery revenue summary
+
+</div>
+
+<div class="notify">
+
+⚙ <b>Admin Controls</b>
+
+<br><br>
+
+• Manage delivery operations<br>
+• Maintain dashboard activity<br>
+• Supervise overall system flow
+
+</div>
+
+</div>
+
+`;
+
+}
+
 
 </script>
 

@@ -1,151 +1,344 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <title>Alka-Jozen Rider Dashboard</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-* { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #f1f5f9;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-.sidebar {
-  width: 240px;
-  background: #0f172a;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  height: 100vh;
+body{
+  font-family:'Segoe UI',sans-serif;
+
+  background:
+  linear-gradient(135deg,#dbeafe,#eff6ff,#f8fafc);
+
+  min-height:100vh;
+  overflow-x:hidden;
 }
 
-.brand {
-  font-size: 20px;
-  font-weight: bold;
-  color: #38bdf8;
-  margin-bottom: 20px;
+/* SIDEBAR */
+
+.sidebar{
+  width:250px;
+  height:100vh;
+
+  position:fixed;
+  left:0;
+  top:0;
+
+  padding:25px 18px;
+
+  background:
+  linear-gradient(180deg,#0f172a,#111827);
+
+  box-shadow:
+  10px 0 30px rgba(0,0,0,.15);
+
+  z-index:100;
 }
 
-.sidebar button {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 12px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 8px;
-  margin: 4px 0;
+.brand{
+  font-size:24px;
+  font-weight:800;
+  color:#38bdf8;
+  text-align:center;
+  margin-bottom:35px;
+
+  text-shadow:
+  0 0 20px rgba(56,189,248,.5);
 }
 
-.sidebar button:hover {
-  background: rgba(56,189,248,0.15);
+.sidebar button{
+  width:100%;
+  border:none;
+
+  padding:16px;
+  margin-bottom:12px;
+
+  border-radius:18px;
+
+  background:rgba(255,255,255,.05);
+
+  color:white;
+  font-weight:700;
+  font-size:15px;
+
+  text-align:left;
+  cursor:pointer;
+
+  transition:.3s;
 }
 
-.content {
-  margin-left: 240px;
-  padding: 20px;
+.sidebar button:hover{
+  transform:translateX(5px);
+
+  background:
+  linear-gradient(90deg,#0ea5e9,#38bdf8);
+
+  box-shadow:
+  0 10px 25px rgba(14,165,233,.35);
 }
 
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+/* CONTENT */
+
+.content{
+  margin-left:250px;
+  padding:35px;
 }
 
-.step-btn {
-  width: 100%;
-  padding: 10px;
-  margin: 4px 0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #e2e8f0;
+/* TITLE */
+
+h2{
+  color:#0f172a;
+  margin-bottom:20px;
+  font-size:30px;
 }
 
-.active-step {
-  background: #22c55e !important;
-  color: white;
+/* GLASS CARD */
+
+.card{
+
+  background:
+  rgba(255,255,255,.45);
+
+  backdrop-filter:blur(18px);
+
+  border:
+  1px solid rgba(255,255,255,.5);
+
+  border-radius:28px;
+
+  padding:24px;
+
+  margin-bottom:20px;
+
+  box-shadow:
+  0 10px 35px rgba(0,0,0,.08);
+
+  transition:.3s ease;
+
+  animation:fade .4s ease;
 }
 
-/* MAP */
-#mapPopup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.card:hover{
+  transform:translateY(-5px);
+
+  box-shadow:
+  0 20px 40px rgba(14,165,233,.18);
 }
 
-.map-box {
-  width: 95%;
-  max-width: 420px;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
+@keyframes fade{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
-.map-area {
-  position: relative;
-  width: 100%;
-  height: 300px;
-  background: #dbeafe;
+/* ORDER INFO */
+
+.order-top{
+  cursor:pointer;
+  line-height:2;
+  color:#334155;
 }
 
-.road {
-  position: absolute;
-  top: 50%;
-  left: 10%;
-  width: 80%;
-  height: 4px;
-  background: #94a3b8;
+/* BUTTONS */
+
+.step-btn{
+  width:100%;
+  border:none;
+
+  padding:14px;
+  margin-top:10px;
+
+  border-radius:15px;
+
+  background:#e2e8f0;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:.25s;
 }
 
-.start { position: absolute; top:45%; left:10%; }
-.dest { position: absolute; top:45%; right:10%; }
-
-#rider {
-  position: absolute;
-  top: 45%;
-  left: 10%;
-  transition: 1.5s linear;
+.step-btn:hover{
+  transform:translateY(-2px);
 }
 
-.status {
-  text-align: center;
-  padding: 10px;
+.active-step{
+  background:
+  linear-gradient(90deg,#22c55e,#16a34a)!important;
+
+  color:white;
+
+  box-shadow:
+  0 10px 20px rgba(34,197,94,.3);
 }
 
-.close-btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  background: #0ea5e9;
-  color: white;
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  background:rgba(15,23,42,.6);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  z-index:999;
+
+  backdrop-filter:blur(6px);
 }
+
+.modal-box{
+
+  width:92%;
+  max-width:450px;
+
+  background:white;
+
+  border-radius:30px;
+
+  padding:25px;
+
+  animation:pop .3s ease;
+}
+
+@keyframes pop{
+  from{
+    transform:scale(.9);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.close-btn{
+  width:100%;
+  border:none;
+
+  padding:15px;
+  margin-top:18px;
+
+  border-radius:15px;
+
+  background:
+  linear-gradient(90deg,#0ea5e9,#38bdf8);
+
+  color:white;
+
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+/* RATING */
+
+.rating{
+  color:#f59e0b;
+  font-size:18px;
+  margin-top:10px;
+}
+
+/* CHART */
+
+.chart-box{
+  margin-top:25px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  .sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+    display:flex;
+    overflow-x:auto;
+    gap:10px;
+    padding:12px;
+  }
+
+  .brand{
+    display:none;
+  }
+
+  .sidebar button{
+    flex:1;
+    white-space:nowrap;
+    font-size:13px;
+    padding:12px;
+    border-radius:12px;
+  }
+
+  .content{
+    margin-left:0;
+    padding:15px;
+  }
+
+  h2{
+    font-size:22px;
+  }
+
+  .card{
+    padding:16px;
+    border-radius:18px;
+  }
+
+  .step-btn{
+    padding:14px;
+    font-size:14px;
+    margin-top:12px;
+  }
+
+  .modal-box{
+    width:95%;
+    padding:18px;
+    border-radius:20px;
+  }
+
+}
+
+.card{
+  word-wrap:break-word;
+  line-height:1.6;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-  <div class="brand">🚴 Alka-Jozen Rider</div>
+
+  <div class="brand">
+    🚴 Alka-Jozen Rider
+  </div>
 
   <button onclick="loadOrders()">📦 Incoming</button>
   <button onclick="active()">🛵 Active</button>
   <button onclick="earnings()">💰 Earnings</button>
   <button onclick="delivered()">🎉 Delivered</button>
+
 </div>
 
 <div class="content" id="content"></div>
@@ -153,66 +346,55 @@ body {
 <script>
 
 /* ================= STORAGE ================= */
+
 function getOrders(){
   return JSON.parse(localStorage.getItem("history")) || [];
 }
 
 function save(data){
-  localStorage.setItem("history", JSON.stringify(data));
+  localStorage.setItem("history",JSON.stringify(data));
 }
 
-/* ================= RIDER NAME ================= */
 function getRiderName(){
   return localStorage.getItem("username") || "Unknown Rider";
 }
 
-/* ================= SAFE USER NAME ================= */
 function getName(o){
   return o.name || o.user || "Unknown";
 }
 
 /* ================= LOAD ================= */
+
 loadOrders();
 
 function loadOrders(){
 
-  let o = getOrders();
-  let html = "<h2>📦 Incoming Orders</h2>";
-  let has = false;
+let html = "<h2>📦 Incoming Orders</h2>";
 
-  o.forEach((x,i)=>{
+html += `
+<div class="card">
 
-    if(x.status !== "Order Received") return;
+📦 #001<br>
+👤 Juan Dela Cruz<br>
+📍 Urduja, Caloocan City<br>
 
-    has = true;
+<button class="step-btn" onclick="accept(0)">
+Accept Order
+</button>
 
-    html += `
-      <div class="card">
-        📦 ${x.orderNumber}<br>
-        👤 ${getName(x)}<br>
-        📞 ${x.contact}<br>
-        📍 ${x.address}<br>
+</div>
+`;
 
-        <button class="step-btn" onclick="accept(${i})">
-          Accept Order
-        </button>
-      </div>
-    `;
-  });
-
-  if(!has) html += "<p>No incoming orders</p>";
-
-  document.getElementById("content").innerHTML = html;
+document.getElementById("content").innerHTML = html;
 }
 
-/* ================= ACCEPT (FIXED) ================= */
+/* ================= ACCEPT ================= */
+
 function accept(i){
 
   let o = getOrders();
 
   o[i].status = "Go to Pickup";
-
-  // 🔥 FIX: SAVE RIDER NAME
   o[i].rider = getRiderName();
 
   save(o);
@@ -221,10 +403,15 @@ function accept(i){
 }
 
 /* ================= ACTIVE ================= */
+
+/* ================= ACTIVE DELIVERIES (WORKING FLOW) ================= */
+
 function active(){
 
   let o = getOrders();
+
   let html = "<h2>🛵 Active Deliveries</h2>";
+
   let found = false;
 
   o.forEach((x,i)=>{
@@ -235,26 +422,119 @@ function active(){
 
     html += `
       <div class="card">
-        📦 ${x.orderNumber}<br>
-        👤 ${getName(x)}<br>
-        🚴 Rider: ${x.rider || "Unassigned"}<br>
-        📍 ${x.address}<br>
-        🚦 ${x.status}
 
-        <br><br>
+        📦 #001<br>
+        👤 Juan Dela Cruz<br>
+        🚴 Rider: ${getRiderName()}<br>
+        📍 Urduja, Caloocan City<br>
+        🚦 Current: <b>${x.status}</b><br>
 
-        ${statusUI(i, x.status)}
+        <div style="margin-top:10px;">
+          ${statusUI(i, x.status)}
+        </div>
+
+        <button class="step-btn" onclick="showDetails(${i})">
+        📦 View Details
+        </button>
+
       </div>
     `;
   });
 
-  if(!found) html += "<p>No active deliveries</p>";
+  if(!found){
+
+    // SAMPLE DISPLAY kapag walang real data
+    html += `
+      <div class="card">
+
+        📦 #001<br>
+        👤 Juan Dela Cruz<br>
+        🚴 Rider: ${getRiderName()}<br>
+        📍 Urduja, Caloocan City<br>
+        🚦 Current: Go to Pickup<br>
+
+        <div style="margin-top:10px;">
+          <button class="step-btn active-step">Go to Pickup</button>
+          <button class="step-btn">Collecting Gallon</button>
+          <button class="step-btn">Cleaning</button>
+          <button class="step-btn">Refilling</button>
+          <button class="step-btn">Out for Delivery</button>
+          <button class="step-btn">Delivered</button>
+        </div>
+
+        <button class="step-btn" onclick="alert('Example order only')">
+        📦 View Details
+        </button>
+
+      </div>
+    `;
+  }
 
   document.getElementById("content").innerHTML = html;
 }
 
-/* ================= STATUS BUTTONS ================= */
-function statusUI(i, current){
+
+/* ================= STATUS FLOW BUTTONS ================= */
+
+function statusUI(i,current){
+
+  let flow = [
+    "Go to Pickup",
+    "Collecting Gallon",
+    "Cleaning",
+    "Refilling",
+    "Out for Delivery",
+    "Delivered"
+  ];
+
+  return flow.map(step => {
+
+    let active = current === step ? "active-step" : "";
+
+    return `
+      <button class="step-btn ${active}"
+        onclick="setStatus(${i}, '${step}')">
+        ${step}
+      </button>
+    `;
+  }).join("");
+}
+
+
+/* ================= UPDATE STATUS ================= */
+
+function setStatus(i,status){
+
+  let o = getOrders();
+
+  o[i].status = status;
+
+  // kapag Delivered, auto assign rider confirm
+  if(status === "Delivered"){
+    o[i].deliveredAt = new Date().toLocaleString();
+  }
+
+  save(o);
+
+  active(); // refresh UI
+}
+
+/* ================= TOGGLE ================= */
+
+function toggleSteps(i){
+
+  let el = document.getElementById("steps-"+i);
+
+  if(el.style.display==="none"){
+    el.style.display="block";
+  }else{
+    el.style.display="none";
+  }
+}
+
+/* ================= STATUS UI ================= */
+
+function statusUI(i,current){
 
   let flow = [
     "Go to Pickup",
@@ -266,143 +546,190 @@ function statusUI(i, current){
   ];
 
   return flow.map(step=>`
-    <button class="step-btn ${current===step?'active-step':''}"
-      onclick="setStatus(${i}, '${step}')">
-      ${step}
+
+    <button class="step-btn
+    ${current===step?'active-step':''}"
+
+    onclick="setStatus(${i},'${step}')">
+
+    ${step}
+
     </button>
+
   `).join("");
 }
 
-/* ================= UPDATE STATUS ================= */
-function setStatus(i, status){
+/* ================= SET STATUS ================= */
+
+function setStatus(i,status){
 
   let o = getOrders();
-  o[i].status = status;
-  save(o);
 
-  if(status === "Out for Delivery"){
-    showMap(o[i]);
-  }
+  o[i].status = status;
+
+  save(o);
 
   active();
 }
 
-/* ================= MAP ================= */
-function showMap(order){
+/* ================= DETAILS MODAL ================= */
 
-  let popup = document.createElement("div");
-  popup.id = "mapPopup";
+function showDetails(i){
 
-  popup.innerHTML = `
-    <div class="map-box">
+  let o = getOrders();
 
-      <div style="text-align:center;padding:10px;">
-        <h3>🚴 Live Tracking</h3>
-        <p><b>${getName(order)}</b></p>
-        <p>🚴 ${order.rider || "No Rider"}</p>
-        <p>${order.address}</p>
-      </div>
+  let x = o[i];
 
-      <div class="map-area">
-        <div class="road"></div>
-        <div class="start">🚴</div>
-        <div class="dest">🏠</div>
-        <div id="rider">🚴</div>
-      </div>
+  let modal = document.createElement("div");
 
-      <div class="status" id="statusText">
-        Starting delivery...
-      </div>
+  modal.className = "modal";
 
-      <button class="close-btn" onclick="closeMap()">Close</button>
+  modal.id = "modal";
 
+  modal.innerHTML = `
+
+  <div class="modal-box">
+
+    <h2>📦 Order Details</h2>
+
+    <br>
+
+    <p><b>Order:</b> ${x.orderNumber}</p>
+    <p><b>Customer:</b> ${getName(x)}</p>
+    <p><b>Contact:</b> ${x.contact}</p>
+    <p><b>Address:</b> ${x.address}</p>
+    <p><b>Total:</b> ₱${x.total || 0}</p>
+    <p><b>Status:</b> ${x.status}</p>
+
+    <div class="rating">
+      ⭐⭐⭐⭐⭐
     </div>
+
+    <button class="close-btn"
+    onclick="closeModal()">
+    Close
+    </button>
+
+  </div>
   `;
 
-  document.body.appendChild(popup);
-  animateRider();
+  document.body.appendChild(modal);
 }
 
-/* ================= ANIMATION ================= */
-function animateRider(){
+function closeModal(){
 
-  let rider = document.getElementById("rider");
-  let text = document.getElementById("statusText");
+  let m = document.getElementById("modal");
 
-  let pos = 10;
-
-  let interval = setInterval(()=>{
-
-    if(pos >= 80){
-
-      clearInterval(interval);
-      rider.style.left = "80%";
-      text.innerHTML = "🎉 DELIVERED!";
-
-      let o = getOrders();
-      let order = o.find(x=>x.status==="Out for Delivery");
-      if(order) order.status = "Delivered";
-      save(o);
-
-      setTimeout(closeMap, 2000);
-      return;
-    }
-
-    pos += 12;
-    rider.style.left = pos + "%";
-
-  },1500);
-}
-
-/* ================= CLOSE ================= */
-function closeMap(){
-  let el = document.getElementById("mapPopup");
-  if(el) el.remove();
+  if(m) m.remove();
 }
 
 /* ================= EARNINGS ================= */
+
 function earnings(){
 
   let rider = getRiderName();
 
   let o = getOrders().filter(x=>
-    x.status==="Delivered" && x.rider===rider
+    x.status==="Delivered" &&
+    x.rider===rider
   );
 
-  let total = o.reduce((s,x)=>s+Number(x.total||0),0);
-
-  document.getElementById("content").innerHTML = `
-    <h2>💰 Earnings</h2>
-    <div class="card">
-      🚴 Rider: ${rider}<br>
-      Delivered: ${o.length}<br>
-      Income: ₱${total}
-    </div>
-  `;
-}
-
-/* ================= DELIVERED ================= */
-function delivered(){
-
-  let rider = getRiderName();
-
-  let o = getOrders().filter(x=>
-    x.status==="Delivered" && x.rider===rider
-  );
-
-  let html = "<h2>🎉 Delivered Orders</h2>";
+  let today = 0;
+  let week = 0;
+  let month = 0;
 
   o.forEach(x=>{
-    html += `
-      <div class="card">
-        📦 ${x.orderNumber}<br>
-        👤 ${getName(x)}<br>
-        💰 ₱${x.total}
-      </div>
-    `;
+
+    let total = Number(x.total || 0);
+
+    today += total;
+    week += total;
+    month += total;
   });
 
-  document.getElementById("content").innerHTML = html;
+  document.getElementById("content").innerHTML = `
+
+    <h2>💰 Earnings Dashboard</h2>
+
+    <div class="card">
+
+      🚴 Rider: ${rider}<br><br>
+
+      💵 Today Income: ₱${today}<br>
+      📅 Weekly Income: ₱${week}<br>
+      🗓 Monthly Income: ₱${month}<br>
+      📦 Completed Deliveries: ${o.length}
+
+      <div class="chart-box">
+        <canvas id="earnChart"></canvas>
+      </div>
+
+    </div>
+  `;
+
+  setTimeout(renderChart,100);
+}
+
+/* ================= CHART ================= */
+
+function renderChart(){
+
+  let ctx =
+  document.getElementById("earnChart");
+
+  new Chart(ctx,{
+
+    type:'bar',
+
+    data:{
+      labels:[
+        'Today',
+        'Weekly',
+        'Monthly'
+      ],
+
+      datasets:[{
+        label:'Income',
+
+        data:[
+          1200,
+          5400,
+          14000
+        ],
+
+        borderRadius:12
+      }]
+    },
+
+    options:{
+      responsive:true
+    }
+  });
+}
+
+/* ================= DELIVERED (SAMPLE ONLY) ================= */
+
+function delivered(){
+
+document.getElementById("content").innerHTML = `
+
+<h2>🎉 Delivered Orders</h2>
+
+<div class="card">
+
+📦 #001<br>
+👤 Juan Dela Cruz<br>
+🚴 Rider: ${getRiderName()}<br>
+💰 ₱150<br>
+📍 Urduja, Caloocan City<br>
+
+<div class="rating">
+⭐⭐⭐⭐⭐
+</div>
+
+</div>
+
+`;
 }
 
 </script>
