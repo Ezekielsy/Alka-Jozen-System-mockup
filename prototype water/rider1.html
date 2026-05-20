@@ -301,6 +301,13 @@ body {
   .steps-grid { grid-template-columns: 1fr; }
   .topbar { padding: 12px 16px; }
 }
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 </style>
 </head>
 <body>
@@ -329,6 +336,12 @@ body {
     <button class="nav-btn" id="nav-delivered" onclick="setNav('delivered'); delivered()">
       <i class="fa-solid fa-circle-check"></i> Delivered
     </button>
+
+    <!-- 🔴 ADD THIS -->
+  <button class="nav-btn" onclick="showLogoutModal()">
+    <i class="fa-solid fa-right-from-bracket"></i> Logout
+  </button>
+</div>
   </div>
 
   <div class="sidebar-bottom">
@@ -355,6 +368,138 @@ body {
 </div>
 
 <script>
+
+  function getDateTimeNow() {
+  const now = new Date();
+  return now.toLocaleString('en-PH', {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+
+function showAttendanceModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'attendanceModal';
+
+  const riderName = getRiderName();
+
+  modal.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-title">
+        <i class="fa-solid fa-clock" style="color:#38bdf8;"></i>
+        Attendance Confirmation
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">Rider Name</span>
+        <span class="modal-value">${riderName}</span>
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">Current Date & Time</span>
+        <span class="modal-value">${getDateTimeNow()}</span>
+      </div>
+
+      <div class="action-row" style="margin-top:18px;">
+        <button class="btn btn-success" onclick="markPresent()">
+          <i class="fa-solid fa-check"></i> I am Present
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function markPresent() {
+
+  const riderName = getRiderName();
+
+  // REQUEST DATA
+  const request = {
+    rider: riderName,
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString(),
+    status: "pending"
+  };
+
+  // SAVE REQUEST
+  localStorage.setItem(
+    "attendanceRequest",
+    JSON.stringify(request)
+  );
+
+  // WAITING STATUS
+  localStorage.setItem(
+    "attendance",
+    "waiting"
+  );
+
+  // REMOVE MODAL
+  const m = document.getElementById('attendanceModal');
+  if (m) m.remove();
+
+  // SHOW WAITING SCREEN
+  showWaitingApproval();
+}
+
+function showWaitingApproval(){
+
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'waitingModal';
+
+  const riderName = getRiderName();
+
+  const request = JSON.parse(localStorage.getItem("attendanceRequest")) || {};
+
+  modal.innerHTML = `
+    <div class="modal-box">
+
+      <div class="modal-title">
+        <i class="fa-solid fa-clock" style="color:#f59e0b;"></i>
+        Waiting for Manager Approval
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">Rider Name</span>
+        <span class="modal-value">${riderName}</span>
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">Submitted Time</span>
+        <span class="modal-value">${request.time || '--'}</span>
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">Status</span>
+        <span class="modal-value" style="color:#f59e0b;font-weight:800;">
+          PENDING
+        </span>
+      </div>
+
+      <div style="margin-top:18px;text-align:center;">
+        <div style="
+          font-size:55px;
+          animation: pulse 1.5s infinite;
+        ">⏳</div>
+
+        <p style="margin-top:10px;color:#1e4976;font-size:13px;">
+          Please wait while the manager reviews your attendance.
+        </p>
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
 /* CLOCK */
 function updateClock() {
   const now = new Date();
@@ -656,6 +801,260 @@ function delivered() {
   document.getElementById('content').innerHTML = html;
 }
 
+window.onload = function () {
+
+  const attendance = localStorage.getItem("attendance");
+
+  if (!attendance) {
+    showAttendanceModal();
+  }
+
+  else if (attendance === "waiting") {
+    showWaitingApproval();
+  }
+
+  else if (attendance === "approved") {
+    loadOrders();
+  }
+
+  else if (attendance === "rejected") {
+    document.getElementById("content").innerHTML = `
+      <div class="card" style="text-align:center;padding:60px;">
+        <h1 style="font-size:60px;">❌</h1>
+        <h2>Attendance Rejected</h2>
+        <p>Please contact your manager.</p>
+      </div>
+    `;
+  }
+
+};
+
+function markAttendance(riderId){
+
+let attendance =
+JSON.parse(localStorage.getItem("attendance")) || {};
+
+let today = new Date();
+
+let dateKey =
+today.toISOString().split("T")[0];
+
+let time =
+today.toLocaleTimeString();
+
+if(!attendance[riderId]){
+attendance[riderId] = {};
+}
+
+attendance[riderId][dateKey] = {
+
+loginTime: time,
+status: "Pending"
+
+};
+
+localStorage.setItem(
+"attendance",
+JSON.stringify(attendance)
+);
+
+// ✅ GET EXISTING NOTIFICATIONS
+let notifications =
+JSON.parse(localStorage.getItem("managerNotifications")) || [];
+
+// ✅ PUSH NEW NOTIFICATION
+notifications.push(
+`📌 ${riderId} submitted attendance at ${time}`
+);
+
+// ✅ SAVE
+localStorage.setItem(
+"managerNotifications",
+JSON.stringify(notifications)
+);
+
+alert("Attendance Submitted ✅");
+
+}
+
+function showLogoutModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'logoutModal';
+
+  modal.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-title">
+        <i class="fa-solid fa-right-from-bracket" style="color:#f59e0b;"></i>
+        Confirm Logout
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">Logout Time</span>
+        <span class="modal-value">${getDateTimeNow()}</span>
+      </div>
+
+      <div class="action-row" style="margin-top:18px;">
+        <button class="btn btn-secondary" onclick="closeLogout()">
+          Cancel
+        </button>
+        <button class="btn btn-primary" onclick="logoutNow()">
+          Logout
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function closeLogout() {
+  const m = document.getElementById('logoutModal');
+  if (m) m.remove();
+}
+
+function logoutNow() {
+  localStorage.removeItem("attendance");
+  localStorage.removeItem("loginTime");
+  window.location.href = "login.html"; // or your login page
+}
+
+function simulateManagerApprove() {
+  localStorage.setItem("attendance", "approved");
+  showApprovalResult("approved");
+}
+
+function simulateManagerReject() {
+  localStorage.setItem("attendance", "rejected");
+  showApprovalResult("rejected");
+}
+
+function showApprovalResult(status) {
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+
+  let icon = status === "approved" ? "✅" : "❌";
+  let title = status === "approved" ? "Approved!" : "Rejected";
+  let color = status === "approved" ? "#22c55e" : "#ef4444";
+
+  modal.innerHTML = `
+    <div class="modal-box" style="text-align:center;">
+      
+      <div style="font-size:60px;margin-bottom:10px;">
+        ${icon}
+      </div>
+
+      <div class="modal-title" style="justify-content:center;color:${color}">
+        ${title}
+      </div>
+
+      <p style="color:#1e4976;margin-bottom:20px;">
+        ${status === "approved" 
+          ? "You can now start accepting orders." 
+          : "Please contact admin/manager for review."}
+      </p>
+
+      <button class="btn btn-primary" onclick="closeApproval(); location.reload();">
+        OK
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function simulateApprove() {
+  localStorage.setItem("attendance", "approved");
+  showApprovalPopup("approved");
+}
+
+function simulateReject() {
+  localStorage.setItem("attendance", "rejected");
+  showApprovalPopup("rejected");
+}
+
+function showApprovalPopup(status){
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+
+  let icon = status === "approved" ? "🎉" : "❌";
+  let title = status === "approved" ? "Approved!" : "Rejected";
+  let color = status === "approved" ? "#22c55e" : "#ef4444";
+  let msg = status === "approved"
+    ? "You can now accept orders."
+    : "Your attendance was rejected.";
+
+  modal.innerHTML = `
+    <div class="modal-box" style="text-align:center;">
+
+      <div style="font-size:60px;margin-bottom:10px;">
+        ${icon}
+      </div>
+
+      <div class="modal-title" style="justify-content:center;color:${color}">
+        ${title}
+      </div>
+
+      <p style="color:#1e4976;margin:15px 0;">
+        ${msg}
+      </p>
+
+      <div style="display:flex;justify-content:center;margin-top:20px;">
+  <button class="btn btn-primary" onclick="closePopup(); location.reload();"
+  style="min-width:120px;">
+    OK
+  </button>
+</div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function closePopup(){
+  const m = document.querySelector(".modal");
+  if(m) m.remove();
+}
+
 </script>
+<div style="
+position:fixed;
+bottom:20px;
+right:20px;
+z-index:9999;
+display:flex;
+flex-direction:column;
+gap:8px;
+">
+
+<button onclick="simulateApprove()" style="
+padding:10px;
+background:#22c55e;
+color:white;
+border:none;
+border-radius:10px;
+font-weight:bold;
+">
+Approve (Test)
+</button>
+
+<button onclick="simulateReject()" style="
+padding:10px;
+background:#ef4444;
+color:white;
+border:none;
+border-radius:10px;
+font-weight:bold;
+">
+Reject (Test)
+</button>
+
+</div>
+</button>
+
 </body>
 </html>

@@ -954,6 +954,18 @@ textarea{
     }
 }
 
+/* AI CHAT EFFECT */
+
+.ai-msg{
+    box-shadow:
+    0 4px 15px rgba(14,165,233,0.15);
+}
+
+.user-msg{
+    box-shadow:
+    0 4px 15px rgba(0,0,0,0.08);
+}
+
 </style>
 </head>
 
@@ -1033,7 +1045,11 @@ FAQ Assistant
 
 <div class="chat-input">
 
-<input id="faqInput" placeholder="Ask something...">
+<input 
+id="faqInput"
+placeholder="Ask AI anything..."
+onkeypress="if(event.key==='Enter') sendFAQ()"
+>
 
 <button onclick="sendFAQ()">Send</button>
 
@@ -2532,46 +2548,449 @@ function toggleFAQ(){
     : "flex";
 }
 
+/* =========================================
+   AI RAG PROTOTYPE SYSTEM
+========================================= */
+
+/* KNOWLEDGE BASE */
+
+/* =========================================
+   ADVANCED AI RAG KNOWLEDGE BASE
+========================================= */
+
+const knowledgeBase = [
+
+{
+    id:1,
+    topic:"delivery",
+    keywords:[
+        "delivery",
+        "eta",
+        "arrive",
+        "rider",
+        "minutes",
+        "where"
+    ],
+    response:
+    "🚚 Your water delivery usually arrives within 3-5 minutes depending on rider availability and traffic."
+},
+
+{
+    id:2,
+    topic:"payment",
+    keywords:[
+        "payment",
+        "gcash",
+        "cash",
+        "pay",
+        "money"
+    ],
+    response:
+    "💳 We support Cash on Delivery and GCash payments."
+},
+
+{
+    id:3,
+    topic:"tracking",
+    keywords:[
+        "track",
+        "status",
+        "order",
+        "tracking"
+    ],
+    response:
+    "📦 You may track your order in the Tracking section for real-time updates."
+},
+
+{
+    id:4,
+    topic:"price",
+    keywords:[
+        "price",
+        "cost",
+        "how much",
+        "bayad"
+    ],
+    response:
+    "💧 Water refill service starts at ₱150."
+},
+
+{
+    id:5,
+    topic:"location",
+    keywords:[
+        "address",
+        "gps",
+        "location",
+        "map"
+    ],
+    response:
+    "📍 You can use GPS autofill for faster delivery processing."
+},
+
+{
+    id:6,
+    topic:"support",
+    keywords:[
+        "help",
+        "support",
+        "problem",
+        "issue"
+    ],
+    response:
+    "🤖 Alka-Jozen AI Support is ready to assist you anytime."
+}
+
+];
+
+/* =========================================
+   AI MEMORY
+========================================= */
+
+let aiMemory = [];
+
+function rememberMessage(role, content){
+
+    aiMemory.push({
+        role,
+        content,
+        time:new Date().toLocaleTimeString()
+    });
+
+    /* limit memory */
+
+    if(aiMemory.length > 10){
+        aiMemory.shift();
+    }
+}
+
+/* =========================================
+   SEND MESSAGE
+========================================= */
+
 function sendFAQ(){
 
-    let input = document.getElementById("faqInput");
-    let msg = input.value.toLowerCase().trim();
+    let input =
+    document.getElementById("faqInput");
+
+    let msg =
+    input.value.trim();
 
     if(!msg) return;
 
-    let answer = getFAQAnswer(msg);
-
-    document.getElementById("faqBody").innerHTML +=
-    `<p><b>You:</b> ${msg}</p>
-     <p><b>AI:</b> ${answer}</p>`;
+    appendMessage("You", msg);
 
     input.value = "";
+
+    /* typing animation */
+
+    appendTyping();
+
+    setTimeout(()=>{
+
+        removeTyping();
+
+        let aiReply =
+        generateRAGResponse(msg);
+
+        appendMessage("AI", aiReply);
+
+    },Math.random()*1000 + 800);
 }
 
-/* SIMPLE FAQ BRAIN */
-function getFAQAnswer(msg){
 
-    if(msg.includes("how long") || msg.includes("delivery time")){
-        return "⏱️ Delivery time is 3–5 minutes only.";
+/* =========================================
+   GENERATE RAG RESPONSE
+========================================= */
+
+function generateRAGResponse(message){
+
+    let msg =
+    message.toLowerCase();
+
+    rememberMessage("user", message);
+
+    let orders =
+    getOrders().filter(
+        o=>o.user===getUser()
+    );
+
+    /* =========================================
+       SMART ORDER RETRIEVAL
+    ========================================= */
+
+    if(
+        msg.includes("my order") ||
+        msg.includes("latest order") ||
+        msg.includes("track")
+    ){
+
+        if(orders.length === 0){
+            return "❌ No active orders found.";
+        }
+
+        let latest =
+        orders[orders.length - 1];
+
+        return `
+🤖 AI Order Assistant
+
+📦 Order #${latest.orderNumber}
+
+💧 Gallons:
+${latest.gallon}
+
+🚚 Status:
+${latest.status}
+
+💳 Payment:
+${latest.payment}
+
+⏱️ ETA:
+${getETA(latest.status)}
+
+📍 Address:
+${latest.address}
+        `;
     }
 
-    if(msg.includes("payment")){
-        return "💳 You can pay via Cash or GCash.";
+    /* =========================================
+       PAYMENT RETRIEVAL
+    ========================================= */
+
+    if(
+        msg.includes("payment status")
+    ){
+
+        if(orders.length === 0){
+            return "❌ No payment records found.";
+        }
+
+        let latest =
+        orders[orders.length - 1];
+
+        return `
+💳 Payment Information
+
+Method:
+${latest.payment}
+
+Status:
+${latest.paymentStatus}
+
+Details:
+${latest.paymentStatusDetail}
+        `;
     }
 
-    if(msg.includes("price") || msg.includes("how much")){
-        return "💧 Standard rate is ₱150 per order.";
+    /* =========================================
+       MEMORY AWARENESS
+    ========================================= */
+
+    if(
+        msg.includes("what did i ask") ||
+        msg.includes("memory")
+    ){
+
+        let lastQuestions =
+        aiMemory
+        .filter(x=>x.role==="user")
+        .slice(-3);
+
+        if(lastQuestions.length===0){
+            return "🤖 I currently have no conversation memory.";
+        }
+
+        return `
+🧠 Recent Conversation Memory
+
+${lastQuestions
+.map(x=>"• "+x.content)
+.join("\n")}
+        `;
     }
 
-    if(msg.includes("track") || msg.includes("status")){
-        return "📦 You can check Tracking page for real-time status.";
+    /* =========================================
+       SIMULATED SEMANTIC SEARCH
+    ========================================= */
+
+    let bestMatch = null;
+    let highestScore = 0;
+
+    knowledgeBase.forEach(item=>{
+
+        let score = 0;
+
+        item.keywords.forEach(keyword=>{
+
+            if(msg.includes(keyword)){
+                score += 2;
+            }
+
+            /* semantic similarity simulation */
+
+            if(
+                keyword.startsWith(msg.slice(0,3))
+            ){
+                score += 1;
+            }
+
+        });
+
+        if(score > highestScore){
+
+            highestScore = score;
+            bestMatch = item;
+        }
+
+    });
+
+    /* =========================================
+       AI RECOMMENDATIONS
+    ========================================= */
+
+    if(
+        msg.includes("recommend")
+    ){
+
+        return `
+🤖 AI Recommendation
+
+💧 Recommended:
+• Weekly water refill subscription
+• GCash for faster checkout
+• GPS autofill for faster rider delivery
+        `;
     }
 
-    if(msg.includes("hello") || msg.includes("hi")){
-        return "👋 Hello! How can I help you today?";
+    /* =========================================
+       BEST MATCH
+    ========================================= */
+
+    if(bestMatch){
+
+        rememberMessage(
+            "assistant",
+            bestMatch.response
+        );
+
+        return `
+🤖 Alka-Jozen AI
+
+${bestMatch.response}
+        `;
     }
 
-    return "❌ Sorry, hindi ko masasagot yan sa system namin.";
+    /* =========================================
+       FALLBACK AI
+    ========================================= */
+
+    return `
+🤖 AI Assistant
+
+I couldn't fully understand your request.
+
+Try asking:
+• where is my order
+• payment status
+• delivery time
+• recommend service
+• tracking
+• price
+• address
+    `;
+}
+
+
+/* =========================================
+   CHAT UI HELPERS
+========================================= */
+
+function appendMessage(sender,text){
+
+    let body =
+    document.getElementById("faqBody");
+
+    let bubbleClass =
+    sender === "AI"
+    ? "ai-msg"
+    : "user-msg";
+
+    body.innerHTML += `
+
+    <div class="${bubbleClass}"
+    style="
+        margin-bottom:12px;
+        padding:12px 15px;
+        border-radius:18px;
+        max-width:85%;
+        white-space:pre-line;
+        animation:fadeIn .3s ease;
+
+        ${
+            sender==="AI"
+            ?
+            `
+            background:#e0f2fe;
+            color:#0f172a;
+            `
+            :
+            `
+            background:#0ea5e9;
+            color:white;
+            margin-left:auto;
+            `
+        }
+    ">
+
+    <b>${sender}:</b><br>
+    ${text}
+
+    </div>
+    `;
+
+    body.scrollTop =
+    body.scrollHeight;
+}
+
+
+/* =========================================
+   TYPING EFFECT
+========================================= */
+
+function appendTyping(){
+
+    let body =
+    document.getElementById("faqBody");
+
+    body.innerHTML += `
+
+    <div id="typingBubble"
+    style="
+        background:#e2e8f0;
+        padding:10px 15px;
+        border-radius:18px;
+        width:80px;
+        margin-bottom:12px;
+    ">
+
+    🤖 typing...
+
+    </div>
+    `;
+
+    body.scrollTop =
+    body.scrollHeight;
+}
+
+function removeTyping(){
+
+    let bubble =
+    document.getElementById("typingBubble");
+
+    if(bubble){
+        bubble.remove();
+    }
 }
 
 /* START */

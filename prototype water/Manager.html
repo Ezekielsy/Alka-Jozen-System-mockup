@@ -356,6 +356,7 @@ opacity:0.9;
 }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -428,13 +429,10 @@ opacity:0.9;
 📦 Inventory
 </button>
 
-<button onclick="riderMonitoring()">
-🚚 Rider Monitoring
+<button onclick="riderPerformance()">
+🚚 Rider Performance
 </button>
 
-<button onclick="showRiderAttendance()">
-👨‍💼 Rider Attendance
-</button>
 
 <button onclick="showNotifications()">
 🔔 Notifications
@@ -468,6 +466,615 @@ opacity:0.9;
 
 <script>
 
+  function openReportForm(){
+document.getElementById("reportPopup").style.display = "flex";
+}
+
+function closeReportForm(){
+document.getElementById("reportPopup").style.display = "none";
+}
+
+function saveReport(){
+
+let refilled = parseFloat(document.getElementById("repRefilled").value);
+let sold = parseFloat(document.getElementById("repSold").value);
+let unsold = parseFloat(document.getElementById("repUnsold").value);
+let reason = document.getElementById("repReason").value;
+
+if(isNaN(refilled) || isNaN(sold) || isNaN(unsold) || reason.trim() === ""){
+alert("Please complete all fields");
+return;
+}
+
+let report = {
+date: new Date().toLocaleString(),
+refilled,
+sold,
+unsold,
+reason
+};
+
+reportsList.push(report);
+
+localStorage.setItem("reportsList", JSON.stringify(reportsList));
+
+closeReportForm();
+reports();
+}
+
+  function showAttendanceCalendar(riderId, year = 2026, month = 4){
+  const attendance = getAttendance();
+  const data = attendance[riderId] || {};
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+
+  let html = `
+    <div class="card">
+      <h2>📅 Attendance Calendar</h2>
+      <p class="sub">Rider: ${riderId}</p>
+
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:15px;">
+        <b>Sun</b><b>Mon</b><b>Tue</b><b>Wed</b><b>Thu</b><b>Fri</b><b>Sat</b>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;">
+  `;
+
+  // blank spaces before 1st day
+  for(let i=0;i<firstDay;i++){
+    html += `<div></div>`;
+  }
+
+  for(let day=1; day<=daysInMonth; day++){
+
+    let dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    let record = data[dateKey];
+
+    let color = "#e5e7eb"; // default gray
+    let text = day;
+
+    if(record){
+      if(record.status === "On-time") color = "#22c55e";
+      else if(record.status === "Late") color = "#f59e0b";
+      else if(record.status === "Pending") color = "#3b82f6";
+      else if(record.status === "Absent") color = "#ef4444";
+
+      text = `${day}<br><small>${record.loginTime}</small>`;
+    }
+
+    html += `
+      <div style="
+        background:${color};
+        color:white;
+        padding:10px;
+        border-radius:12px;
+        text-align:center;
+        font-size:12px;
+      ">
+        ${text}
+      </div>
+    `;
+  }
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  document.getElementById("content").innerHTML = html;
+}
+
+  function approveAttendance(riderId, dateKey){
+
+  let attendance = getAttendance();
+
+  if(attendance[riderId] && attendance[riderId][dateKey]){
+
+    attendance[riderId][dateKey].status = "On-time";
+
+    saveAttendance(attendance);
+
+    notify("✅ Attendance Approved");
+  }
+}
+
+function markAttendance(riderId){
+
+  let attendance = getAttendance();
+
+  let today = new Date();
+
+  let dateKey = today.toISOString().split("T")[0];
+
+  let time = today.toLocaleTimeString();
+
+  if(!attendance[riderId]){
+    attendance[riderId] = {};
+  }
+
+  attendance[riderId][dateKey] = {
+
+    loginTime: time,
+
+    status: "Pending"
+
+  };
+
+  saveAttendance(attendance);
+
+  // ✅ AUTO NOTIFICATION TO MANAGER
+
+  notifications.push(
+    `📌 ${riderId} submitted attendance at ${time}`
+  );
+
+  localStorage.setItem(
+    "managerNotifications",
+    JSON.stringify(notifications)
+  );
+
+}
+
+  function generateCalendar(riderId, year, month){
+  const attendance = getAttendance();
+  const data = attendance[riderId] || {};
+
+  let html = `<div class="card"><h2>📅 Attendance Calendar</h2>`;
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for(let day = 1; day <= daysInMonth; day++){
+    let dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+    let record = data[dateKey];
+
+    let status = "Absent";
+    let time = "-";
+
+    if(record){
+      status = record.status;
+      time = record.loginTime;
+    }
+
+    html += `
+      <div class="card">
+        <b>${dateKey}</b><br>
+        🕒 ${time}<br>
+        📌 ${status}
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+
+  document.getElementById("content").innerHTML = html;
+}
+
+  attendance = {
+  "r1": {
+    "2026-05-20": {
+      loginTime: "08:02 AM",
+      status: "On-time"
+    },
+    "2026-05-21": {
+      loginTime: "08:45 AM",
+      status: "Late"
+    }
+  }
+}
+
+function getAttendance(){
+  return JSON.parse(localStorage.getItem("attendance")) || {};
+}
+
+function saveAttendance(data){
+  localStorage.setItem("attendance", JSON.stringify(data));
+}
+
+/* ✅ STEP 3 — RIDER LIST (GLOBAL) */
+let ridersList = [
+  { id: "r1", name: "Rider John" },
+  { id: "r2", name: "Rider Mike" }
+];
+
+  function riderPerformance(){
+  document.getElementById("content").innerHTML = `
+    <div class="card">
+      <h2>🚚 Rider Performance</h2>
+      <p>Select a rider to view full performance</p>
+
+      <br>
+
+      ${ridersList.map(r=>`
+        <div class="notify" style="cursor:pointer" onclick="openRider(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+          👤 ${r.name}
+        </div>
+      `).join("")}
+
+    </div>
+  `;
+}
+
+function openRider(rider){
+
+  const orders = JSON.parse(localStorage.getItem("history")) || [];
+
+  const riderOrders = orders.filter(o => o.rider === rider.name);
+
+  const delivered = riderOrders.filter(o => o.status === "Delivered").length;
+
+  const pending = riderOrders.length - delivered;
+
+  document.getElementById("content").innerHTML = `
+
+    <div class="card">
+      <h2>👤 ${rider.name} Performance</h2>
+
+      <div class="grid">
+
+        <div class="card stat">
+          <h2>${riderOrders.length}</h2>
+          <p>Total Orders</p>
+        </div>
+
+        <div class="card stat">
+          <h2>${delivered}</h2>
+          <p>Delivered</p>
+        </div>
+
+        <div class="card stat">
+          <h2>${pending}</h2>
+          <p>Pending</p>
+        </div>
+
+      </div>
+
+      <br>
+
+      <h3>📦 Customer Orders</h3>
+
+      <table>
+        <tr>
+          <th>Customer</th>
+          <th>Address</th>
+          <th>Status</th>
+          <th>Total</th>
+        </tr>
+
+        ${riderOrders.map(o=>`
+          <tr>
+            <td>${o.name}</td>
+            <td>${o.address}</td>
+            <td>${o.status}</td>
+            <td>₱${o.total}</td>
+          </tr>
+        `).join("")}
+
+      </table>
+    </div>
+
+    ${renderAttendanceCalendar(rider)}
+
+  `;
+}
+
+let currentMonth = 4; // MAY
+let currentYear = 2026;
+
+function renderAttendanceCalendar(rider){
+
+  // SAMPLE ATTENDANCE DATA
+  const attendanceData = {
+
+    "2026-05-01":{
+      timeIn:"7:58 AM",
+      timeOut:"5:02 PM",
+      status:"present"
+    },
+
+    "2026-05-02":{
+      timeIn:"8:10 AM",
+      timeOut:"5:00 PM",
+      status:"late"
+    },
+
+    "2026-05-03":{
+      timeIn:"7:55 AM",
+      timeOut:"5:15 PM",
+      status:"present"
+    },
+
+    "2026-05-05":{
+      timeIn:"8:00 AM",
+      timeOut:"5:12 PM",
+      status:"present"
+    },
+
+    "2026-05-06":{
+      timeIn:"7:49 AM",
+      timeOut:"5:20 PM",
+      status:"present"
+    },
+
+    "2026-05-08":{
+      timeIn:"8:20 AM",
+      timeOut:"5:00 PM",
+      status:"late"
+    },
+
+    "2026-05-09":{
+      timeIn:"7:50 AM",
+      timeOut:"5:05 PM",
+      status:"present"
+    },
+
+    "2026-05-10":{
+      timeIn:"7:59 AM",
+      timeOut:"5:18 PM",
+      status:"present"
+    },
+
+    "2026-05-12":{
+      timeIn:"8:01 AM",
+      timeOut:"5:10 PM",
+      status:"present"
+    },
+
+    "2026-05-13":{
+      timeIn:"7:45 AM",
+      timeOut:"5:30 PM",
+      status:"present"
+    },
+
+    "2026-05-15":{
+      timeIn:"8:25 AM",
+      timeOut:"5:00 PM",
+      status:"late"
+    },
+
+    "2026-05-16":{
+      timeIn:"7:52 AM",
+      timeOut:"5:08 PM",
+      status:"present"
+    },
+
+    "2026-05-18":{
+      timeIn:"7:48 AM",
+      timeOut:"5:22 PM",
+      status:"present"
+    },
+
+    "2026-05-19":{
+      timeIn:"8:00 AM",
+      timeOut:"5:05 PM",
+      status:"present"
+    },
+
+    "2026-05-20":{
+      timeIn:"8:01 AM",
+      timeOut:"5:10 PM",
+      status:"present"
+    },
+
+    "2026-05-21":{
+      timeIn:"8:35 AM",
+      timeOut:"5:00 PM",
+      status:"late"
+    },
+
+    "2026-05-22":{
+      timeIn:"7:56 AM",
+      timeOut:"5:11 PM",
+      status:"present"
+    },
+
+    "2026-05-24":{
+      timeIn:"7:50 AM",
+      timeOut:"5:15 PM",
+      status:"present"
+    },
+
+    "2026-05-25":{
+      timeIn:"8:03 AM",
+      timeOut:"5:07 PM",
+      status:"present"
+    },
+
+    "2026-05-26":{
+      timeIn:"7:55 AM",
+      timeOut:"5:20 PM",
+      status:"present"
+    },
+
+    "2026-05-27":{
+      timeIn:"8:00 AM",
+      timeOut:"5:00 PM",
+      status:"present"
+    },
+
+    "2026-05-29":{
+      timeIn:"7:46 AM",
+      timeOut:"5:18 PM",
+      status:"present"
+    }
+
+  };
+
+  const monthNames = [
+    "January","February","March","April",
+    "May","June","July","August",
+    "September","October","November","December"
+  ];
+
+  const daysInMonth =
+    new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const firstDay =
+    new Date(currentYear, currentMonth, 1).getDay();
+
+  let html = `
+
+  <div class="card">
+
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    ">
+
+      <button class="btn blue"
+        onclick="changeMonth(-1, '${rider.name}')">
+        ⬅
+      </button>
+
+      <h2>
+        📅 ${monthNames[currentMonth]} ${currentYear}
+      </h2>
+
+      <button class="btn blue"
+        onclick="changeMonth(1, '${rider.name}')">
+        ➡
+      </button>
+
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+      text-align:center;
+      margin-bottom:10px;
+      font-weight:bold;
+    ">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+    ">
+  `;
+
+  // blank spaces
+  for(let i=0; i<firstDay; i++){
+    html += `<div></div>`;
+  }
+
+  // days
+  for(let day=1; day<=daysInMonth; day++){
+
+    let dateKey =
+      `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+    let record = attendanceData[dateKey];
+
+    let bg = "#ef4444";
+    let tooltip = "❌ Absent";
+
+    if(record){
+
+      if(record.status === "present"){
+        bg = "#22c55e";
+      }
+
+      if(record.status === "late"){
+        bg = "#f59e0b";
+      }
+
+      tooltip = `
+Status: ${record.status}
+
+Time In: ${record.timeIn}
+
+Time Out: ${record.timeOut}
+      `;
+    }
+
+    html += `
+
+      <div
+
+        title="${tooltip}"
+
+        style="
+          background:${bg};
+          padding:15px 10px;
+          border-radius:14px;
+          min-height:75px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          cursor:pointer;
+          transition:.3s;
+          font-weight:bold;
+          color:white;
+        "
+
+        onmouseover="
+          this.style.transform='scale(1.07)';
+          this.style.boxShadow='0 0 15px rgba(255,255,255,0.4)';
+        "
+
+        onmouseout="
+          this.style.transform='scale(1)';
+          this.style.boxShadow='none';
+        "
+      >
+
+        ${day}
+
+      </div>
+
+    `;
+  }
+
+  html += `
+    </div>
+
+    <br>
+
+    <div class="notify">
+      🟢 Present
+      &nbsp;&nbsp;
+      🟡 Late
+      &nbsp;&nbsp;
+      🔴 Absent
+    </div>
+
+  </div>
+  `;
+
+  return html;
+}
+
+function changeMonth(step, riderName){
+
+  currentMonth += step;
+
+  if(currentMonth > 11){
+    currentMonth = 0;
+    currentYear++;
+  }
+
+  if(currentMonth < 0){
+    currentMonth = 11;
+    currentYear--;
+  }
+
+  openRider({
+    name:riderName
+  });
+}
+
 function getFilterPercent(){
 return Math.max(0, Math.min(100, filterLife));
 }
@@ -493,11 +1100,23 @@ document.querySelector(".sidebar")
 /* DATA */
 
 let gallons = 500;
+let totalGallonsSold = 0;
 let filterLife = 80;
 
 let inventoryLogs = [];
 
-let notifications = [];
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [
+  {
+    id: "n1",
+    riderId: "r1",
+    riderName: "Rider John",
+    date: "2026-05-20",
+    time: "08:10 AM",
+    status: "Pending"
+  }
+];
+
+let reportsList = JSON.parse(localStorage.getItem("reportsList")) || [];
 
 let riders = [
 
@@ -603,17 +1222,36 @@ document.getElementById("content").innerHTML = `
 <p>Filter Lifespan</p>
 </div>
 
-<div class="card stat">
-<h2>${notifications.length}</h2>
-<p>Notifications</p>
 </div>
 
-<div class="card stat">
-<h2>${riders.length}</h2>
-<p>Active Riders</p>
-</div>
+<!-- ANALYTICS -->
+
+<div class="card">
+
+<h2>📊 Sales Analytics</h2>
+
+<br>
+
+<select id="analyticsFilter" onchange="renderAnalytics()"
+style="
+padding:12px;
+border:none;
+border-radius:12px;
+margin-bottom:20px;
+font-size:16px;
+">
+
+<option value="today">Today</option>
+<option value="week">Weekly</option>
+<option value="month">Monthly</option>
+
+</select>
+
+<canvas id="salesChart" height="120"></canvas>
 
 </div>
+
+<!-- ATTENDANCE -->
 
 <div class="card">
 
@@ -655,6 +1293,8 @@ ${localStorage.getItem("managerAttendanceStatus") || "-"}
 
 `;
 
+renderAnalytics();
+
 }
 
 /* INVENTORY */
@@ -685,8 +1325,8 @@ ${filterLife.toFixed(2)}% remaining
 </div>
 
 <div class="card stat">
-<h2>${inventoryLogs.length}</h2>
-<p>Daily Records</p>
+<h2>${totalGallonsSold}</h2>
+<p>Total Gallons Sold</p>
 </div>
 
 </div>
@@ -785,22 +1425,39 @@ alert("Invalid input");
 return;
 }
 
+/* TOTAL GALLONS */
 gallons += sold;
+
+/* TOTAL SOLD */
+totalGallonsSold += sold;
+
+/* FILTER DAMAGE */
 filterLife -= sold * 0.005;
 
 if(filterLife < 0){
 filterLife = 0;
 }
 
+/* SAVE HISTORY */
 inventoryLogs.push({
-date: new Date().toLocaleString(),
-sold: sold
+
+date: new Date().toLocaleDateString(),
+
+fullDate: new Date().toLocaleString(),
+
+sold: sold,
+
+refill: sold
+
 });
 
+/* SAVE LOCAL STORAGE */
 localStorage.setItem("gallons", gallons);
+localStorage.setItem("totalGallonsSold", totalGallonsSold);
 localStorage.setItem("filterLife", filterLife);
 localStorage.setItem("inventoryLogs", JSON.stringify(inventoryLogs));
 
+/* FILTER WARNING */
 if(filterLife <= 10){
 notifications.push("⚠ Filter replacement needed");
 }
@@ -808,7 +1465,8 @@ notifications.push("⚠ Filter replacement needed");
 document.getElementById("gallonInput").value = "";
 
 inventory();
-} 
+
+}
 
 /* RIDER MONITORING */
 
@@ -862,50 +1520,6 @@ ${r.status}
 
 }
 
-/* RIDER ATTENDANCE */
-
-function showRiderAttendance(){
-
-document.getElementById("content").innerHTML = `
-
-<div class="card">
-
-<h2>👨‍💼 Rider Attendance</h2>
-
-<br>
-
-<table>
-
-<tr>
-<th>Name</th>
-<th>Date</th>
-<th>Time In</th>
-<th>Status</th>
-</tr>
-
-${riderAttendance.map(r=>`
-
-<tr>
-
-<td>${r.name}</td>
-
-<td>${r.date}</td>
-
-<td>${r.time}</td>
-
-<td>${r.status}</td>
-
-</tr>
-
-`).join("")}
-
-</table>
-
-</div>
-
-`;
-
-}
 
 /* NOTIFICATIONS */
 
@@ -914,39 +1528,95 @@ function showNotifications(){
 document.getElementById("content").innerHTML = `
 
 <div class="card">
-
-<h2>🔔 Notifications</h2>
-
+<h2>🔔 Rider Attendance Requests</h2>
 <br>
 
-${
-notifications.length == 0
-
-?
-
-`
-<div class="notify">
-✅ No notifications available
-</div>
-`
-
-:
-
-notifications.map(n=>`
+${notifications.length === 0 ? `
+  <div class="notify">No notifications</div>
+` : notifications.map(n=>`
 
 <div class="notify">
 
-${n}
+<b>${n.riderName}</b><br>
+📅 ${n.date}<br>
+⏰ ${n.time}<br>
+📌 Status: <b>${n.status}</b>
+
+<br><br>
+
+${n.status === "Pending" ? `
+<button class="btn green" onclick="approveRider('${n.id}')">
+Approve
+</button>
+
+<button class="btn orange" onclick="rejectRider('${n.id}')">
+Reject
+</button>
+` : `
+<span class="status ${n.status === 'Approved' ? 'delivered' : 'pending'}">
+${n.status}
+</span>
+`}
 
 </div>
 
-`).join("")
-
-}
+`).join("")}
 
 </div>
 
 `;
+}
+
+function approveRider(id){
+
+let notif = notifications.find(n => n.id === id);
+
+if(!notif) return;
+
+// update attendance sa rider
+let attendance = getAttendance();
+
+if(!attendance[notif.riderId]) attendance[notif.riderId] = {};
+
+attendance[notif.riderId][notif.date] = {
+  loginTime: notif.time,
+  status: "On-time"
+};
+
+saveAttendance(attendance);
+
+// update notif
+notif.status = "Approved";
+
+localStorage.setItem("notifications", JSON.stringify(notifications));
+
+showNotifications();
+}
+
+function rejectRider(id){
+
+let notif = notifications.find(n => n.id === id);
+
+if(!notif) return;
+
+notif.status = "Rejected";
+
+localStorage.setItem("notifications", JSON.stringify(notifications));
+
+showNotifications();
+}
+
+
+function approveNotif(index){
+
+notifications[index] += " ✔ Approved";
+
+localStorage.setItem(
+"managerNotifications",
+JSON.stringify(notifications)
+);
+
+showNotifications();
 
 }
 
@@ -962,30 +1632,34 @@ document.getElementById("content").innerHTML = `
 
 <br>
 
-<div class="notify">
-💧 Total Gallons: ${gallons}
-</div>
+<button class="btn blue" onclick="openReportForm()">
+➕ Create Report
+</button>
 
-<div class="notify">
-🧪 Filter Life: ${filterLife.toFixed(2)}%
-</div>
+<br><br>
 
-<div class="notify">
-🚚 Active Riders: ${riders.length}
-</div>
+<h3>📄 Generated Reports</h3>
 
+${
+reportsList.length === 0
+?
+`<div class="notify">No reports yet</div>`
+:
+reportsList.map(r=>`
 <div class="notify">
-📦 Inventory Logs: ${inventoryLogs.length}
-</div>
+<b>${r.date}</b><br><br>
 
-<div class="notify">
-🔔 Notifications: ${notifications.length}
+💧 Refilled: ${r.refilled} gallons<br>
+📦 Sold: ${r.sold} gallons<br>
+📉 Unsold: ${r.unsold} gallons<br>
+📝 Reason: ${r.reason}
 </div>
+`).join("")
+}
 
 </div>
 
 `;
-
 }
 
 /* LOGOUT POPUP */
@@ -1033,10 +1707,215 @@ document.getElementById("attendancePopup")
 .style.display = "flex";
 
 /* DEFAULT */
+/* LOAD SAVED DATA */
+
+gallons = parseFloat(localStorage.getItem("gallons")) || 500;
+
+totalGallonsSold =
+parseFloat(localStorage.getItem("totalGallonsSold")) || 0;
+
+filterLife =
+parseFloat(localStorage.getItem("filterLife")) || 80;
+
+inventoryLogs =
+JSON.parse(localStorage.getItem("inventoryLogs")) || [];
+
+let salesChart;
+
+function renderAnalytics(){
+
+const filter =
+document.getElementById("analyticsFilter").value;
+
+let labels = [];
+let refillData = [];
+let salesData = [];
+
+const today =
+new Date().toLocaleDateString();
+
+if(filter === "today"){
+
+const todayLogs =
+inventoryLogs.filter(
+log => log.date === today
+);
+
+labels = todayLogs.map(log => log.fullDate);
+
+refillData =
+todayLogs.map(log => log.refill);
+
+salesData =
+todayLogs.map(log => log.sold);
+
+}
+
+if(filter === "week"){
+
+let grouped = {};
+
+inventoryLogs.forEach(log=>{
+
+grouped[log.date] =
+(grouped[log.date] || 0)
++ log.sold;
+
+});
+
+labels = Object.keys(grouped);
+
+salesData = Object.values(grouped);
+
+refillData = Object.values(grouped);
+
+}
+
+if(filter === "month"){
+
+let grouped = {};
+
+inventoryLogs.forEach(log=>{
+
+const month =
+new Date(log.date)
+.toLocaleString("default",
+{month:"short"});
+
+grouped[month] =
+(grouped[month] || 0)
++ log.sold;
+
+});
+
+labels = Object.keys(grouped);
+
+salesData = Object.values(grouped);
+
+refillData = Object.values(grouped);
+
+}
+
+const ctx =
+document.getElementById("salesChart");
+
+if(salesChart){
+salesChart.destroy();
+}
+
+salesChart = new Chart(ctx, {
+
+type:"line",
+
+data:{
+
+labels:labels,
+
+datasets:[
+
+{
+label:"Refill Gallons",
+data:refillData,
+borderColor:"#22c55e",
+backgroundColor:"rgba(34,197,94,0.2)",
+tension:.4,
+fill:true
+},
+
+{
+label:"Total Sales",
+data:salesData,
+borderColor:"#3b82f6",
+backgroundColor:"rgba(59,130,246,0.2)",
+tension:.4,
+fill:true
+}
+
+]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{
+labels:{
+color:"white"
+}
+},
+
+tooltip:{
+callbacks:{
+
+label:function(context){
+
+return context.dataset.label +
+": " +
+context.raw + " gallons";
+
+}
+
+}
+
+}
+
+},
+
+scales:{
+
+x:{
+ticks:{
+color:"white"
+}
+},
+
+y:{
+ticks:{
+color:"white"
+}
+}
+
+}
+
+}
+
+});
+
+}
 
 dashboard();
 
 </script>
+<div id="reportPopup" class="popup-overlay">
 
+<div class="popup-card">
+
+<h2>📋 Create Report</h2>
+
+<br>
+
+<input id="repRefilled" type="number" placeholder="Total Gallons Refilled">
+<input id="repSold" type="number" placeholder="Total Gallons Sold">
+<input id="repUnsold" type="number" placeholder="Total Gallons Unsold">
+<input id="repReason" type="text" placeholder="Reason">
+
+<br><br>
+
+<button class="btn green" onclick="saveReport()">
+💾 Save Report
+</button>
+
+<br><br>
+
+<button class="btn orange" onclick="closeReportForm()">
+❌ Close
+</button>
+
+</div>
+
+</div>
 </body>
 </html>
