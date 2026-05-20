@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manager Dashboard</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:
+linear-gradient(
+135deg,
+#0f4c75,
+#3282b8,
+#bbe1fa,
+#3282b8,
+#0f4c75
+);
+background-size:400% 400%;
+animation:waterFlow 20s ease infinite;
+color:white;
+display:flex;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+@keyframes waterFlow{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* MOBILE MENU */
+
+.menu-btn{
+display:none;
+position:fixed;
+top:15px;
+left:15px;
+z-index:99999;
+padding:12px 16px;
+border:none;
+border-radius:12px;
+background:#0f4c75;
+color:white;
+font-size:22px;
+cursor:pointer;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+height:100vh;
+background:rgba(15,76,117,0.92);
+backdrop-filter:blur(20px);
+padding:20px;
+position:fixed;
+border-right:1px solid rgba(255,255,255,0.15);
+transition:.3s;
+z-index:9999;
+overflow-y:auto;
+}
+
+.brand{
+font-size:26px;
+font-weight:bold;
+text-align:center;
+margin-bottom:30px;
+color:#bbe1fa;
+}
+
+.sidebar button{
+width:100%;
+padding:16px;
+margin:10px 0;
+border:none;
+border-radius:16px;
+background:rgba(255,255,255,0.08);
+color:white;
+cursor:pointer;
+font-size:15px;
+transition:.3s;
+text-align:left;
+}
+
+.sidebar button:hover{
+background:rgba(255,255,255,0.18);
+transform:translateX(5px);
+}
+
+/* MAIN */
+
+.main{
+margin-left:260px;
+padding:30px;
+width:100%;
+}
+
+/* TOPBAR */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.topbar h1{
+font-size:32px;
+color:#bbe1fa;
+}
+
+.clock{
+padding:14px 20px;
+background:rgba(255,255,255,0.08);
+border-radius:16px;
+}
+
+/* GRID */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+/* CARD */
+
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+padding:25px;
+border-radius:24px;
+border:1px solid rgba(255,255,255,0.15);
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+margin-bottom:20px;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.stat{
+text-align:center;
+}
+
+.stat h2{
+font-size:40px;
+color:#bbe1fa;
+}
+
+.stat p{
+margin-top:10px;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:16px;
+text-align:left;
+}
+
+th{
+background:rgba(15,76,117,0.5);
+color:#bbe1fa;
+}
+
+tr{
+background:rgba(255,255,255,0.05);
+}
+
+tr:hover{
+background:rgba(255,255,255,0.1);
+}
+
+/* BUTTONS */
+
+.btn{
+padding:14px 20px;
+border:none;
+border-radius:16px;
+color:white;
+cursor:pointer;
+font-weight:bold;
+transition:.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+.blue{
+background:#3b82f6;
+}
+
+.green{
+background:#22c55e;
+}
+
+.orange{
+background:#f97316;
+}
+
+/* STATUS */
+
+.status{
+padding:8px 14px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+display:inline-block;
+}
+
+.pending{
+background:#f59e0b;
+}
+
+.delivered{
+background:#22c55e;
+}
+
+.prepare{
+background:#3b82f6;
+}
+
+/* NOTIFY */
+
+.notify{
+padding:16px;
+border-radius:14px;
+background:rgba(255,255,255,0.08);
+margin:10px 0;
+}
+
+/* INPUT */
+
+input{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+margin-top:10px;
+font-size:16px;
+outline:none;
+}
+
+/* POPUP */
+
+.popup-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+backdrop-filter:blur(8px);
+}
+
+.popup-card{
+width:400px;
+padding:35px;
+border-radius:24px;
+background:rgba(187,225,250,0.12);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,0.2);
+text-align:center;
+animation:popupShow .4s ease;
+}
+
+@keyframes popupShow{
+from{
+opacity:0;
+transform:scale(.8);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.menu-btn{
+display:block;
+}
+
+.sidebar{
+left:-100%;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.main{
+margin-left:0;
+padding-top:80px;
+}
+
+.topbar{
+flex-direction:column;
+gap:15px;
+align-items:flex-start;
+}
+
+.popup-card{
+width:90%;
+}
+
+}
+
+/* FILTER HEALTH BAR */
+.bar-container{
+width:100%;
+height:18px;
+background:rgba(255,255,255,0.1);
+border-radius:20px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.bar-fill{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#22c55e,#facc15,#f97316,#ef4444);
+transition:0.5s ease;
+border-radius:20px;
+}
+
+.bar-text{
+margin-top:10px;
+font-size:14px;
+opacity:0.9;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MOBILE MENU -->
+
+<button class="menu-btn" onclick="toggleSidebar()">
+☰
+</button>
+
+<!-- ATTENDANCE POPUP -->
+
+<div id="attendancePopup" class="popup-overlay">
+
+<div class="popup-card">
+
+<h2>📅 Attendance Confirmation</h2>
+
+<br>
+
+<p id="attendanceDate"></p>
+<p id="attendanceTime"></p>
+
+<br>
+
+<button class="btn green" onclick="managerPresent()">
+✅ I Am Present
+</button>
+
+</div>
+
+</div>
+
+<!-- LOGOUT POPUP -->
+
+<div id="logoutPopup" class="popup-overlay">
+
+<div class="popup-card">
+
+<h2>🚪 Logout Confirmation</h2>
+
+<br>
+
+<p id="logoutDate"></p>
+<p id="logoutTime"></p>
+
+<br>
+
+<button class="btn orange" onclick="confirmLogout()">
+📌 Confirm Log Out
+</button>
+
+</div>
+
+</div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="brand">
+💧 MANAGER
+</div>
+
+<button onclick="dashboard()">
+📊 Dashboard
+</button>
+
+<button onclick="inventory()">
+📦 Inventory
+</button>
+
+<button onclick="riderMonitoring()">
+🚚 Rider Monitoring
+</button>
+
+<button onclick="showRiderAttendance()">
+👨‍💼 Rider Attendance
+</button>
+
+<button onclick="showNotifications()">
+🔔 Notifications
+</button>
+
+<button onclick="reports()">
+📋 Reports
+</button>
+
+<button onclick="showLogoutPopup()">
+🚪 Log Out
+</button>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>Manager Dashboard</h1>
+
+<div class="clock" id="clock"></div>
+
+</div>
+
+<div id="content"></div>
+
+</div>
+
+<script>
+
+function getFilterPercent(){
+return Math.max(0, Math.min(100, filterLife));
+}
+
+/* CLOCK */
+
+setInterval(()=>{
+
+document.getElementById("clock").innerHTML =
+new Date().toLocaleTimeString();
+
+},1000);
+
+/* MOBILE SIDEBAR */
+
+function toggleSidebar(){
+
+document.querySelector(".sidebar")
+.classList.toggle("active");
+
+}
+
+/* DATA */
+
+let gallons = 500;
+let filterLife = 80;
+
+let inventoryLogs = [];
+
+let notifications = [];
+
+let riders = [
+
+{
+name:"Rider John",
+status:"Preparing"
+},
+
+{
+name:"Rider Mike",
+status:"On The Way"
+},
+
+{
+name:"Rider Alex",
+status:"Delivered"
+}
+
+];
+
+let riderAttendance = [
+
+{
+name:"Rider John",
+date:new Date().toDateString(),
+time:new Date().toLocaleTimeString(),
+status:"Present"
+},
+
+{
+name:"Rider Mike",
+date:new Date().toDateString(),
+time:new Date().toLocaleTimeString(),
+status:"Present"
+}
+
+];
+
+/* ATTENDANCE POPUP */
+
+function updateAttendancePopup(){
+
+const now = new Date();
+
+document.getElementById("attendanceDate").innerHTML =
+"📅 Date: " + now.toDateString();
+
+document.getElementById("attendanceTime").innerHTML =
+"⏰ Time In: " + now.toLocaleTimeString();
+
+}
+
+updateAttendancePopup();
+
+/* MANAGER PRESENT */
+
+function managerPresent(){
+
+const now = new Date();
+
+let status =
+now.getHours() >= 22
+? "Late"
+: "On Time";
+
+localStorage.setItem(
+"managerLoginDate",
+now.toDateString()
+);
+
+localStorage.setItem(
+"managerLoginTime",
+now.toLocaleTimeString()
+);
+
+localStorage.setItem(
+"managerAttendanceStatus",
+status
+);
+
+document.getElementById("attendancePopup")
+.style.display = "none";
+
+dashboard();
+
+}
+
+/* DASHBOARD */
+
+function dashboard(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="grid">
+
+<div class="card stat">
+<h2>${gallons}</h2>
+<p>Total Gallons</p>
+</div>
+
+<div class="card stat">
+<h2>${filterLife.toFixed(2)}%</h2>
+<p>Filter Lifespan</p>
+</div>
+
+<div class="card stat">
+<h2>${notifications.length}</h2>
+<p>Notifications</p>
+</div>
+
+<div class="card stat">
+<h2>${riders.length}</h2>
+<p>Active Riders</p>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>📅 Attendance Information</h3>
+
+<br>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Log In</th>
+<th>Status</th>
+</tr>
+
+<tr>
+
+<td>
+${localStorage.getItem("managerLoginDate") || "-"}
+</td>
+
+<td>
+${localStorage.getItem("managerLoginTime") || "-"}
+</td>
+
+<td>
+
+<span class="status pending">
+${localStorage.getItem("managerAttendanceStatus") || "-"}
+</span>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+`;
+
+}
+
+/* INVENTORY */
+
+function inventory(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="grid">
+
+<div class="card stat">
+<h2>${gallons}</h2>
+<p>Total Gallons Refilled</p>
+</div>
+
+<div class="card stat">
+
+<h3>Filter Health</h3>
+
+<div class="bar-container">
+  <div class="bar-fill" style="width:${getFilterPercent()}%"></div>
+</div>
+
+<div class="bar-text">
+${filterLife.toFixed(2)}% remaining
+</div>
+
+</div>
+
+<div class="card stat">
+<h2>${inventoryLogs.length}</h2>
+<p>Daily Records</p>
+</div>
+
+</div>
+
+
+<!-- DAILY INPUT -->
+<div class="card">
+
+<h2>📦 Daily Sales Input</h2>
+
+<br>
+
+<p>Enter gallons refilled today:</p>
+
+<input type="number" id="gallonInput" placeholder="e.g. 100">
+
+<br><br>
+
+<button class="btn blue" onclick="addSoldGallons()">
+➕ Submit
+</button>
+
+<br><br>
+
+<div class="notify">
+💧 Every gallon reduces filter life by 0.005%
+</div>
+
+<br>
+
+${
+filterLife <= 10
+?
+`<div class="notify" style="background:rgba(255,0,0,0.2);">
+⚠ CRITICAL: Replace filter immediately
+</div>`
+:
+filterLife <= 30
+?
+`<div class="notify" style="background:rgba(255,165,0,0.2);">
+⚠ WARNING: Filter is degrading
+</div>`
+:
+`<div class="notify">
+✅ Filter condition is good
+</div>`
+}
+
+</div>
+
+
+<!-- HISTORY -->
+<div class="card">
+
+<h2>📊 Sales History</h2>
+
+<br>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Gallons Sold</th>
+<th>Impact</th>
+</tr>
+
+${inventoryLogs.length === 0
+?
+`<tr><td colspan="3">No records yet</td></tr>`
+:
+inventoryLogs.map(log=>`
+<tr>
+<td>${log.date}</td>
+<td>${log.sold}</td>
+<td>-${(log.sold * 0.005).toFixed(2)}%</td>
+</tr>
+`).join("")
+}
+
+</table>
+
+</div>
+
+`;
+}
+
+/* ADD GALLONS */
+
+function addSoldGallons(){
+
+let input = document.getElementById("gallonInput").value;
+let sold = parseFloat(input);
+
+if(isNaN(sold) || sold <= 0){
+alert("Invalid input");
+return;
+}
+
+gallons += sold;
+filterLife -= sold * 0.005;
+
+if(filterLife < 0){
+filterLife = 0;
+}
+
+inventoryLogs.push({
+date: new Date().toLocaleString(),
+sold: sold
+});
+
+localStorage.setItem("gallons", gallons);
+localStorage.setItem("filterLife", filterLife);
+localStorage.setItem("inventoryLogs", JSON.stringify(inventoryLogs));
+
+if(filterLife <= 10){
+notifications.push("⚠ Filter replacement needed");
+}
+
+document.getElementById("gallonInput").value = "";
+
+inventory();
+} 
+
+/* RIDER MONITORING */
+
+function riderMonitoring(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="card">
+
+<h2>🚚 Rider Monitoring</h2>
+
+<br>
+
+<table>
+
+<tr>
+<th>Rider</th>
+<th>Status</th>
+</tr>
+
+${riders.map(r=>`
+
+<tr>
+
+<td>${r.name}</td>
+
+<td>
+
+<span class="status
+${r.status=="Delivered"
+? "delivered"
+: r.status=="Preparing"
+? "prepare"
+: "pending"}">
+
+${r.status}
+
+</span>
+
+</td>
+
+</tr>
+
+`).join("")}
+
+</table>
+
+</div>
+
+`;
+
+}
+
+/* RIDER ATTENDANCE */
+
+function showRiderAttendance(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="card">
+
+<h2>👨‍💼 Rider Attendance</h2>
+
+<br>
+
+<table>
+
+<tr>
+<th>Name</th>
+<th>Date</th>
+<th>Time In</th>
+<th>Status</th>
+</tr>
+
+${riderAttendance.map(r=>`
+
+<tr>
+
+<td>${r.name}</td>
+
+<td>${r.date}</td>
+
+<td>${r.time}</td>
+
+<td>${r.status}</td>
+
+</tr>
+
+`).join("")}
+
+</table>
+
+</div>
+
+`;
+
+}
+
+/* NOTIFICATIONS */
+
+function showNotifications(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="card">
+
+<h2>🔔 Notifications</h2>
+
+<br>
+
+${
+notifications.length == 0
+
+?
+
+`
+<div class="notify">
+✅ No notifications available
+</div>
+`
+
+:
+
+notifications.map(n=>`
+
+<div class="notify">
+
+${n}
+
+</div>
+
+`).join("")
+
+}
+
+</div>
+
+`;
+
+}
+
+/* REPORTS */
+
+function reports(){
+
+document.getElementById("content").innerHTML = `
+
+<div class="card">
+
+<h2>📋 Reports</h2>
+
+<br>
+
+<div class="notify">
+💧 Total Gallons: ${gallons}
+</div>
+
+<div class="notify">
+🧪 Filter Life: ${filterLife.toFixed(2)}%
+</div>
+
+<div class="notify">
+🚚 Active Riders: ${riders.length}
+</div>
+
+<div class="notify">
+📦 Inventory Logs: ${inventoryLogs.length}
+</div>
+
+<div class="notify">
+🔔 Notifications: ${notifications.length}
+</div>
+
+</div>
+
+`;
+
+}
+
+/* LOGOUT POPUP */
+
+function showLogoutPopup(){
+
+const now = new Date();
+
+document.getElementById("logoutDate").innerHTML =
+"📅 Date: " + now.toDateString();
+
+document.getElementById("logoutTime").innerHTML =
+"⏰ Time Out: " + now.toLocaleTimeString();
+
+document.getElementById("logoutPopup")
+.style.display = "flex";
+
+}
+
+/* CONFIRM LOGOUT */
+
+function confirmLogout(){
+
+const now = new Date();
+
+localStorage.setItem(
+"managerLogoutDate",
+now.toDateString()
+);
+
+localStorage.setItem(
+"managerLogoutTime",
+now.toLocaleTimeString()
+);
+
+alert("Logged Out Successfully ✅");
+
+window.location.href = "login.html";
+
+}
+
+/* ALWAYS SHOW ATTENDANCE POPUP */
+
+document.getElementById("attendancePopup")
+.style.display = "flex";
+
+/* DEFAULT */
+
+dashboard();
+
+</script>
+
+</body>
+</html>

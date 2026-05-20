@@ -4,203 +4,277 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ADMIN</title>
+<title>OWNER DASHBOARD</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-  font-family:Segoe UI;
-  background:#0f172a;
-  color:white;
-  display:flex;
+font-family:Segoe UI;
+background:
+linear-gradient(
+135deg,
+#0f4c75 0%,
+#3282b8 25%,
+#bbe1fa 50%,
+#3282b8 75%,
+#0f4c75 100%
+);
+background-size:400% 400%;
+animation:waterFlow 20s ease infinite;
+color:white;
+display:flex;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+@keyframes waterFlow{
+0%{background-position:0% 50%;}
+25%{background-position:100% 50%;}
+50%{background-position:100% 0%;}
+75%{background-position:0% 0%;}
+100%{background-position:0% 50%;}
+}
+
+/* BUBBLES */
+
+.bubble{
+position:fixed;
+border-radius:50%;
+background:linear-gradient(
+135deg,
+rgba(187,225,250,0.3),
+rgba(50,130,184,0.2)
+);
+backdrop-filter:blur(15px);
+border:2px solid rgba(187,225,250,0.4);
+animation:waterDrop 15s infinite ease-in-out;
+z-index:0;
+}
+
+@keyframes waterDrop{
+0%{
+transform:translateY(0) scale(1);
+opacity:.7;
+}
+50%{
+transform:translateY(-40px) scale(1.1);
+opacity:1;
+}
+100%{
+transform:translateY(0) scale(1);
+opacity:.7;
+}
 }
 
 /* SIDEBAR */
 
 .sidebar{
-  width:250px;
-  height:100vh;
-  background:#111827;
-  padding:20px;
-  position:fixed;
+width:260px;
+height:100vh;
+position:fixed;
+padding:20px;
+background:rgba(15,76,117,0.9);
+backdrop-filter:blur(25px);
+border-right:1px solid rgba(255,255,255,0.2);
+z-index:10;
 }
 
 .brand{
-  font-size:24px;
-  font-weight:bold;
-  color:#38bdf8;
-  margin-bottom:30px;
+font-size:24px;
+font-weight:bold;
+color:#bbe1fa;
+text-align:center;
+margin-bottom:30px;
 }
 
 .sidebar button{
-  width:100%;
-  padding:14px;
-  margin:8px 0;
-  border:none;
-  border-radius:12px;
-  background:rgba(255,255,255,0.05);
-  color:white;
-  cursor:pointer;
-  transition:.3s;
-  text-align:left;
-  font-size:15px;
+width:100%;
+padding:16px;
+margin:10px 0;
+border:none;
+border-radius:16px;
+background:rgba(255,255,255,0.08);
+color:white;
+cursor:pointer;
+font-size:15px;
+transition:.3s;
+text-align:left;
 }
 
 .sidebar button:hover{
-  background:#38bdf8;
-  transform:translateX(5px);
+background:rgba(255,255,255,0.18);
+transform:translateX(5px);
 }
 
 /* MAIN */
 
 .main{
-  margin-left:250px;
-  width:100%;
-  padding:20px;
+margin-left:260px;
+padding:30px;
+width:100%;
+position:relative;
+z-index:1;
 }
 
 /* TOPBAR */
 
 .topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
 }
 
 .topbar h1{
-  font-size:28px;
+font-size:32px;
+color:#bbe1fa;
 }
 
 .clock{
-  background:rgba(255,255,255,0.08);
-  padding:10px 20px;
-  border-radius:12px;
+padding:14px 20px;
+border-radius:16px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
 }
 
 /* GRID */
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
 }
 
 /* CARD */
 
 .card{
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+border-radius:22px;
+padding:25px;
+border:1px solid rgba(255,255,255,0.15);
+box-shadow:0 8px 30px rgba(0,0,0,0.2);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
 }
 
 /* STAT */
 
 .stat{
-  text-align:center;
-  transition:.3s;
-}
-
-.stat:hover{
-  transform:translateY(-5px);
+text-align:center;
 }
 
 .stat h2{
-  font-size:35px;
-  color:#38bdf8;
+font-size:40px;
+color:#bbe1fa;
+}
+
+.stat p{
+margin-top:10px;
+color:#dbeafe;
 }
 
 /* TABLE */
 
 table{
-  width:100%;
-  border-collapse:collapse;
+width:100%;
+border-collapse:collapse;
+overflow:hidden;
+border-radius:16px;
 }
 
 th,td{
-  padding:12px;
-  text-align:left;
+padding:16px;
+text-align:left;
 }
 
 th{
-  color:#94a3b8;
+background:rgba(15,76,117,0.5);
+color:#bbe1fa;
 }
 
 tr{
-  border-bottom:1px solid rgba(255,255,255,0.05);
+background:rgba(255,255,255,0.05);
+}
+
+tr:hover{
+background:rgba(255,255,255,0.1);
 }
 
 /* STATUS */
 
 .status{
-  padding:6px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:bold;
+padding:8px 14px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
 }
 
 .pending{
-  background:#f59e0b;
+background:#f59e0b;
 }
 
 .delivered{
-  background:#22c55e;
+background:#22c55e;
 }
 
-.ontheway{
-  background:#3b82f6;
+.ontime{
+background:#3b82f6;
+}
+
+/* NOTIFY */
+
+.notify{
+padding:18px;
+margin:12px 0;
+border-radius:14px;
+background:rgba(255,255,255,0.08);
 }
 
 /* BUTTON */
 
 .btn{
-  padding:8px 12px;
-  border:none;
-  border-radius:8px;
-  color:white;
-  cursor:pointer;
+padding:12px 20px;
+border:none;
+border-radius:14px;
+background:#3b82f6;
+color:white;
+cursor:pointer;
+font-weight:bold;
+transition:.3s;
 }
 
-.green{background:#22c55e;}
-.blue{background:#3b82f6;}
-.orange{background:#f59e0b;}
-
-/* NOTIFICATIONS */
-
-.notify{
-  margin:10px 0;
-  padding:12px;
-  border-radius:10px;
-  background:rgba(255,255,255,0.05);
+.btn:hover{
+transform:scale(1.05);
 }
 
 /* RESPONSIVE */
 
 @media(max-width:768px){
 
+body{
+flex-direction:column;
+}
+
 .sidebar{
-  width:100%;
-  height:auto;
-  position:relative;
+position:relative;
+width:100%;
+height:auto;
 }
 
 .main{
-  margin-left:0;
-}
-
-body{
-  flex-direction:column;
+margin-left:0;
 }
 
 }
@@ -214,13 +288,17 @@ body{
 
 <div class="sidebar">
 
-<div class="brand">💧 ADMIN</div>
+<div class="brand">
+💧 OWNER DASHBOARD
+</div>
 
-<button onclick="dashboard()">📊 Dashboard</button>
-<button onclick="orders()">📦 Orders</button>
-<button onclick="riders()">🚴 Riders</button>
-<button onclick="analytics()">📈 Analytics</button>
-<button onclick="ai()">🛠 Help Center</button>
+<button onclick="salesReport()">💰 Sales Report</button>
+
+<button onclick="managerPerformance()">👨‍💼 Manager Performance</button>
+
+<button onclick="riderPerformance()">🚴 Rider Performance</button>
+
+<button onclick="inventoryFilter()">🧪 Inventory & Filter</button>
 
 </div>
 
@@ -230,7 +308,7 @@ body{
 
 <div class="topbar">
 
-<h1>Dashboard</h1>
+<h1>Owner Monitoring System</h1>
 
 <div class="clock" id="clock"></div>
 
@@ -245,66 +323,69 @@ body{
 /* CLOCK */
 
 setInterval(()=>{
+
 document.getElementById("clock").innerHTML =
 new Date().toLocaleTimeString();
+
 },1000);
 
-/* DATA */
+/* SAMPLE DATA */
 
-let order = {
-  orderNumber:"001",
-  user:"Juan Dela Cruz",
-  address:"Urduja, Caloocan City",
-  total:30,
-  status:"Pending",
-  rider:"Auto Rider System",
+let gallonsInput = parseFloat(localStorage.getItem("gallons")) || 500;
+let filterLife = parseFloat(localStorage.getItem("filterLife")) || 78;
+let inventoryLogs = JSON.parse(localStorage.getItem("inventoryLogs")) || [];
+/* ADD GALLONS */
 
-  payment:"GCash",
-  reference:"1234567890",
-  paymentStatus:"Unpaid"
-};
+function addGallons(count){
 
-/* DASHBOARD */
+gallonsInput += count;
 
-dashboard();
+/* 0.005 deduction */
+filterLife -= (count * 0.005);
 
-function dashboard(){
+if(filterLife < 0){
+filterLife = 0;
+}
+
+inventoryFilter();
+
+}
+
+/* ================= SALES REPORT ================= */
+
+function salesReport(){
 
 document.getElementById("content").innerHTML = `
-
-<!-- STATS -->
 
 <div class="grid">
 
 <div class="card stat">
-<h2>1</h2>
-<p>Total Orders</p>
+<h2>120</h2>
+<p>Daily Delivered Gallons</p>
 </div>
 
 <div class="card stat">
-<h2>₱30</h2>
-<p>Total Sales</p>
+<h2>₱7,200</h2>
+<p>Daily Income</p>
 </div>
 
 <div class="card stat">
-<h2>2</h2>
-<p>Active Riders</p>
+<h2>850</h2>
+<p>Weekly Delivered</p>
 </div>
 
 <div class="card stat">
-<h2>${order.status=="Delivered" ? 1 : 0}</h2>
-<p>Delivered</p>
+<h2>₱210,000</h2>
+<p>Monthly Sales</p>
 </div>
 
 </div>
 
 <br>
 
-<!-- CHART -->
-
 <div class="card">
 
-<h3>📈 Weekly Sales</h3>
+<h3>📈 Sales Overview</h3>
 
 <br>
 
@@ -314,73 +395,41 @@ document.getElementById("content").innerHTML = `
 
 <br>
 
-<!-- RECENT ORDERS -->
-
 <div class="card">
 
-<h3>📦 Recent Orders</h3>
+<h3>💰 Total Sales Summary</h3>
 
 <br>
 
 <table>
 
 <tr>
-<th>Order</th>
-<th>Customer</th>
-<th>Status</th>
-<th>Total</th>
+<th>Period</th>
+<th>Gallons Sold</th>
+<th>Income</th>
 </tr>
 
 <tr>
-<td>#${order.orderNumber}</td>
-<td>${order.user}</td>
-<td>
+<td>Today</td>
+<td>120</td>
+<td>₱7,200</td>
+</tr>
 
-<span class="status ${
-order.status=="Pending"
-? "pending"
-: order.status=="Delivered"
-? "delivered"
-: "ontheway"
-}">
+<tr>
+<td>This Week</td>
+<td>850</td>
+<td>₱52,000</td>
+</tr>
 
-${order.status}
-
-</span>
-
-</td>
-
-<td>₱${order.total}</td>
+<tr>
+<td>This Month</td>
+<td>3,200</td>
+<td>₱210,000</td>
 </tr>
 
 </table>
 
 </div>
-
-<br>
-
-<!-- NOTIFICATIONS -->
-
-<div class="card">
-
-<h3>🔔 Notifications</h3>
-
-<div class="notify">
-📦 New order received
-</div>
-
-<div class="notify">
-🚴 Rider assigned automatically
-</div>
-
-<div class="notify">
-💰 Revenue updated
-</div>
-
-</div>
-
-<br>
-
 
 `;
 
@@ -398,10 +447,9 @@ type:'line',
 
 data:{
 labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-
 datasets:[{
 label:'Sales',
-data:[120,190,300,250,400,280,500],
+data:[5000,7000,9000,6000,12000,10000,15000],
 borderColor:'#38bdf8',
 backgroundColor:'rgba(56,189,248,0.2)',
 fill:true,
@@ -432,153 +480,63 @@ ticks:{color:'white'}
 
 }
 
-/* ORDERS */
+/* ================= MANAGER PERFORMANCE ================= */
 
-function orders(){
+function managerPerformance(){
 
-let html = `
-<div class="card">
-<h2>📦 Order Management</h2>
-<p class="sub">Click an order to view details & payment verification</p>
-</div>
-`;
+/* GET DATA FROM MANAGER PAGE */
 
-html += `
-<div class="card">
-`;
+let loginTime =
+localStorage.getItem("managerLoginTime");
 
-// sample list (later pwede mo palitan ng localStorage orders)
-html += `
-<div onclick="viewOrder('001')" style="padding:15px; background:rgba(255,255,255,0.05); margin-bottom:10px; border-radius:12px; cursor:pointer;">
-<b>#001</b> - Juan Dela Cruz
-<br>
-<span class="status pending">Pending Payment</span>
-</div>
+let loginDate =
+localStorage.getItem("managerLoginDate");
 
-<div onclick="viewOrder('002')" style="padding:15px; background:rgba(255,255,255,0.05); margin-bottom:10px; border-radius:12px; cursor:pointer;">
-<b>#002</b> - Maria Santos
-<br>
-<span class="status ontheway">Paid (GCash)</span>
-</div>
-`;
+let attendanceStatus =
+localStorage.getItem("managerAttendanceStatus");
 
-html += `</div>`;
+let logoutTime =
+localStorage.getItem("managerLogoutTime");
 
-document.getElementById("content").innerHTML = html;
-}
+/* DEFAULT VALUES */
 
-function viewOrder(id){
+if(!loginTime){
 
-let html = `
-<div class="card">
-
-<h2>📦 Order #${id}</h2>
-
-<hr><br>
-
-👤 Customer: Juan Dela Cruz<br>
-📍 Address: Urduja, Caloocan City<br>
-💰 Total: ₱30<br>
-🚚 Status: Pending<br><br>
-
-<h3>💳 Payment Verification</h3>
-
-<div style="margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px;">
-
-📌 Method: GCash<br>
-📌 Reference: 09123456789<br>
-📌 Proof: <br><br>
-
-<img src="https://via.placeholder.com/250x150?text=GCash+Proof" style="border-radius:12px; width:100%;">
-
-<br><br>
-
-<button class="btn green" onclick="approvePayment()">
-✔ Approve Payment
-</button>
-
-<button class="btn orange" onclick="rejectPayment()">
-✖ Reject
-</button>
-
-</div>
-
-</div>
-`;
-
-document.getElementById("content").innerHTML = html;
-}
-
-function approvePayment(){
-alert("Payment Approved ✔");
-orders();
-}
-
-function rejectPayment(){
-alert("Payment Rejected ✖");
-orders();
-}
-/* UPDATE STATUS */
-
-function updateStatus(status){
-
-order.status = status;
-
-alert("Order updated to: " + status);
-
-orders();
+loginTime = "-";
+loginDate = "-";
+attendanceStatus = "No Record";
+logoutTime = "-";
 
 }
 
-/* RIDERS */
+/* SAMPLE REPORT DATA */
 
-function riders(){
-
-document.getElementById("content").innerHTML = `
-
-<div class="card">
-
-<h2>🚴 Rider Panel</h2>
-
-<br>
-
-<p>🚴 Rider Name: ${order.rider}</p>
-
-<br>
-
-<p>📦 Current Deliveries: 1</p>
-
-<br>
-
-<p>🚚 Status: ${order.status}</p>
-
-</div>
-
-`;
-
-}
-
-/* ANALYTICS */
-
-function analytics(){
+let refilled = 150;
+let sold = 120;
+let unsold = 30;
 
 document.getElementById("content").innerHTML = `
 
 <div class="grid">
 
 <div class="card stat">
-<h2>₱30</h2>
-<p>Today's Revenue</p>
+<h2>${attendanceStatus}</h2>
+<p>Attendance Status</p>
 </div>
 
 <div class="card stat">
-<h2>1</h2>
-<p>Total Orders</p>
+<h2>${refilled}</h2>
+<p>Refilled Gallons</p>
 </div>
 
 <div class="card stat">
-<h2>95%</h2>
-<p>Success Rate</p>
+<h2>${sold}</h2>
+<p>Gallons Sold</p>
+</div>
+
+<div class="card stat">
+<h2>${unsold}</h2>
+<p>Unsold Gallons</p>
 </div>
 
 </div>
@@ -587,15 +545,74 @@ document.getElementById("content").innerHTML = `
 
 <div class="card">
 
-<h3>📈 Business Analytics</h3>
+<h3>👨‍💼 Attendance Tracking</h3>
 
 <br>
 
-<p>✔ Orders are stable today.</p>
+<table>
 
-<p>✔ Delivery performance is good.</p>
+<tr>
+<th>Date</th>
+<th>Log In</th>
+<th>Status</th>
+<th>Log Out</th>
+</tr>
 
-<p>✔ Revenue increased from yesterday.</p>
+<tr>
+
+<td>${loginDate}</td>
+
+<td>${loginTime}</td>
+
+<td>
+
+<span class="status ${
+attendanceStatus == "Late"
+? "pending"
+: "delivered"
+}">
+
+${attendanceStatus}
+
+</span>
+
+</td>
+
+<td>${logoutTime}</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>📋 Submitted Report</h3>
+
+<br>
+
+<div class="notify">
+🧾 Refilled Gallons:
+${refilled}
+</div>
+
+<div class="notify">
+💧 Sold Gallons:
+${sold}
+</div>
+
+<div class="notify">
+⚠ Unsold Gallons:
+${unsold}
+</div>
+
+<div class="notify">
+📌 Reason:
+Reserve gallons prepared for next day delivery.
+</div>
 
 </div>
 
@@ -603,91 +620,83 @@ document.getElementById("content").innerHTML = `
 
 }
 
-/* AI */
+/* ================= RIDER PERFORMANCE ================= */
 
-/* ================= ADMIN HELP CENTER ================= */
+function riderPerformance(){
 
-function ai(){
+let riderLate = true;
 
 document.getElementById("content").innerHTML = `
 
-<div class="card">
+<div class="grid">
 
-<h2>🛠 ADMIN HELP CENTER</h2>
+<div class="card stat">
+<h2>5</h2>
+<p>Total Riders</p>
+</div>
+
+<div class="card stat">
+<h2>4</h2>
+<p>Active Riders</p>
+</div>
+
+<div class="card stat">
+<h2>${riderLate ? "1" : "0"}</h2>
+<p>Late Riders</p>
+</div>
+
+</div>
 
 <br>
 
-<div class="notify">
+<div class="card">
 
-📦 <b>Order Management</b>
+<h3>🚴 Rider Attendance</h3>
 
-<br><br>
+<br>
 
-• Accept customer orders<br>
-• Update delivery status<br>
-• Mark orders as completed
+<table>
 
-</div>
+<tr>
+<th>Rider</th>
+<th>Date</th>
+<th>Log In</th>
+<th>Status</th>
+</tr>
 
-<div class="notify">
+<tr>
 
-🚴 <b>Rider Monitoring</b>
+<td>Juan Rider</td>
+<td>May 19, 2026</td>
+<td>10:20 PM</td>
 
-<br><br>
+<td>
 
-• Track assigned riders<br>
-• Monitor active deliveries<br>
-• View rider availability
+<span class="status pending">
+Late
+</span>
 
-</div>
+</td>
 
-<div class="notify">
+</tr>
 
-📈 <b>Analytics Overview</b>
+<tr>
 
-<br><br>
+<td>Mark Rider</td>
+<td>May 19, 2026</td>
+<td>9:55 PM</td>
 
-• Monitor daily sales<br>
-• Check total deliveries<br>
-• Track business performance
+<td>
 
-</div>
+<span class="status delivered">
+On Time
+</span>
 
-<div class="notify">
+</td>
 
-🔔 <b>System Notifications</b>
+</tr>
 
-<br><br>
-
-• Receive new order alerts<br>
-• Rider delivery updates<br>
-• Delivery completion notices
-
-</div>
-
-<div class="notify">
-
-💰 <b>Revenue Tracking</b>
-
-<br><br>
-
-• Daily sales reports<br>
-• Weekly income monitoring<br>
-• Delivery revenue summary
-
-</div>
-
-<div class="notify">
-
-⚙ <b>Admin Controls</b>
-
-<br><br>
-
-• Manage delivery operations<br>
-• Maintain dashboard activity<br>
-• Supervise overall system flow
-
-</div>
+</table>
 
 </div>
 
@@ -695,6 +704,147 @@ document.getElementById("content").innerHTML = `
 
 }
 
+/* ================= INVENTORY & FILTER ================= */
+
+function inventoryFilter(){
+
+let latestUpdate = "15 mins ago";
+
+let warning = filterLife <= 10;
+
+document.getElementById("content").innerHTML = `
+
+<div class="grid">
+
+<div class="card stat">
+<h2>${gallonsInput}</h2>
+<p>Total Gallons Input</p>
+</div>
+
+<div class="card stat">
+<h2>${filterLife.toFixed(2)}%</h2>
+<p>Filter Lifespan</p>
+</div>
+
+<div class="card stat">
+<h2>${latestUpdate}</h2>
+<p>Latest Update</p>
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>🧪 Real-Time Inventory</h3>
+
+<br>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Gallons Added</th>
+<th>Updated By</th>
+<th>Time</th>
+</tr>
+
+<tr>
+<td>May 19, 2026</td>
+<td>25 Gallons</td>
+<td>Manager</td>
+<td>10:45 PM</td>
+</tr>
+
+<tr>
+<td>May 19, 2026</td>
+<td>30 Gallons</td>
+<td>Manager</td>
+<td>11:20 PM</td>
+</tr>
+
+</table>
+
+<br>
+
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>⚙ Filter Status</h3>
+
+<br>
+
+<div class="notify">
+💧 Every gallon input reduces filter lifespan by 0.005%
+</div>
+
+<div class="notify">
+🧪 Current Filter Life: ${filterLife.toFixed(2)}%
+</div>
+
+${warning ? `
+
+<div class="notify" style="background:rgba(255,0,0,0.2); border:1px solid red;">
+⚠ WARNING:
+Filter is below 10%.
+
+Replace within 14 days.
+</div>
+
+` : `
+
+<div class="notify">
+✅ Filter condition is stable.
+</div>
+
+`}
+
+</div>
+
+`;
+
+}
+
+/* DEFAULT PAGE */
+
+salesReport();
+
+/* BUBBLES */
+
+function createBubble(){
+
+const bubble = document.createElement('div');
+
+bubble.className = 'bubble';
+
+const size = Math.random() * 40 + 20;
+
+bubble.style.width = size + 'px';
+bubble.style.height = size + 'px';
+
+bubble.style.left = Math.random() * 100 + 'vw';
+bubble.style.top = Math.random() * 100 + 'vh';
+
+document.body.appendChild(bubble);
+
+setTimeout(()=>{
+bubble.remove();
+},15000);
+
+}
+
+setInterval(createBubble,2000);
+
+for(let i=0;i<8;i++){
+
+setTimeout(createBubble,Math.random()*5000);
+
+}
 
 </script>
 

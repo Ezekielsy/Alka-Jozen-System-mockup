@@ -26,36 +26,77 @@ body{
     background:
     linear-gradient(
         135deg,
-        #eff6ff,
-        #dbeafe,
-        #f8fafc
+        #0f4c75 0%,
+        #3282b8 25%,
+        #bbe1fa 50%,
+        #3282b8 75%,
+        #0f4c75 100%
     );
 
+    background-size: 400% 400%;
+    animation: waterFlow 20s ease infinite;
     overflow-x:hidden;
+    min-height: 100vh;
 }
 
-/* BUBBLES */
+@keyframes waterFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 0%; }
+    75% { background-position: 0% 0%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* WATER DROPLETS */
 
 .bubble{
     position:fixed;
     border-radius:50%;
-    background:rgba(56,189,248,0.08);
-    animation:float 10s infinite ease-in-out;
+    background:linear-gradient(135deg, rgba(187, 225, 250, 0.3), rgba(50, 130, 184, 0.2));
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(187, 225, 250, 0.4);
+    animation: waterDrop 15s infinite ease-in-out, ripple 3s infinite ease-in-out;
     z-index:0;
+    box-shadow:
+        0 8px 32px rgba(15, 76, 117, 0.2),
+        inset 0 0 20px rgba(187, 225, 250, 0.1);
 }
 
-@keyframes float{
-
+@keyframes waterDrop{
     0%{
-        transform:translateY(0);
+        transform:translateY(0) rotate(0deg) scale(1);
+        opacity: 0.7;
     }
-
+    25%{
+        transform:translateY(-40px) rotate(90deg) scale(1.1);
+        opacity: 0.9;
+    }
     50%{
-        transform:translateY(-20px);
+        transform:translateY(-20px) rotate(180deg) scale(0.9);
+        opacity: 0.8;
     }
-
+    75%{
+        transform:translateY(-50px) rotate(270deg) scale(1.2);
+        opacity: 0.6;
+    }
     100%{
-        transform:translateY(0);
+        transform:translateY(0) rotate(360deg) scale(1);
+        opacity: 0.7;
+    }
+}
+
+@keyframes ripple {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow:
+            0 8px 32px rgba(15, 76, 117, 0.2),
+            inset 0 0 20px rgba(187, 225, 250, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow:
+            0 12px 40px rgba(15, 76, 117, 0.3),
+            inset 0 0 25px rgba(187, 225, 250, 0.15);
     }
 }
 
@@ -100,21 +141,31 @@ body{
 
 .sidebar{
 
-    width:260px;
+    width:220px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
 
     background:
     linear-gradient(
         180deg,
-        #0f172a,
-        #0b1220
+        rgba(15, 76, 117, 0.9),
+        rgba(50, 130, 184, 0.8),
+        rgba(15, 76, 117, 0.9)
     );
 
-    padding:25px 18px;
+    backdrop-filter: blur(25px);
+
+    border-right: 2px solid rgba(187, 225, 250, 0.3);
+
+    padding:20px 15px;
 
     color:white;
 
     box-shadow:
-    5px 0 25px rgba(0,0,0,0.15);
+    0 8px 32px rgba(15, 76, 117, 0.3),
+    inset 0 0 50px rgba(187, 225, 250, 0.1);
 }
 
 .brand{
@@ -122,29 +173,35 @@ body{
     font-size:28px;
     font-weight:800;
 
-    color:#38bdf8;
+    color:#bbe1fa;
 
     text-align:center;
 
-    margin-bottom:35px;
-}
+    margin-bottom:20px;
 
-/* MENU */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 
-.menu-btn{
+    text-shadow: 0 2px 10px rgba(187, 225, 250, 0.5);
 
     width:100%;
 
-    padding:15px;
+    padding:16px 18px;
 
-    margin-bottom:12px;
+    margin-bottom:10px;
 
     border:none;
 
     border-radius:16px;
 
     background:
-    rgba(255,255,255,0.05);
+    rgba(255,255,255,0.1);
+
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255,255,255,0.1);
 
     color:white;
 
@@ -154,33 +211,84 @@ body{
 
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:12px;
 
-    transition:.25s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    font-weight: 500;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.menu-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 18px;
+    margin:10px 0;
+    border:none;
+    border-radius:18px;
+    background:rgba(255,255,255,0.08);
+    color:#eff6ff;
+    font-size:16px;
+    font-weight:600;
+    text-align:left;
+    cursor:pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.menu-btn i{
+    width:26px;
+    text-align:center;
+    font-size:18px;
+}
+
+.menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.menu-btn:hover::before {
+    left: 100%;
 }
 
 .menu-btn:hover{
 
-    transform:translateX(5px);
+    transform:translateX(8px) scale(1.02);
 
     background:
-    rgba(56,189,248,0.15);
+    rgba(255,255,255,0.2);
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .menu-btn.active{
 
     background:
-    rgba(56,189,248,0.18);
+    linear-gradient(135deg, rgba(56,189,248,0.3), rgba(14,165,233,0.3));
 
-    border-left:
-    4px solid #38bdf8;
+    border: 1px solid rgba(56,189,248,0.5);
+
+    box-shadow: 0 0 20px rgba(56,189,248,0.3);
 }
 
 /* CONTENT */
 
 .content{
     flex:1;
-    padding:35px;
+    padding:30px;
 }
 
 /* GLASS CARDS */
@@ -191,39 +299,62 @@ body{
 .profile-card{
 
     background:
-    rgba(255,255,255,0.60);
+    rgba(255, 255, 255, 0.15);
 
     backdrop-filter:
-    blur(18px);
+    blur(25px);
 
     border:
-    1px solid rgba(255,255,255,0.45);
+    1px solid rgba(255, 255, 255, 0.2);
 
-    border-radius:28px;
+    border-radius:24px;
 
     padding:25px;
 
-    margin-bottom:22px;
+    margin-bottom:20px;
 
     box-shadow:
-    0 10px 40px rgba(0,0,0,0.08);
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(255,255,255,0.05) inset;
 
-    transition:.25s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.6s;
+}
+
+.card:hover::before {
+    left: 100%;
 }
 
 .card:hover,
 .order-card:hover,
 .track-card:hover{
 
-    transform:translateY(-4px);
+    transform:translateY(-8px) scale(1.01);
 
     box-shadow:
-    0 15px 35px rgba(56,189,248,0.15);
+    0 25px 50px rgba(0,0,0,0.15),
+    0 0 0 1px rgba(255,255,255,0.1) inset,
+    0 0 30px rgba(56,189,248,0.1);
 }
 
 h2{
     color:#0f172a;
-    margin-bottom:10px;
+    margin-bottom:5px;
+    font-size:24px;
 }
 
 .sub{
@@ -238,9 +369,9 @@ textarea{
 
     width:100%;
 
-    padding:15px;
+    padding:18px;
 
-    margin-top:15px;
+    margin-top:10px;
 
     border:none;
 
@@ -251,15 +382,188 @@ textarea{
     outline:none;
 }
 
+/* ADDRESS WRAPPER */
+
+.address-wrapper{
+    position:relative;
+    margin-top:10px;
+}
+
+.address-wrapper input{
+    margin-top:0;
+    padding-right:50px;
+}
+
+.locate-btn{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+    border:none;
+    border-radius:12px;
+    width:36px;
+    height:36px;
+    color:white;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    transition:.2s;
+    z-index:2;
+}
+
+.locate-btn:hover{
+    transform:translateY(-50%) scale(1.1);
+    box-shadow:0 4px 14px rgba(14,165,233,0.4);
+}
+
+.locate-btn.loading{
+    animation:spin 1s linear infinite;
+    pointer-events:none;
+}
+
+@keyframes spin{
+    from{transform:translateY(-50%) rotate(0deg);}
+    to{transform:translateY(-50%) rotate(360deg);}
+}
+
+/* LOCATION BADGE */
+
+.location-badge{
+    display:none;
+    align-items:center;
+    gap:8px;
+    margin-top:5px;
+    padding:10px 14px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#ecfdf5,#d1fae5);
+    border:1px solid #86efac;
+    color:#15803d;
+    font-size:13px;
+    font-weight:600;
+    animation:fadeIn .3s ease;
+}
+
+.location-badge.show{
+    display:flex;
+}
+
+.location-badge.error{
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border-color:#fca5a5;
+    color:#dc2626;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(-6px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+/* CONTACT WRAPPER */
+
+.contact-wrapper{
+    position:relative;
+    margin-top:10px;
+}
+
+.contact-wrapper input{
+    margin-top:0;
+    padding-right:50px;
+}
+
+.validate-btn{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    border:none;
+    border-radius:12px;
+    width:36px;
+    height:36px;
+    color:white;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    transition:.2s;
+    z-index:2;
+}
+
+.validate-btn:hover{
+    transform:translateY(-50%) scale(1.1);
+    box-shadow:0 4px 14px rgba(34,197,94,0.4);
+}
+
+.validate-btn.validating{
+    animation:spin 1s linear infinite;
+    pointer-events:none;
+}
+
+/* CONTACT BADGE */
+
+.contact-badge{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:5px;
+    padding:10px 14px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#fef3c7,#fde68a);
+    border:1px solid #fcd34d;
+    color:#92400e;
+    font-size:13px;
+    font-weight:600;
+    animation:fadeIn .3s ease;
+}
+
+.contact-badge.valid{
+    background:linear-gradient(135deg,#ecfdf5,#d1fae5);
+    border-color:#86efac;
+    color:#15803d;
+}
+
+.contact-badge.invalid{
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border-color:#fca5a5;
+    color:#dc2626;
+}
+
+/* MAP PREVIEW */
+
+.map-preview{
+    display:none;
+    margin-top:8px;
+    border-radius:18px;
+    overflow:hidden;
+    border:2px solid rgba(56,189,248,0.3);
+    box-shadow:0 6px 20px rgba(14,165,233,0.15);
+    animation:fadeIn .4s ease;
+}
+
+.map-preview.show{
+    display:block;
+}
+
+.map-preview iframe{
+    width:100%;
+    height:180px;
+    border:none;
+    display:block;
+}
+
 /* BUTTON */
 
 .primary-btn{
 
     width:100%;
 
-    padding:15px;
+    padding:18px;
 
-    margin-top:18px;
+    margin-top:12px;
 
     border:none;
 
@@ -317,7 +621,7 @@ textarea{
 /* TRACK */
 
 .track-wrapper{
-    margin-top:40px;
+    margin-top:25px;
     position:relative;
 }
 
@@ -391,7 +695,7 @@ textarea{
 
 .eta-box{
 
-    margin-top:18px;
+    margin-top:12px;
 
     padding:16px;
 
@@ -558,7 +862,7 @@ textarea{
     display:flex;
     gap:8px;
 
-    margin-top:18px;
+    margin-top:12px;
 }
 
 .stars i{
@@ -665,7 +969,8 @@ textarea{
 <div class="sidebar">
 
 <div class="brand">
-💧 Alka-Jozen
+<img src="water drop.png" alt="Logo" style="width:60px; height:60px; margin-bottom:10px;">
+<div>💧 Alka-Jozen</div>
 </div>
 
 <button class="menu-btn active"
@@ -854,11 +1159,27 @@ function home(){
             Order #${o.orderNumber}
             </b>
 
-            <br><br>
+            <br>
 
-            📍 ${o.address}
+            💧 ${o.gallon} ${o.gallonType || 'Gallon'}
 
-            <br><br>
+            <br>
+
+            💵 Payment: ${o.payment || 'Not selected'}${o.payment === 'GCash' && o.paymentReference ? ` · Ref: ${String(o.paymentReference).replace(/.(?=.{4})/g, '*')}` : ''}
+
+            <br>
+
+            🧾 Total: ₱${o.total || '0'}
+
+            <br>
+
+            📍 ${o.address}${o.altAddress ? ` (Alt: ${o.altAddress})` : ''}${o.specificLocation ? `, ${o.specificLocation}` : ''}
+
+            <br>
+
+            👤 ${o.recipient}${o.deliveryNotes ? ` - ${o.deliveryNotes}` : ''}
+
+            <br>
 
             <div class="status delivery">
 
@@ -885,13 +1206,107 @@ function newOrder(){
 
         <h2>🛒 New Order</h2>
 
-        <input id="gallon" placeholder="💧 Gallons">
-        <input id="address" placeholder="📍 Address">
-        <input id="contact" placeholder="📞 Contact">
+        <input 
+            id="gallon" 
+            placeholder="💧 Gallons (or select from list)"
+            list="gallonOptions"
+            type="number"
+            min="1"
+        >
+        <datalist id="gallonOptions">
+            <option value="1">1 Gallon</option>
+            <option value="2">2 Gallons</option>
+            <option value="3">3 Gallons</option>
+            <option value="4">4 Gallons</option>
+            <option value="5">5 Gallons</option>
+        </datalist>
 
-        <select id="payment" onchange="showGCash()">
-            <option value="Cash">Cash</option>
-            <option value="GCash">GCash</option>
+        <select id="gallonType" required>
+            <option value="">💧 Select Gallon Availability</option>
+            <option value="Half Empty">Half Empty</option>
+            <option value="Needs Replacement">Needs to be refilled </option>
+        </select>
+
+        <!-- ADDRESS WITH GEOLOCATION -->
+        <div class="address-wrapper">
+            <input
+                id="address"
+                placeholder="📍 Delivery Address"
+                oninput="onAddressInput()"
+            >
+            <button
+                class="locate-btn"
+                id="locateBtn"
+                onclick="useMyLocation()"
+                title="Use my current location"
+            >
+                <i class="fa fa-location-crosshairs" id="locateIcon"></i>
+            </button>
+        </div>
+
+        <!-- STATUS BADGE -->
+        <div class="location-badge" id="locationBadge">
+            <i class="fa fa-circle-check"></i>
+            <span id="locationBadgeText">Location detected!</span>
+        </div>
+
+        <!-- MAP PREVIEW -->
+        <div class="map-preview" id="mapPreview">
+            <iframe id="mapFrame" src="" allowfullscreen loading="lazy"></iframe>
+        </div>
+
+        <input id="altAddress" placeholder="📍 Add Another Address (If you put wrong address) ">
+
+        <input id="specificLocation" placeholder="🏠 Specific Location (e.g., Apartment, Floor, Landmark)">
+
+        <!-- CONTACT WITH VALIDATION -->
+        <div class="contact-wrapper">
+            <input
+                id="contact"
+                placeholder="📞 Contact Number"
+                oninput="validateContact()"
+                maxlength="11"
+            >
+            <button
+                class="validate-btn"
+                id="validateBtn"
+                onclick="validateContactNumber()"
+                title="Validate contact number"
+            >
+                <i class="fa fa-check" id="validateIcon"></i>
+            </button>
+        </div>
+
+        <!-- CONTACT STATUS BADGE -->
+        <div class="contact-badge" id="contactBadge">
+            <i class="fa fa-circle-info"></i>
+            <span id="contactBadgeText">Add another contact number in case of the person is unavailable</span>
+        </div>
+
+        <!-- DELIVERY RECIPIENT -->
+        <select id="recipient" required>
+            <option value="">👤 Who will receive the order?</option>
+            <option value="Me">I will receive it personally</option>
+            <option value="Family Member">Family member (spouse, parent, child)</option>
+            <option value="Friend">Friend or roommate</option>
+            <option value="Neighbor">Neighbor</option>
+            <option value="Security Guard">Building security guard</option>
+            <option value="Receptionist">Office receptionist</option>
+            <option value="Leave at Door">Leave at door/front desk</option>
+            <option value="Other">Other (specify in notes)</option>
+        </select>
+
+        <textarea id="deliveryNotes" 
+            placeholder="📝 Additional delivery instructions (optional)"
+            rows="3"
+            style="width:100%;margin-top:10px;padding:12px;border-radius:12px;border:none;background:#f8fafc;resize:vertical;"
+        ></textarea>
+
+        <h3 style="margin-top:20px;margin-bottom:10px;color:#0f172a;font-size:16px;">💳 Mode of Payment</h3>
+
+        <select id="payment" onchange="showPaymentMethod()">
+            <option value="Cash">💵 Cash on Delivery</option>
+            <option value="GCash">📱 GCash</option>
         </select>
 
         <!-- GCASH BOX -->
@@ -911,10 +1326,10 @@ function newOrder(){
                 style="width:200px;border-radius:12px;margin-top:10px;">
 
                 <p style="margin-top:10px;">
-                    Send to: <b>09123456789</b>
+                    Send to: <b>0912****789</b>
                 </p>
 
-                <input id="reference"
+                <input id="reference" type="password"
                 placeholder="Enter GCash Reference Number">
 
             </div>
@@ -929,21 +1344,298 @@ function newOrder(){
     `;
 }
 
-function showGCash(){
+/* ── GEOLOCATION FEATURE ── */
+
+let detectedLat = null;
+let detectedLon = null;
+
+function useMyLocation(){
+
+    if(!navigator.geolocation){
+        showBadge("❌ Geolocation not supported by your browser.", true);
+        return;
+    }
+
+    // Spinner state
+    const btn  = document.getElementById("locateBtn");
+    const icon = document.getElementById("locateIcon");
+
+    btn.classList.add("loading");
+    icon.className = "fa fa-spinner";
+
+    navigator.geolocation.getCurrentPosition(
+
+        async (pos) => {
+
+            detectedLat = pos.coords.latitude;
+            detectedLon = pos.coords.longitude;
+
+            try {
+                // Reverse geocode via OpenStreetMap Nominatim (free, no key)
+                const res = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?lat=${detectedLat}&lon=${detectedLon}&format=json`,
+                    { headers:{ "Accept-Language":"en" } }
+                );
+
+                const data = await res.json();
+
+                const addr = buildAddress(data);
+
+                document.getElementById("address").value = addr;
+
+                showBadge("✅ Location detected & filled in!", false);
+                showMap(detectedLat, detectedLon);
+
+            } catch(e) {
+
+                // Fallback: just fill coordinates
+                document.getElementById("address").value =
+                    `Lat: ${detectedLat.toFixed(5)}, Lon: ${detectedLon.toFixed(5)}`;
+
+                showBadge("📍 Coordinates used (address lookup failed).", false);
+                showMap(detectedLat, detectedLon);
+            }
+
+            // Reset button
+            btn.classList.remove("loading");
+            icon.className = "fa fa-location-crosshairs";
+        },
+
+        (err) => {
+
+            btn.classList.remove("loading");
+            icon.className = "fa fa-location-crosshairs";
+
+            let msg = "❌ Location access denied.";
+
+            if(err.code === 1)
+                msg = "❌ Permission denied. Please allow location access.";
+            else if(err.code === 2)
+                msg = "❌ Location unavailable. Check your GPS.";
+            else if(err.code === 3)
+                msg = "❌ Location request timed out.";
+
+            showBadge(msg, true);
+        },
+
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+}
+
+/* Build a readable address from Nominatim response */
+function buildAddress(data){
+
+    const a = data.address || {};
+
+    const parts = [
+        a.house_number,
+        a.road || a.street,
+        a.neighbourhood || a.suburb,
+        a.city || a.town || a.municipality || a.village,
+        a.state || a.region,
+        a.country
+    ].filter(Boolean);
+
+    return parts.join(", ") || data.display_name || "Unknown Address";
+}
+
+/* Show the status badge */
+function showBadge(text, isError){
+
+    const badge = document.getElementById("locationBadge");
+
+    if(!badge) return;
+
+    badge.className = "location-badge show" + (isError ? " error" : "");
+    document.getElementById("locationBadgeText").textContent = text;
+}
+
+/* Show OpenStreetMap embed preview */
+function showMap(lat, lon){
+
+    const preview = document.getElementById("mapPreview");
+    const frame   = document.getElementById("mapFrame");
+
+    if(!preview || !frame) return;
+
+    // OpenStreetMap embed (free, no API key)
+    frame.src =
+        `https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.005},${lat-0.005},${lon+0.005},${lat+0.005}&layer=mapnik&marker=${lat},${lon}`;
+
+    preview.classList.add("show");
+}
+
+/* Hide map when user manually edits the address */
+function onAddressInput(){
+
+    const preview = document.getElementById("mapPreview");
+    const badge   = document.getElementById("locationBadge");
+
+    if(preview) preview.classList.remove("show");
+    if(badge)   badge.classList.remove("show");
+
+    detectedLat = null;
+    detectedLon = null;
+}
+
+/* CONTACT VALIDATION FUNCTIONS */
+
+function validateContact(){
+    const input = document.getElementById("contact");
+    const value = input.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Auto-format Philippine numbers
+    if(value.startsWith('09') && value.length <= 11){
+        // Format as 09XX-XXX-XXXX
+        let formatted = value;
+        if(value.length >= 4) formatted = value.slice(0,4) + '-' + value.slice(4);
+        if(value.length >= 7) formatted = formatted.slice(0,8) + '-' + formatted.slice(8);
+        input.value = formatted;
+    } else if(value.startsWith('63') && value.length <= 12){
+        // Format as +63-9XX-XXX-XXXX
+        let formatted = '+63-' + value.slice(2);
+        if(value.length >= 5) formatted = '+63-' + value.slice(2,5) + '-' + value.slice(5);
+        if(value.length >= 8) formatted = '+63-' + value.slice(2,5) + '-' + value.slice(5,8) + '-' + value.slice(8);
+        input.value = formatted;
+    }
+    
+    // Update badge based on validation
+    updateContactBadge();
+}
+
+function validateContactNumber(){
+    const input = document.getElementById("contact");
+    const value = input.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Show validating state
+    const btn = document.getElementById("validateBtn");
+    const icon = document.getElementById("validateIcon");
+    btn.classList.add("validating");
+    icon.className = "fa fa-spinner";
+    
+    // Simulate validation delay
+    setTimeout(() => {
+        btn.classList.remove("validating");
+        
+        // Check if it's a valid Philippine mobile number
+        const isValid = (value.startsWith('09') && value.length === 11) || 
+                       (value.startsWith('639') && value.length === 12) ||
+                       (value.startsWith('63') && value.length === 12);
+        
+        if(isValid){
+            icon.className = "fa fa-check";
+            showContactBadge("✅ Valid Philippine mobile number!", "valid");
+        } else {
+            icon.className = "fa fa-times";
+            showContactBadge("❌ Invalid number. Use 09XX-XXX-XXXX or +63-9XX-XXX-XXXX format.", "invalid");
+        }
+    }, 1000);
+}
+
+function updateContactBadge(){
+    const input = document.getElementById("contact");
+    const value = input.value.replace(/\D/g, '');
+    
+    if(value.length === 0){
+        showContactBadge("Enter a valid Philippine mobile number", "");
+    } else if(value.startsWith('09') && value.length === 11){
+        showContactBadge("Valid format detected", "valid");
+    } else if(value.startsWith('63') && value.length === 12){
+        showContactBadge("Valid international format detected", "valid");
+    } else if(value.length > 0){
+        showContactBadge("Please enter a valid Philippine mobile number", "invalid");
+    }
+}
+
+function showContactBadge(text, status){
+    const badge = document.getElementById("contactBadge");
+    const textSpan = document.getElementById("contactBadgeText");
+    
+    if(!badge || !textSpan) return;
+    
+    badge.className = "contact-badge " + status;
+    textSpan.textContent = text;
+}
+
+/* ──────────────────────── */
+
+function showPaymentMethod(){
 
     let payment = document.getElementById("payment").value;
-    let box = document.getElementById("gcashBox");
+    
+    // Hide all payment boxes
+    document.getElementById("gcashBox").style.display = "none";
 
+    // Show the selected payment box
     if(payment === "GCash"){
-        box.style.display = "block";
-    } else {
-        box.style.display = "none";
+        document.getElementById("gcashBox").style.display = "block";
     }
+}
+
+function getPaymentReference(){
+    const paymentMethod = document.getElementById("payment").value;
+    
+    if(paymentMethod === "Cash") return "Cash on Delivery";
+    if(paymentMethod === "GCash") return document.getElementById("reference").value;
+    
+    return "";
 }
 
 /* SAVE */
 
 function saveOrder(){
+
+    // Validation
+    if (!document.getElementById("address").value.trim()) {
+        notify("❌ Please enter a delivery address.");
+        return;
+    }
+
+    if (!document.getElementById("gallon").value.trim()) {
+        notify("❌ Please enter the number of gallons.");
+        return;
+    }
+
+    if (!document.getElementById("gallonType").value) {
+        notify("❌ Please select gallon availability.");
+        return;
+    }
+
+    // Validate contact number
+    const contactValue = document.getElementById("contact").value.replace(/\D/g, '');
+    if (!contactValue || !(contactValue.startsWith('09') && contactValue.length === 11) && 
+        !(contactValue.startsWith('63') && contactValue.length === 12)) {
+        notify("❌ Please enter a valid Philippine mobile number.");
+        return;
+    }
+
+    if (!document.getElementById("recipient").value) {
+        notify("❌ Please specify who will receive the order.");
+        return;
+    }
+
+    // Validate payment reference based on method
+    const paymentMethod = document.getElementById("payment").value;
+    const paymentReference = getPaymentReference();
+    if (paymentMethod === "GCash" && !paymentReference.trim()) {
+        notify("❌ Please enter the GCash reference number.");
+        return;
+    }
+
+    let paymentStatus = "";
+    let paymentStatusDetail = "";
+    if (paymentMethod === "GCash") {
+        if (!/^[0-9]{8,16}$/.test(paymentReference.trim())) {
+            paymentStatus = "Rejected";
+            paymentStatusDetail = "Invalid GCash reference number.";
+        } else {
+            paymentStatus = "Pending Verification";
+            paymentStatusDetail = "Awaiting confirmation from GCash payment.";
+        }
+    } else {
+        paymentStatus = "Pay on Delivery";
+        paymentStatusDetail = "Cash payment to be collected on delivery.";
+    }
 
     let orders =
     getOrders();
@@ -962,9 +1654,24 @@ function saveOrder(){
         "gallon"
         ).value,
 
+        gallonType:
+        document.getElementById(
+        "gallonType"
+        ).value,
+
         address:
         document.getElementById(
         "address"
+        ).value,
+
+        altAddress:
+        document.getElementById(
+        "altAddress"
+        ).value,
+
+        specificLocation:
+        document.getElementById(
+        "specificLocation"
         ).value,
 
         contact:
@@ -972,10 +1679,26 @@ function saveOrder(){
         "contact"
         ).value,
 
+        recipient:
+        document.getElementById(
+        "recipient"
+        ).value,
+
+        deliveryNotes:
+        document.getElementById(
+        "deliveryNotes"
+        ).value,
+
         payment:
         document.getElementById(
         "payment"
         ).value,
+
+        paymentReference: paymentReference,
+
+        paymentStatus: paymentStatus,
+
+        paymentStatusDetail: paymentStatusDetail,
 
         status:"Go to Pickup",
 
@@ -1029,7 +1752,7 @@ function trackOrder(){
             #${o.orderNumber}
             </b>
 
-            <br><br>
+            <br>
 
             ${o.status}
 
@@ -1106,6 +1829,16 @@ function viewTrack(id){
 
         </p>
 
+        <p class="sub">
+            Order:
+            <b>${o.gallon} ${o.gallon === "1" ? "gallon" : "gallons"} of ${o.gallonType}</b>
+        </p>
+
+        <p class="sub">
+            Delivered to:
+            <b>${o.recipient || "Recipient"}</b>
+        </p>
+
         <div class="eta-box">
 
         🚚 ETA:
@@ -1163,7 +1896,7 @@ function viewTrack(id){
 
         html += `
 
-        <div style="margin-top:35px;">
+        <div style="margin-top:20px;">
 
             <h3>
             ⭐ Rate Rider
@@ -1308,13 +2041,45 @@ function paymentHistory(){
             #${o.orderNumber}
             </b>
 
-            <br><br>
+            <br>
 
-            ${o.payment}
+            💧 ${o.gallon} ${o.gallonType || 'Gallon'}
 
-            <br><br>
+            <br>
 
-            ₱${o.total || 0}
+            💵 ${o.payment || 'Not selected'}${o.payment === 'GCash' && o.paymentReference ? ` · Ref: ${String(o.paymentReference).replace(/.(?=.{4})/g, '*')}` : ''}
+
+            <br>
+
+            🟢 Payment Status: ${o.paymentStatus || 'Unknown'}
+
+            <br>
+
+            ⚠️ Reason: ${o.paymentStatusDetail || 'No issues reported.'}
+
+            <br>
+
+            🧾 Total: ₱${o.total || 0}
+
+            <br>
+
+             👥 Customer: ${o.user || 'Mauiii'}
+
+            <br>
+
+            👥 Recipient: ${o.recipient || 'Not set'}
+
+            <br>
+
+            🚴 Rider: ${o.rider || 'Unassigned'}
+
+            <br>
+
+            📍 ${o.address}${o.altAddress ? ` (Alt: ${o.altAddress})` : ''}${o.specificLocation ? `, ${o.specificLocation}` : ''}
+
+            <br>
+
+            🚚 Status: ${o.status || 'Pending'}
 
         </div>
         `;
@@ -1362,7 +2127,7 @@ function profile(){
 
         <div style="
             text-align:center;
-            margin-bottom:35px;
+            margin-bottom:20px;
         ">
 
             <div style="
@@ -1418,8 +2183,8 @@ function profile(){
             display:grid;
             grid-template-columns:
             repeat(auto-fit,minmax(220px,1fr));
-            gap:18px;
-            margin-bottom:30px;
+            gap:12px;
+            margin-bottom:20px;
         ">
 
             <div class="card" style="
@@ -1482,7 +2247,7 @@ function profile(){
 
             <div class="card" style="
                 margin:0;
-                padding:22px;
+                padding:15px;
             ">
 
                 <div style="
