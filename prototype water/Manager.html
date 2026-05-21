@@ -603,14 +603,28 @@ function markAttendance(riderId){
 
   saveAttendance(attendance);
 
-  // ✅ AUTO NOTIFICATION TO MANAGER
+  // ✅ CREATE NOTIFICATION
 
-  notifications.push(
-    `📌 ${riderId} submitted attendance at ${time}`
-  );
+  notifications.push({
+
+    id: Date.now(),
+
+    riderId: riderId,
+
+    riderName: riderId,
+
+    date: dateKey,
+
+    time: time,
+
+    status: "Pending"
+
+  });
+
+  // ✅ SAVE
 
   localStorage.setItem(
-    "managerNotifications",
+    "notifications",
     JSON.stringify(notifications)
   );
 
@@ -678,17 +692,55 @@ let ridersList = [
   { id: "r2", name: "Rider Mike" }
 ];
 
+
+
   function riderPerformance(){
+
+  // SAMPLE COUNTS
+  const totalRiders = ridersList.length;
+
+  const activeRiders = 2;
+
+  const lateRiders = 1;
+
   document.getElementById("content").innerHTML = `
+
+    <!-- RIDER SUMMARY -->
+
+    <div class="grid">
+
+      <div class="card stat">
+        <h2>${totalRiders}</h2>
+        <p>Total Riders</p>
+      </div>
+
+      <div class="card stat">
+        <h2>${activeRiders}</h2>
+        <p>Active Riders</p>
+      </div>
+
+      <div class="card stat">
+        <h2>${lateRiders}</h2>
+        <p>Late Riders</p>
+      </div>
+
+    </div>
+
     <div class="card">
+
       <h2>🚚 Rider Performance</h2>
+
       <p>Select a rider to view full performance</p>
 
       <br>
 
       ${ridersList.map(r=>`
-        <div class="notify" style="cursor:pointer" onclick="openRider(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+        <div class="notify"
+          style="cursor:pointer"
+          onclick="openRider(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+
           👤 ${r.name}
+
         </div>
       `).join("")}
 
@@ -696,15 +748,60 @@ let ridersList = [
   `;
 }
 
+
 function openRider(rider){
 
-  const orders = JSON.parse(localStorage.getItem("history")) || [];
+  // PROTOTYPE DATA (per rider)
+  const orders = [
+    {
+      name:"Juan Dela Cruz",
+      address:"Blk 1 Lot 2 Caloocan City",
+      status:"Delivered",
+      total:120,
+      rider:"Rider John"
+    },
+    {
+      name:"Maria Santos",
+      address:"blk3 lot4 Caloocan City",
+      status:"Pending",
+      total:80,
+      rider:"Rider John"
+    },
+    {
+      name:"Pedro Reyes",
+      address:"Urduja Caloocan City",
+      status:"Delivered",
+      total:150,
+      rider:"Rider John"
+    },
+    {
+      name:"Ana Lopez",
+      address:"Blk1 Lot2 Urduja Caloocan City",
+      status:"Pending",
+      total:200,
+      rider:"Rider Mike"
+    },
+    {
+      name:"Carlo Ramos",
+      address:"Urduja Caloocan City",
+      status:"Delivered",
+      total:175,
+      rider:"Rider Mike"
+    },
+    {
+      name:"Liza Cruz",
+      address:"Caloocan Urduja City",
+      status:"Delivered",
+      total:140,
+      rider:"Rider Mike"
+    }
+  ];
 
+  // FILTER BY SELECTED RIDER
   const riderOrders = orders.filter(o => o.rider === rider.name);
 
   const delivered = riderOrders.filter(o => o.status === "Delivered").length;
-
-  const pending = riderOrders.length - delivered;
+  const pending = riderOrders.filter(o => o.status === "Pending").length;
 
   document.getElementById("content").innerHTML = `
 
@@ -732,7 +829,7 @@ function openRider(rider){
 
       <br>
 
-      <h3>📦 Customer Orders</h3>
+      <h3>📦 Customer Orders (Pickup / Delivery List)</h3>
 
       <table>
         <tr>
@@ -746,12 +843,21 @@ function openRider(rider){
           <tr>
             <td>${o.name}</td>
             <td>${o.address}</td>
-            <td>${o.status}</td>
+            <td>
+              <span class="status ${
+                o.status === "Delivered"
+                  ? "delivered"
+                  : "pending"
+              }">
+                ${o.status}
+              </span>
+            </td>
             <td>₱${o.total}</td>
           </tr>
         `).join("")}
 
       </table>
+
     </div>
 
     ${renderAttendanceCalendar(rider)}
@@ -1103,56 +1209,207 @@ let gallons = 500;
 let totalGallonsSold = 0;
 let filterLife = 80;
 
-let inventoryLogs = [];
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
-let notifications = JSON.parse(localStorage.getItem("notifications")) || [
-  {
-    id: "n1",
-    riderId: "r1",
+/* ✅ PROTOTYPE SAMPLE NOTIFICATION */
+if (notifications.length === 0) {
+  notifications.push({
+    id: 1,
     riderName: "Rider John",
-    date: "2026-05-20",
-    time: "08:10 AM",
+    message: "I am present",
+    date: "5/22/2026",
+    time: "8:00 AM",
     status: "Pending"
+  });
+
+  localStorage.setItem("notifications", JSON.stringify(notifications));
+}
+
+inventoryLogs = [
+
+  /* ================= TODAY ================= */
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"8:00 AM",
+    refill:120,
+    sold:90
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"9:00 AM",
+    refill:150,
+    sold:130
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"10:00 AM",
+    refill:180,
+    sold:160
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"11:00 AM",
+    refill:220,
+    sold:200
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"12:00 PM",
+    refill:260,
+    sold:230
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"1:00 PM",
+    refill:300,
+    sold:280
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"2:00 PM",
+    refill:350,
+    sold:320
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"3:00 PM",
+    refill:400,
+    sold:370
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"4:00 PM",
+    refill:430,
+    sold:390
+  },
+
+  {
+    date:new Date().toLocaleDateString(),
+    time:"5:00 PM",
+    refill:470,
+    sold:430
+  },
+
+  /* ================= WEEK ================= */
+
+  {
+    date:"5/16/2026",
+    refill:200,
+    sold:180
+  },
+
+  {
+    date:"5/17/2026",
+    refill:240,
+    sold:210
+  },
+
+  {
+    date:"5/18/2026",
+    refill:280,
+    sold:250
+  },
+
+  {
+    date:"5/19/2026",
+    refill:320,
+    sold:290
+  },
+
+  {
+    date:"5/20/2026",
+    refill:360,
+    sold:330
+  },
+
+  {
+    date:"5/21/2026",
+    refill:390,
+    sold:350
+  },
+
+  {
+    date:"5/22/2026",
+    refill:420,
+    sold:390
+  },
+
+  /* ================= MONTH ================= */
+
+  {
+    date:"1/10/2026",
+    refill:1000,
+    sold:900
+  },
+
+  {
+    date:"2/10/2026",
+    refill:1300,
+    sold:1200
+  },
+
+  {
+    date:"3/10/2026",
+    refill:1600,
+    sold:1450
+  },
+
+  {
+    date:"4/10/2026",
+    refill:1900,
+    sold:1700
+  },
+
+  {
+    date:"5/10/2026",
+    refill:2200,
+    sold:2000
   }
+
 ];
 
 let reportsList = JSON.parse(localStorage.getItem("reportsList")) || [];
 
-let riders = [
-
-{
-name:"Rider John",
-status:"Preparing"
-},
-
-{
-name:"Rider Mike",
-status:"On The Way"
-},
-
-{
-name:"Rider Alex",
-status:"Delivered"
-}
-
-];
-
-let riderAttendance = [
-
-{
-name:"Rider John",
-date:new Date().toDateString(),
-time:new Date().toLocaleTimeString(),
-status:"Present"
-},
-
-{
-name:"Rider Mike",
-date:new Date().toDateString(),
-time:new Date().toLocaleTimeString(),
-status:"Present"
-}
-
+let customerOrders = [
+  {
+    customer: "Juan Dela Cruz",
+    address: "Caloocan City",
+    status: "Delivered",
+    total: 120
+  },
+  {
+    customer: "Maria Santos",
+    address: "Quezon City",
+    status: "Pending",
+    total: 80
+  },
+  {
+    customer: "Pedro Reyes",
+    address: "Valenzuela City",
+    status: "Delivered",
+    total: 150
+  },
+  {
+    customer: "Ana Lopez",
+    address: "Caloocan City",
+    status: "Preparing",
+    total: 200
+  },
+  {
+    customer: "Carlo Ramos",
+    address: "Manila City",
+    status: "Delivered",
+    total: 175
+  }
 ];
 
 /* ATTENDANCE POPUP */
@@ -1222,7 +1479,10 @@ document.getElementById("content").innerHTML = `
 <p>Filter Lifespan</p>
 </div>
 
+
 </div>
+
+
 
 <!-- ANALYTICS -->
 
@@ -1251,50 +1511,376 @@ font-size:16px;
 
 </div>
 
-<!-- ATTENDANCE -->
-
-<div class="card">
-
-<h3>📅 Attendance Information</h3>
-
-<br>
-
-<table>
-
-<tr>
-<th>Date</th>
-<th>Log In</th>
-<th>Status</th>
-</tr>
-
-<tr>
-
-<td>
-${localStorage.getItem("managerLoginDate") || "-"}
-</td>
-
-<td>
-${localStorage.getItem("managerLoginTime") || "-"}
-</td>
-
-<td>
-
-<span class="status pending">
-${localStorage.getItem("managerAttendanceStatus") || "-"}
-</span>
-
-</td>
-
-</tr>
-
-</table>
-
-</div>
+${renderManagerAttendanceCalendar()}
 
 `;
 
 renderAnalytics();
 
+}
+
+function renderManagerAttendanceCalendar(){
+
+ const managerAttendance = {
+
+  "2026-05-01":{
+    status:"present",
+    timeIn:"7:58 AM",
+    timeOut:"5:02 PM"
+  },
+
+  "2026-05-02":{
+    status:"present",
+    timeIn:"7:55 AM",
+    timeOut:"5:10 PM"
+  },
+
+  "2026-05-03":{
+    status:"present",
+    timeIn:"7:50 AM",
+    timeOut:"5:15 PM"
+  },
+
+  "2026-05-04":{
+    status:"present",
+    timeIn:"7:45 AM",
+    timeOut:"5:20 PM"
+  },
+
+  "2026-05-05":{
+    status:"present",
+    timeIn:"7:52 AM",
+    timeOut:"5:08 PM"
+  },
+
+  "2026-05-06":{
+    status:"present",
+    timeIn:"7:48 AM",
+    timeOut:"5:18 PM"
+  },
+
+  "2026-05-07":{
+    status:"present",
+    timeIn:"7:56 AM",
+    timeOut:"5:05 PM"
+  },
+
+  "2026-05-08":{
+    status:"late",
+    timeIn:"8:20 AM",
+    timeOut:"5:00 PM"
+  },
+
+  "2026-05-09":{
+    status:"present",
+    timeIn:"7:54 AM",
+    timeOut:"5:12 PM"
+  },
+
+  "2026-05-10":{
+    status:"present",
+    timeIn:"7:49 AM",
+    timeOut:"5:25 PM"
+  },
+
+  "2026-05-11":{
+    status:"present",
+    timeIn:"7:58 AM",
+    timeOut:"5:07 PM"
+  },
+
+  "2026-05-12":{
+    status:"present",
+    timeIn:"7:53 AM",
+    timeOut:"5:16 PM"
+  },
+
+  "2026-05-13":{
+    status:"present",
+    timeIn:"7:47 AM",
+    timeOut:"5:22 PM"
+  },
+
+  "2026-05-14":{
+    status:"present",
+    timeIn:"7:51 AM",
+    timeOut:"5:11 PM"
+  },
+
+  "2026-05-15":{
+    status:"late",
+    timeIn:"8:30 AM",
+    timeOut:"5:00 PM"
+  },
+
+  "2026-05-16":{
+    status:"present",
+    timeIn:"7:50 AM",
+    timeOut:"5:19 PM"
+  },
+
+  "2026-05-17":{
+    status:"present",
+    timeIn:"7:57 AM",
+    timeOut:"5:06 PM"
+  },
+
+  "2026-05-18":{
+    status:"present",
+    timeIn:"7:46 AM",
+    timeOut:"5:24 PM"
+  },
+
+  "2026-05-19":{
+    status:"present",
+    timeIn:"7:55 AM",
+    timeOut:"5:09 PM"
+  },
+
+  "2026-05-20":{
+    status:"present",
+    timeIn:"7:52 AM",
+    timeOut:"5:14 PM"
+  },
+
+  "2026-05-21":{
+    status:"late",
+    timeIn:"8:15 AM",
+    timeOut:"5:00 PM"
+  },
+
+  "2026-05-22":{
+    status:"present",
+    timeIn:"7:48 AM",
+    timeOut:"5:20 PM"
+  },
+
+  "2026-05-23":{
+    status:"present",
+    timeIn:"7:59 AM",
+    timeOut:"5:03 PM"
+  },
+
+  "2026-05-24":{
+    status:"present",
+    timeIn:"7:51 AM",
+    timeOut:"5:17 PM"
+  },
+
+  "2026-05-25":{
+    status:"present",
+    timeIn:"7:54 AM",
+    timeOut:"5:13 PM"
+  },
+
+  "2026-05-26":{
+    status:"present",
+    timeIn:"7:49 AM",
+    timeOut:"5:21 PM"
+  },
+
+  "2026-05-27":{
+    status:"present",
+    timeIn:"7:56 AM",
+    timeOut:"5:10 PM"
+  },
+
+  "2026-05-28":{
+    status:"present",
+    timeIn:"7:53 AM",
+    timeOut:"5:15 PM"
+  },
+
+  "2026-05-29":{
+    status:"present",
+    timeIn:"7:47 AM",
+    timeOut:"5:23 PM"
+  },
+
+  "2026-05-30":{
+    status:"present",
+    timeIn:"7:58 AM",
+    timeOut:"5:05 PM"
+  },
+
+  "2026-05-31":{
+    status:"present",
+    timeIn:"7:55 AM",
+    timeOut:"5:12 PM"
+  }
+
+};
+
+  const monthNames = [
+    "January","February","March","April",
+    "May","June","July","August",
+    "September","October","November","December"
+  ];
+
+  let year = 2026;
+  let month = 4;
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
+
+  const firstDay =
+    new Date(year, month, 1).getDay();
+
+  let html = `
+
+  <div class="card">
+
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    ">
+
+      <button class="btn blue">
+        ⬅
+      </button>
+
+      <h2>
+        📅 Manager Attendance - ${monthNames[month]} ${year}
+      </h2>
+
+      <button class="btn blue">
+        ➡
+      </button>
+
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+      text-align:center;
+      margin-bottom:10px;
+      font-weight:bold;
+    ">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+    ">
+  `;
+
+  // blank spaces
+  for(let i=0; i<firstDay; i++){
+    html += `<div></div>`;
+  }
+
+  for(let day=1; day<=daysInMonth; day++){
+
+    let dateKey =
+      `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+    let record = managerAttendance[dateKey];
+
+    let bg = "#ef4444";
+    let tooltip = `
+❌ Absent
+
+Time In: -
+
+Time Out: -
+`;
+
+    if(record){
+
+  if(record.status === "present"){
+    bg = "#22c55e";
+  }
+
+  if(record.status === "late"){
+    bg = "#f59e0b";
+  }
+
+  if(record.status === "absent"){
+    bg = "#ef4444";
+  }
+
+  tooltip = `
+
+${record.status.toUpperCase()}
+
+⏰ Time In: ${record.timeIn}
+
+🕔 Time Out: ${record.timeOut}
+
+  `;
+}
+
+    html += `
+
+      <div
+
+        title="${tooltip}"
+
+        style="
+          background:${bg};
+          padding:18px 10px;
+          border-radius:14px;
+          min-height:75px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          cursor:pointer;
+          transition:.3s;
+          font-weight:bold;
+          color:white;
+        "
+
+        onmouseover="
+          this.style.transform='scale(1.05)';
+          this.style.boxShadow='0 0 15px rgba(255,255,255,0.3)';
+        "
+
+        onmouseout="
+          this.style.transform='scale(1)';
+          this.style.boxShadow='none';
+        "
+      >
+
+        ${day}
+
+      </div>
+
+    `;
+  }
+
+  html += `
+
+    </div>
+
+    <br>
+
+    <div class="notify">
+
+      🟢 Present
+      &nbsp;&nbsp;&nbsp;
+
+      🟡 Late
+      &nbsp;&nbsp;&nbsp;
+
+      🔴 Absent
+
+    </div>
+
+  </div>
+  `;
+
+  return html;
 }
 
 /* INVENTORY */
@@ -1379,9 +1965,10 @@ filterLife <= 30
 
 
 <!-- HISTORY -->
+<!-- DAILY INPUT HISTORY -->
 <div class="card">
 
-<h2>📊 Sales History</h2>
+<h2>📊 History of Daily Sales Input</h2>
 
 <br>
 
@@ -1389,19 +1976,49 @@ filterLife <= 30
 
 <tr>
 <th>Date</th>
-<th>Gallons Sold</th>
+<th>Total Input</th>
 <th>Impact</th>
+<th>Status</th>
+<th>Action</th>
 </tr>
 
-${inventoryLogs.length === 0
+${
+inventoryLogs.length === 0
 ?
-`<tr><td colspan="3">No records yet</td></tr>`
+`<tr><td colspan="5">No records yet</td></tr>`
 :
-inventoryLogs.map(log=>`
+inventoryLogs.map(log => `
 <tr>
-<td>${log.date}</td>
-<td>${log.sold}</td>
-<td>-${(log.sold * 0.005).toFixed(2)}%</td>
+<td>${log.date || "5/20/2026, 12:00 PM"}</td>
+
+<td>${log.totalInput ?? "50"} gal</td>
+
+<td>${log.impact ?? "-0.25"}%</td>
+
+<td>
+<span class="status ${
+  log.status === "Edited"
+    ? "prepare"
+    : log.status === "Pending"
+    ? "pending"
+    : "delivered"
+}">
+${log.status || "Unedited"}
+</span>
+</td>
+
+<td>
+
+${
+log.editRequested
+? `<span class="status pending">Pending Approval</span>`
+: `<button class="btn orange" onclick="requestEdit(${log.id})">
+Request Edit
+</button>`
+}
+
+</td>
+
 </tr>
 `).join("")
 }
@@ -1410,7 +2027,33 @@ inventoryLogs.map(log=>`
 
 </div>
 
+</table>
+
+</div>
+
 `;
+}
+
+function requestEdit(id){
+
+let log = inventoryLogs.find(l => l.id === id);
+if(!log) return;
+
+log.editRequested = true;
+
+notifications.push({
+  id: "edit_" + id,
+  type: "edit-request",
+  logId: id,
+  message: "Edit request for daily sales input",
+  status: "Pending",
+  date: new Date().toLocaleDateString(),
+  time: new Date().toLocaleTimeString()
+});
+
+localStorage.setItem("inventoryLogs", JSON.stringify(inventoryLogs));
+
+inventory();
 }
 
 /* ADD GALLONS */
@@ -1440,15 +2083,14 @@ filterLife = 0;
 
 /* SAVE HISTORY */
 inventoryLogs.push({
-
-date: new Date().toLocaleDateString(),
-
-fullDate: new Date().toLocaleString(),
-
-sold: sold,
-
-refill: sold
-
+  id: Date.now(),
+  date: new Date().toLocaleDateString(),
+  fullDate: new Date().toLocaleString(),
+  totalInput: sold,
+  impact: -(sold * 0.005).toFixed(2),
+  status: "Unedited",
+  editRequested: false,
+  approved: false
 });
 
 /* SAVE LOCAL STORAGE */
@@ -1525,100 +2167,111 @@ ${r.status}
 
 function showNotifications(){
 
-document.getElementById("content").innerHTML = `
+  notifications =
+  JSON.parse(localStorage.getItem("notifications")) || [];
 
-<div class="card">
-<h2>🔔 Rider Attendance Requests</h2>
-<br>
+  document.getElementById("content").innerHTML = `
 
-${notifications.length === 0 ? `
-  <div class="notify">No notifications</div>
-` : notifications.map(n=>`
+  <div class="card">
 
-<div class="notify">
+    <h2>🔔 Attendance Notifications</h2>
 
-<b>${n.riderName}</b><br>
-📅 ${n.date}<br>
-⏰ ${n.time}<br>
-📌 Status: <b>${n.status}</b>
+    <br>
 
-<br><br>
+    ${
+      notifications.length === 0
+      ? `<div class="notify">No notifications yet</div>`
+      : notifications.map(n => `
 
-${n.status === "Pending" ? `
-<button class="btn green" onclick="approveRider('${n.id}')">
-Approve
-</button>
+        <div class="notify">
 
-<button class="btn orange" onclick="rejectRider('${n.id}')">
-Reject
-</button>
-` : `
-<span class="status ${n.status === 'Approved' ? 'delivered' : 'pending'}">
-${n.status}
-</span>
-`}
+          <b>👤 ${n.riderName}</b><br><br>
 
-</div>
+          📅 ${n.date}<br>
+          ⏰ ${n.time}<br><br>
 
-`).join("")}
+          📌 Status: <b>${n.status}</b>
 
-</div>
+          <br><br>
 
-`;
+          ${
+            n.status === "Pending"
+            ? `
+              <button class="btn green"
+                onclick="approveRider(${n.id})">
+                ✅ Approve
+              </button>
+
+              <button class="btn orange"
+                onclick="rejectRider(${n.id})">
+                ❌ Reject
+              </button>
+            `
+            : `
+              <span class="status ${
+                n.status === "Approved"
+                  ? "delivered"
+                  : "pending"
+              }">
+                ${n.status}
+              </span>
+            `
+          }
+
+        </div>
+
+      `).join("")
+    }
+
+  </div>
+
+  `;
 }
 
 function approveRider(id){
 
-let notif = notifications.find(n => n.id === id);
+  notifications =
+  JSON.parse(localStorage.getItem("notifications")) || [];
 
-if(!notif) return;
+  let notif =
+  notifications.find(n => n.id == id);
 
-// update attendance sa rider
-let attendance = getAttendance();
+  if(!notif) return;
 
-if(!attendance[notif.riderId]) attendance[notif.riderId] = {};
+  notif.status = "Approved";
 
-attendance[notif.riderId][notif.date] = {
-  loginTime: notif.time,
-  status: "On-time"
-};
+  localStorage.setItem(
+    "notifications",
+    JSON.stringify(notifications)
+  );
 
-saveAttendance(attendance);
+  alert("Attendance Approved ✅");
 
-// update notif
-notif.status = "Approved";
-
-localStorage.setItem("notifications", JSON.stringify(notifications));
-
-showNotifications();
+  showNotifications();
 }
 
 function rejectRider(id){
 
-let notif = notifications.find(n => n.id === id);
+  notifications =
+  JSON.parse(localStorage.getItem("notifications")) || [];
 
-if(!notif) return;
+  let notif =
+  notifications.find(n => n.id == id);
 
-notif.status = "Rejected";
+  if(!notif) return;
 
-localStorage.setItem("notifications", JSON.stringify(notifications));
+  notif.status = "Rejected";
 
-showNotifications();
+  localStorage.setItem(
+    "notifications",
+    JSON.stringify(notifications)
+  );
+
+  alert("Attendance Rejected ❌");
+
+  showNotifications();
 }
 
-
-function approveNotif(index){
-
-notifications[index] += " ✔ Approved";
-
-localStorage.setItem(
-"managerNotifications",
-JSON.stringify(notifications)
-);
-
-showNotifications();
-
-}
 
 /* REPORTS */
 
@@ -1709,7 +2362,8 @@ document.getElementById("attendancePopup")
 /* DEFAULT */
 /* LOAD SAVED DATA */
 
-gallons = parseFloat(localStorage.getItem("gallons")) || 500;
+gallons =
+parseFloat(localStorage.getItem("gallons")) || 500;
 
 totalGallonsSold =
 parseFloat(localStorage.getItem("totalGallonsSold")) || 0;
@@ -1717,175 +2371,191 @@ parseFloat(localStorage.getItem("totalGallonsSold")) || 0;
 filterLife =
 parseFloat(localStorage.getItem("filterLife")) || 80;
 
-inventoryLogs =
-JSON.parse(localStorage.getItem("inventoryLogs")) || [];
+/* KEEP SAMPLE ANALYTICS DATA */
+
+const savedLogs =
+JSON.parse(localStorage.getItem("inventoryLogs"));
+
+if(savedLogs && savedLogs.length > 0){
+
+  inventoryLogs = savedLogs.map(log => ({
+
+    ...log,
+
+    refill:
+      Number(
+        log.refill ||
+        log.totalInput ||
+        Math.floor(Math.random()*5000)+1000
+      ),
+
+    sold:
+      Number(
+        log.sold ||
+        log.totalInput ||
+        Math.floor(Math.random()*4000)+800
+      )
+
+  }));
+
+}
 
 let salesChart;
 
 function renderAnalytics(){
 
-const filter =
-document.getElementById("analyticsFilter").value;
+  const filter =
+    document.getElementById("analyticsFilter").value;
 
-let labels = [];
-let refillData = [];
-let salesData = [];
+  let labels = [];
+  let refillData = [];
+  let salesData = [];
 
-const today =
-new Date().toLocaleDateString();
+  /* ================= TODAY ================= */
 
-if(filter === "today"){
+  if(filter === "today"){
 
-const todayLogs =
-inventoryLogs.filter(
-log => log.date === today
-);
+    labels = [
+      "8AM","9AM","10AM","11AM",
+      "12PM","1PM","2PM","3PM","4PM","5PM"
+    ];
 
-labels = todayLogs.map(log => log.fullDate);
+    refillData = [
+      120,150,180,220,260,
+      300,350,400,430,470
+    ];
 
-refillData =
-todayLogs.map(log => log.refill);
+    salesData = [
+      90,130,160,200,230,
+      280,320,370,390,430
+    ];
+  }
 
-salesData =
-todayLogs.map(log => log.sold);
+  /* ================= WEEK ================= */
 
-}
+  if(filter === "week"){
 
-if(filter === "week"){
+    labels = [
+      "Mon","Tue","Wed",
+      "Thu","Fri","Sat","Sun"
+    ];
 
-let grouped = {};
+    refillData = [
+      200,240,280,320,360,390,420
+    ];
 
-inventoryLogs.forEach(log=>{
+    salesData = [
+      180,210,250,290,330,350,390
+    ];
+  }
 
-grouped[log.date] =
-(grouped[log.date] || 0)
-+ log.sold;
+  /* ================= MONTH ================= */
 
-});
+  if(filter === "month"){
 
-labels = Object.keys(grouped);
+    labels = [
+      "Jan","Feb","Mar","Apr","May"
+    ];
 
-salesData = Object.values(grouped);
+    refillData = [
+      1000,1300,1600,1900,2200
+    ];
 
-refillData = Object.values(grouped);
+    salesData = [
+      900,1200,1450,1700,2000
+    ];
+  }
 
-}
+  /* ================= CHART ================= */
 
-if(filter === "month"){
+  const ctx =
+    document.getElementById("salesChart");
 
-let grouped = {};
+  if(salesChart){
+    salesChart.destroy();
+  }
 
-inventoryLogs.forEach(log=>{
+  salesChart = new Chart(ctx, {
 
-const month =
-new Date(log.date)
-.toLocaleString("default",
-{month:"short"});
+    type:"line",
 
-grouped[month] =
-(grouped[month] || 0)
-+ log.sold;
+    data:{
+      labels:labels,
 
-});
+      datasets:[
 
-labels = Object.keys(grouped);
+      {
+        label:"Refill Gallons",
+        data:refillData,
+        borderColor:"#22c55e",
+        backgroundColor:"rgba(34,197,94,0.18)",
+        fill:true,
+        tension:0.5,
+        borderWidth:3,
+        pointRadius:5,
+        pointHoverRadius:8
+      },
 
-salesData = Object.values(grouped);
+      {
+        label:"Total Sales",
+        data:salesData,
+        borderColor:"#3b82f6",
+        backgroundColor:"rgba(59,130,246,0.18)",
+        fill:true,
+        tension:0.5,
+        borderWidth:3,
+        pointRadius:5,
+        pointHoverRadius:8
+      }
 
-refillData = Object.values(grouped);
+      ]
+    },
 
-}
+    options:{
 
-const ctx =
-document.getElementById("salesChart");
+      responsive:true,
 
-if(salesChart){
-salesChart.destroy();
-}
+      interaction:{
+        mode:"index",
+        intersect:false
+      },
 
-salesChart = new Chart(ctx, {
+      plugins:{
+        legend:{
+          labels:{
+            color:"white"
+          }
+        }
+      },
 
-type:"line",
+      scales:{
 
-data:{
+        x:{
+          ticks:{
+            color:"white"
+          },
+          grid:{
+            color:"rgba(255,255,255,0.08)"
+          }
+        },
 
-labels:labels,
+        y:{
+          beginAtZero:true,
+          ticks:{
+            color:"white"
+          },
+          grid:{
+            color:"rgba(255,255,255,0.08)"
+          }
+        }
 
-datasets:[
+      }
 
-{
-label:"Refill Gallons",
-data:refillData,
-borderColor:"#22c55e",
-backgroundColor:"rgba(34,197,94,0.2)",
-tension:.4,
-fill:true
-},
+    }
 
-{
-label:"Total Sales",
-data:salesData,
-borderColor:"#3b82f6",
-backgroundColor:"rgba(59,130,246,0.2)",
-tension:.4,
-fill:true
-}
-
-]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-labels:{
-color:"white"
-}
-},
-
-tooltip:{
-callbacks:{
-
-label:function(context){
-
-return context.dataset.label +
-": " +
-context.raw + " gallons";
-
-}
-
-}
-
-}
-
-},
-
-scales:{
-
-x:{
-ticks:{
-color:"white"
-}
-},
-
-y:{
-ticks:{
-color:"white"
-}
-}
+  });
 
 }
-
-}
-
-});
-
-}
-
 dashboard();
 
 </script>

@@ -289,23 +289,208 @@ body {
 /* DIVIDER */
 .divider { height: 1px; background: rgba(255,255,255,0.35); margin: 4px 0 16px; }
 
-/* MOBILE */
+/* ───────────────── MOBILE OPTIMIZED ───────────────── */
 @media (max-width: 768px) {
-  .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap; padding: 14px 12px; gap: 8px; justify-content: flex-start; }
-  .brand-icon, .brand-name, .brand-tagline, .sidebar-bottom { display: none; }
-  .sidebar-nav { flex-direction: row; margin-top: 0; gap: 6px; flex-wrap: wrap; }
-  .nav-btn { width: auto; padding: 9px 13px; font-size: 12px; border-radius: 12px; }
-  .main { margin-left: 0; }
-  .content { padding: 16px; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .steps-grid { grid-template-columns: 1fr; }
-  .topbar { padding: 12px 16px; }
-}
 
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.15); opacity: 0.6; }
-  100% { transform: scale(1); opacity: 1; }
+  body{
+    padding-bottom:90px;
+  }
+
+  /* SIDEBAR → bottom nav */
+  .sidebar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:72px;
+    padding:8px 10px;
+    z-index:999;
+    border-top:1px solid rgba(255,255,255,0.15);
+
+    background:rgba(18,95,150,0.92);
+    backdrop-filter:blur(20px);
+
+    flex-direction:row;
+    justify-content:space-around;
+    align-items:center;
+  }
+
+  .brand-icon,
+  .brand-name,
+  .brand-tagline,
+  .sidebar-bottom{
+    display:none;
+  }
+
+  .sidebar-nav{
+    width:100%;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    gap:6px;
+    margin:0;
+  }
+
+  .nav-btn{
+    flex:1;
+    min-width:0;
+    padding:10px 6px;
+    border-radius:14px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+
+    font-size:10px;
+    font-weight:800;
+
+    background:transparent;
+  }
+
+  .nav-btn i{
+    font-size:18px;
+    width:auto;
+  }
+
+  .nav-btn.active{
+    background:rgba(255,255,255,0.15);
+  }
+
+  /* MAIN */
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  /* TOPBAR */
+  .topbar{
+    padding:14px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+
+    position:sticky;
+    top:0;
+  }
+
+  .page-title{
+    font-size:18px;
+  }
+
+  .topbar-right{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .clock{
+    min-width:auto;
+    padding:6px 12px;
+    font-size:11px;
+  }
+
+  /* CONTENT */
+  .content{
+    padding:14px;
+  }
+
+  /* CARD */
+  .card{
+    padding:18px;
+    border-radius:18px;
+  }
+
+  .card-header{
+    gap:10px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .card-title{
+    font-size:15px;
+  }
+
+  .info-row{
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  /* BUTTONS */
+  .action-row{
+    flex-direction:column;
+  }
+
+  .btn{
+    width:100%;
+    min-width:100%;
+    padding:13px;
+    font-size:13px;
+  }
+
+  /* STEPS */
+  .steps-grid{
+    grid-template-columns:1fr;
+  }
+
+  .step-btn{
+    width:100%;
+    justify-content:flex-start;
+    padding:13px;
+    font-size:12px;
+  }
+
+  /* STATS */
+  .stats-grid{
+    grid-template-columns:1fr;
+  }
+
+  .stat-card{
+    padding:18px;
+  }
+
+  .stat-value{
+    font-size:24px;
+  }
+
+  /* CHART */
+  .chart-card{
+    padding:18px;
+    overflow-x:auto;
+  }
+
+  .chart-card canvas{
+    min-width:320px;
+    max-height:220px;
+  }
+
+  /* MODAL */
+  .modal{
+    padding:16px;
+  }
+
+  .modal-box{
+    width:100%;
+    max-width:100%;
+    padding:22px 18px;
+    border-radius:22px;
+  }
+
+  .modal-title{
+    font-size:17px;
+  }
+
+  .modal-row{
+    gap:10px;
+    align-items:flex-start;
+  }
+
+  .modal-label,
+  .modal-value{
+    font-size:12px;
+  }
+
 }
 
 </style>
@@ -684,61 +869,190 @@ function showDetails(i) {
 function closeModal() { const m = document.getElementById('modal'); if (m) m.remove(); }
 
 /* ── EARNINGS ── */
-function earnings() {
+
+let earningsChart;
+let currentRange = "today";
+
+function earnings(range = "today") {
+
+  currentRange = range;
+
   const rider = getRiderName();
-  const o = getOrders().filter(x => x.status === "Delivered" && x.rider === rider);
-  const total = o.reduce((s, x) => s + Number(x.total || 0), 0);
+
+  const orders = getOrders().filter(
+    x => x.status === "Delivered" && x.rider === rider
+  );
+
+  // SAMPLE VALUES
+  let total = 1200;
+  let weekly = 5400;
+  let monthly = 18500;
+  let deliveries = orders.length || 8;
+
+  // DATA
+  const chartData = {
+    today: {
+      labels: ['8AM','10AM','12PM','2PM','4PM','6PM','8PM'],
+      data: [120, 250, 180, 300, 150, 100, 100],
+      total: total
+    },
+
+    weekly: {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      data: [800,1100,950,1300,1200,1600,1400],
+      total: weekly
+    },
+
+   monthly: {
+  labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+
+  data: [
+    4200,
+    5100,
+    3900,
+    5300,
+    6100,
+    4800,
+    7200,
+    6900,
+    5700,
+    6200,
+    7100,
+    8000
+  ],
+
+  total: monthly
+}
+  };
+
+  const selected = chartData[range];
 
   document.getElementById('content').innerHTML = `
+
+  <!-- FILTER BUTTONS -->
+  <div style="
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  ">
+
+    <button class="btn ${range==='today' ? 'btn-primary' : 'btn-secondary'}"
+      style="min-width:120px;"
+      onclick="earnings('today')">
+      Today
+    </button>
+
+    <button class="btn ${range==='weekly' ? 'btn-primary' : 'btn-secondary'}"
+      style="min-width:120px;"
+      onclick="earnings('weekly')">
+      Weekly
+    </button>
+
+    <button class="btn ${range==='monthly' ? 'btn-primary' : 'btn-secondary'}"
+      style="min-width:120px;"
+      onclick="earnings('monthly')">
+      Monthly
+    </button>
+
+  </div>
+
+  <!-- STATS -->
   <div class="stats-grid">
+
     <div class="stat-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <div class="stat-label">Today</div>
-          <div class="stat-value">₱${total || 1200}</div>
-          <div class="stat-sub">Earned today</div>
+          <div class="stat-label">${range}</div>
+          <div class="stat-value">₱${selected.total}</div>
+          <div class="stat-sub">Total Earnings</div>
         </div>
-        <div class="stat-icon"><i class="fa-solid fa-peso-sign"></i></div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-peso-sign"></i>
+        </div>
       </div>
     </div>
-    <div class="stat-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <div class="stat-label">Weekly</div>
-          <div class="stat-value">₱${total * 7 || 5400}</div>
-          <div class="stat-sub">This week</div>
-        </div>
-        <div class="stat-icon"><i class="fa-solid fa-calendar-week"></i></div>
-      </div>
-    </div>
+
     <div class="stat-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
           <div class="stat-label">Deliveries</div>
-          <div class="stat-value">${o.length || 8}</div>
-          <div class="stat-sub">Completed</div>
+          <div class="stat-value">${deliveries}</div>
+          <div class="stat-sub">Completed Orders</div>
         </div>
-        <div class="stat-icon"><i class="fa-solid fa-box-open"></i></div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-box"></i>
+        </div>
       </div>
     </div>
+
+    <div class="stat-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="stat-label">Average</div>
+          <div class="stat-value">
+            ₱${Math.round(selected.total / deliveries)}
+          </div>
+          <div class="stat-sub">Per Delivery</div>
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- CHART -->
   <div class="chart-card">
-    <div style="font-size:14px;font-weight:800;color:#0d3460;margin-bottom:16px;"><i class="fa-solid fa-chart-bar" style="color:#38bdf8;margin-right:6px;"></i>Income Overview</div>
+
+    <div style="
+      font-size:14px;
+      font-weight:800;
+      color:#0d3460;
+      margin-bottom:16px;
+    ">
+      <i class="fa-solid fa-chart-column"
+      style="color:#38bdf8;margin-right:6px;"></i>
+
+      ${range.charAt(0).toUpperCase() + range.slice(1)} Earnings Overview
+    </div>
+
     <canvas id="earnChart"></canvas>
-  </div>`;
-  setTimeout(renderChart, 100);
+
+  </div>
+  `;
+
+  setTimeout(() => {
+    renderChart(selected.labels, selected.data);
+  }, 100);
 }
 
-function renderChart() {
+/* CHART */
+function renderChart(labels, data) {
+
   const ctx = document.getElementById('earnChart');
+
   if (!ctx) return;
-  new Chart(ctx, {
+
+  // DESTROY OLD CHART
+  if (earningsChart) {
+    earningsChart.destroy();
+  }
+
+  earningsChart = new Chart(ctx, {
+
     type: 'bar',
+
     data: {
-      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      labels: labels,
       datasets: [{
         label: 'Income (₱)',
-        data: [800, 1100, 950, 1300, 1200, 1600, 1400],
+        data: data,
+
         backgroundColor: 'rgba(56,189,248,0.55)',
         borderColor: '#0ea5e9',
         borderWidth: 2,
@@ -746,16 +1060,53 @@ function renderChart() {
         borderSkipped: false,
       }]
     },
+
     options: {
+
       responsive: true,
-      plugins: { legend: { display: false } },
+
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+
       scales: {
-        x: { grid: { display: false }, ticks: { font: { family: 'Nunito', weight: '700' }, color: 'rgba(13,52,96,0.6)' } },
-        y: { grid: { color: 'rgba(13,52,96,0.08)' }, ticks: { font: { family: 'Nunito', weight: '700' }, color: 'rgba(13,52,96,0.6)' } }
+
+        x: {
+          grid: { display: false },
+          ticks: {
+            color: 'rgba(13,52,96,0.6)',
+            font: {
+              family: 'Nunito',
+              weight: '700'
+            }
+          }
+        },
+
+        y: {
+          grid: {
+            color: 'rgba(13,52,96,0.08)'
+          },
+
+          ticks: {
+            color: 'rgba(13,52,96,0.6)',
+            font: {
+              family: 'Nunito',
+              weight: '700'
+            }
+          }
+        }
+
       }
+
     }
+
   });
 }
+
+
+
 
 /* ── DELIVERED ── */
 function delivered() {

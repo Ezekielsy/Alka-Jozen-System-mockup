@@ -927,31 +927,164 @@ textarea{
     color:#0ea5e9;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
 
-@media(max-width:768px){
+@media screen and (max-width:768px){
+
+    body{
+        overflow-x:hidden;
+    }
+
+    .wrapper{
+        flex-direction:column;
+    }
+
+    /* HIDE SIDEBAR */
 
     .sidebar{
         display:none;
     }
 
+    /* CONTENT */
+
     .content{
-        padding:20px;
+        width:100%;
+        padding:15px;
         padding-bottom:100px;
     }
 
-    .bottom-nav{
-        display:flex;
+    /* CARDS */
+
+    .card,
+    .order-card,
+    .track-card,
+    .profile-card{
+        padding:18px;
+        border-radius:18px;
+    }
+
+    h2{
+        font-size:20px;
+    }
+
+    /* INPUTS */
+
+    input,
+    select,
+    textarea{
+        padding:14px;
+        font-size:14px;
+    }
+
+    /* BUTTONS */
+
+    .primary-btn{
+        padding:15px;
+        font-size:15px;
+    }
+
+    /* TRACKING */
+
+    .track-wrapper{
+        overflow-x:auto;
+    }
+
+    .track-progress{
+        min-width:500px;
     }
 
     .circle{
-        width:50px;
-        height:50px;
+        width:45px;
+        height:45px;
+        font-size:16px;
     }
 
     .track-label{
         font-size:10px;
     }
+
+    .track-line{
+        top:22px;
+    }
+
+    /* PROFILE GRID */
+
+    .profile-card div[style*="grid-template-columns"]{
+        grid-template-columns:1fr !important;
+    }
+
+    /* CHAT BUTTON */
+
+    .chat-btn{
+        width:58px;
+        height:58px;
+        font-size:20px;
+        right:15px;
+        bottom:85px;
+    }
+
+    /* CHAT BOX */
+
+    .chat-box{
+        width:92%;
+        height:70vh;
+        right:4%;
+        bottom:160px;
+        border-radius:22px;
+    }
+
+    /* MAP */
+
+    .map-preview iframe{
+        height:160px;
+    }
+
+    /* NOTIFICATION */
+
+    .notify{
+        width:90%;
+        right:5%;
+        top:15px;
+        text-align:center;
+        font-size:14px;
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav{
+        display:flex;
+        height:75px;
+    }
+
+    .bottom-nav button{
+        font-size:12px;
+    }
+
+    .bottom-nav i{
+        font-size:18px;
+    }
+
+    /* BRAND */
+
+    .brand{
+        font-size:22px;
+    }
+
+    /* MENU BUTTON */
+
+    .menu-btn{
+        padding:12px;
+        font-size:14px;
+    }
+
+    /* STARS */
+
+    .stars i{
+        font-size:24px;
+    }
+
 }
 
 /* AI CHAT EFFECT */
@@ -964,6 +1097,17 @@ textarea{
 .user-msg{
     box-shadow:
     0 4px 15px rgba(0,0,0,0.08);
+}
+
+html{
+    -webkit-text-size-adjust:100%;
+}
+
+button,
+input,
+select,
+textarea{
+    font-size:16px;
 }
 
 </style>
